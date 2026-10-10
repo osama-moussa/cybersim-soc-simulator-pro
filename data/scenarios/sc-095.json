@@ -1,0 +1,117 @@
+{
+  "id": "sc-095",
+  "title": "Shift 095 - Morning Shift",
+  "category": "Identity",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The identity provider reports many failed sign-ins.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Identity: password spray pattern",
+      "source": "Identity Provider",
+      "host": "IDP",
+      "user": "multiple",
+      "summary": "198.51.100.215 attempted one logon each against 59 accounts; 59 failures, 0 successes",
+      "details": {
+        "src_ip": "198.51.100.215",
+        "count": 59,
+        "geo": "Netherlands",
+        "protocol": "HTTPS",
+        "raw_log": "idp signin_failed src=198.51.100.215 accounts=59 error=50126 successes=0"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1110.003"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "07:58:10",
+      "src": "proxy",
+      "host": "FIN-PC-02",
+      "user": "k.gamal",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:00:00",
+      "src": "idp",
+      "host": "IDP",
+      "user": "multiple",
+      "msg": "59 failed sign-ins from 198.51.100.215 (error 50126), 0 successes"
+    },
+    {
+      "t": "08:01:46",
+      "src": "dns",
+      "host": "EXEC-PC-32",
+      "user": "a.hassan",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:12:11",
+      "src": "proxy",
+      "host": "IT-PC-14",
+      "user": "k.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:14:06",
+      "src": "proxy",
+      "host": "ENG-PC-36",
+      "user": "y.hassan",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:16:05",
+      "src": "windows",
+      "host": "ENG-PC-08",
+      "user": "k.saleh",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "08:22:32",
+      "src": "windows",
+      "host": "SALES-PC-33",
+      "user": "o.adel",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "08:25:21",
+      "src": "proxy",
+      "host": "ENG-PC-09",
+      "user": "m.ibrahim",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:27:59",
+      "src": "proxy",
+      "host": "HR-PC-20",
+      "user": "f.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "198.51.100.215": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Known password spraying infrastructure"
+    }
+  },
+  "expected_actions": [
+    "block_ip:198.51.100.215",
+    "enforce_mfa"
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "id": "sc-050",
+  "title": "Shift 050 - Morning Shift",
+  "category": "Account Compromise",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "The email security stack reported anomalies on a finance mailbox.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "n.mansour": "MAIL-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Identity: sign-in from new IP / location",
+      "source": "Identity Provider",
+      "host": "IDP",
+      "user": "n.mansour",
+      "summary": "Sign-in to n.mansour mailbox from 192.0.2.17 (Turkey), no MFA prompt",
+      "details": {
+        "src_ip": "192.0.2.17",
+        "geo": "Turkey",
+        "mfa_result": "Skipped (token replay)",
+        "raw_log": "idp signin user=n.mansour src=192.0.2.17 geo=Turkey mfa=skipped"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 6,
+      "severity": "High",
+      "rule": "Email: inbox rule forwarding to external address",
+      "source": "Email Gateway",
+      "host": "MAIL-01",
+      "user": "n.mansour",
+      "summary": "New inbox rule forwards all mail from n.mansour to n.mansour.backup@mailbox-fwd.net",
+      "details": {
+        "email_to": "n.mansour.backup@mailbox-fwd.net",
+        "src_ip": "192.0.2.17",
+        "action_taken": "Rule created",
+        "raw_log": "mail rule_create user=n.mansour forward_to=n.mansour.backup@mailbox-fwd.net src=192.0.2.17"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1114.003"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 15,
+      "severity": "High",
+      "rule": "Email: outbound payment-change request",
+      "source": "Email Gateway",
+      "host": "MAIL-01",
+      "user": "n.mansour",
+      "summary": "Mail sent from the mailbox to Accounts Payable requesting a bank account change",
+      "details": {
+        "email_from": "n.mansour@corp.example",
+        "email_to": "ap@corp.example",
+        "subject": "Updated bank details",
+        "src_ip": "192.0.2.17",
+        "raw_log": "mail out from=n.mansour to=ap subject='Updated bank details' src=192.0.2.17"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1534"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "05:58:30",
+      "src": "windows",
+      "host": "FIN-PC-27",
+      "user": "r.khaled",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:06:00",
+      "src": "email",
+      "host": "MAIL-01",
+      "user": "n.mansour",
+      "msg": "Inbox rule created: forward -> n.mansour.backup@mailbox-fwd.net"
+    },
+    {
+      "t": "06:06:42",
+      "src": "proxy",
+      "host": "LEGAL-PC-25",
+      "user": "f.zaki",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:10:38",
+      "src": "windows",
+      "host": "FIN-PC-36",
+      "user": "r.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "06:14:56",
+      "src": "proxy",
+      "host": "LEGAL-PC-30",
+      "user": "r.khaled",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "06:16:02",
+      "src": "windows",
+      "host": "IT-PC-12",
+      "user": "s.saleh",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:24:30",
+      "src": "windows",
+      "host": "EXEC-PC-16",
+      "user": "h.ibrahim",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "06:26:02",
+      "src": "proxy",
+      "host": "FIN-PC-16",
+      "user": "a.saleh",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:28:53",
+      "src": "windows",
+      "host": "LEGAL-PC-10",
+      "user": "f.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "192.0.2.17": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Proxy / VPN exit used in mailbox takeover campaigns"
+    }
+  },
+  "expected_actions": [
+    "reset_password:n.mansour",
+    "revoke_sessions:n.mansour",
+    "remove_inbox_rule",
+    "notify_finance",
+    "block_ip:192.0.2.17",
+    "escalate_tier2"
+  ]
+}

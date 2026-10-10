@@ -1,0 +1,138 @@
+{
+  "id": "sc-082",
+  "title": "Shift 082 - Afternoon Shift",
+  "category": "Insider Threat",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "DLP raised alerts on a user in the legal department.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "HR (confidential): Adam Saleh submitted a resignation letter last week."
+    ]
+  },
+  "assets": {
+    "users": {
+      "a.saleh": "LEGAL-PC-14"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "DLP: mass download from document repository",
+      "source": "DLP",
+      "host": "LEGAL-PC-14",
+      "user": "a.saleh",
+      "summary": "a.saleh downloaded 2982 files from the contracts repository in 20 minutes",
+      "details": {
+        "src_ip": "10.15.215.200",
+        "host_ip": "10.15.215.200",
+        "protocol": "HTTPS",
+        "count": 2121,
+        "raw_log": "dlp download repo=Contracts user=a.saleh files>1800 window=20m"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1530"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 10,
+      "severity": "High",
+      "rule": "EDR: bulk copy to USB storage",
+      "source": "EDR",
+      "host": "LEGAL-PC-14",
+      "user": "a.saleh",
+      "summary": "24 GB copied to removable media on LEGAL-PC-14",
+      "details": {
+        "host_ip": "10.15.215.200",
+        "process": "explorer.exe",
+        "file_name": "E:\\Contracts_Archive\\",
+        "raw_log": "EDR file_copy dest=E:\\ size>8GB user=a.saleh"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1052.001"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:55:04",
+      "src": "dns",
+      "host": "SALES-PC-25",
+      "user": "n.zaki",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "16:04:42",
+      "src": "edr",
+      "host": "SALES-PC-17",
+      "user": "a.hassan",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "16:10:00",
+      "src": "edr",
+      "host": "LEGAL-PC-14",
+      "user": "a.saleh",
+      "msg": "Bulk file copy to E:\\ (removable media)"
+    },
+    {
+      "t": "16:10:46",
+      "src": "windows",
+      "host": "HR-PC-05",
+      "user": "t.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "16:12:40",
+      "src": "windows",
+      "host": "ENG-PC-21",
+      "user": "m.zaki",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "16:14:56",
+      "src": "windows",
+      "host": "ENG-PC-34",
+      "user": "y.fathy",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "16:15:01",
+      "src": "proxy",
+      "host": "HR-PC-20",
+      "user": "f.saleh",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "16:24:55",
+      "src": "dns",
+      "host": "LEGAL-PC-07",
+      "user": "f.farouk",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "16:26:47",
+      "src": "dns",
+      "host": "HR-PC-03",
+      "user": "h.nabil",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "preserve_evidence",
+    "notify_hr_legal",
+    "escalate_tier2"
+  ]
+}

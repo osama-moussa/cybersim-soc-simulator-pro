@@ -1,0 +1,131 @@
+{
+  "id": "sc-099",
+  "title": "Shift 099 - Evening Shift",
+  "category": "Network",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Network IDS is reporting scanning activity against internal servers.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2236",
+        "desc": "Weekly authenticated vulnerability scan of server VLAN",
+        "owner": "Security Engineering",
+        "window": "all day"
+      }
+    ],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "IDS: Port scan detected",
+      "source": "Network IDS",
+      "host": "DB-01",
+      "user": "n/a",
+      "summary": "Internal host 10.10.5.5 probed 967 TCP ports on DB-01 within 60 seconds",
+      "details": {
+        "src_ip": "10.10.5.5",
+        "dst_ip": "10.10.0.30",
+        "protocol": "TCP",
+        "count": 967,
+        "action_taken": "Alert only",
+        "raw_log": "IDS sid=2010935 SCAN 10.10.5.5 -> 10.10.0.30 ports=967 window=60s"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:59:00",
+      "src": "windows",
+      "host": "SEC-SCAN-01",
+      "user": "svc.scanner",
+      "msg": "4624 service logon (scheduled task: WeeklyVulnScan)"
+    },
+    {
+      "t": "18:59:37",
+      "src": "proxy",
+      "host": "LEGAL-PC-02",
+      "user": "t.saleh",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:00:00",
+      "src": "firewall",
+      "host": "DB-01",
+      "user": "n/a",
+      "msg": "ALLOW 10.10.5.5 -> 10.10.0.30 tcp multi-port sweep (967 ports)"
+    },
+    {
+      "t": "19:03:48",
+      "src": "windows",
+      "host": "IT-PC-33",
+      "user": "f.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "19:13:44",
+      "src": "dns",
+      "host": "SALES-PC-02",
+      "user": "a.gamal",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:24:50",
+      "src": "edr",
+      "host": "HR-PC-24",
+      "user": "h.fathy",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "19:25:09",
+      "src": "edr",
+      "host": "HR-PC-28",
+      "user": "m.hassan",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "19:25:48",
+      "src": "proxy",
+      "host": "HR-PC-15",
+      "user": "o.farouk",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "19:27:46",
+      "src": "edr",
+      "host": "HR-PC-18",
+      "user": "t.samir",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "19:29:29",
+      "src": "windows",
+      "host": "SALES-PC-29",
+      "user": "s.mansour",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "10.10.5.5": {
+      "type": "ip",
+      "reputation": "benign",
+      "note": "Authorized internal vulnerability scanner (SEC-SCAN-01)"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

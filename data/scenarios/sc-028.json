@@ -1,0 +1,263 @@
+{
+  "id": "sc-028",
+  "title": "Shift 028 - Morning Shift",
+  "category": "Account Compromise",
+  "outcome": "mixed",
+  "difficulty": "Tier 3",
+  "briefing": "Busy shift: alerts are arriving from several sources. Judge each one on its own evidence.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2481",
+        "desc": "Monthly patch deployment through endpoint management (SCCM) - all workstations",
+        "owner": "IT Operations",
+        "window": "02:00-06:00"
+      }
+    ],
+    "notices": [
+      "IT bulletin: new monitoring agent rolled out to workstations this week."
+    ]
+  },
+  "assets": {
+    "users": {
+      "h.zaki": "VPN-GW",
+      "l.nabil": "EXEC-PC-29"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: suspicious link detected",
+      "source": "Email Gateway",
+      "host": "HR-PC-18",
+      "user": "h.zaki",
+      "summary": "Email from payroll@login-center-site.info contains a link to hxxps://login-center-site[.]info/login",
+      "details": {
+        "email_from": "payroll@login-center-site.info",
+        "email_to": "h.zaki@corp.example",
+        "subject": "Payroll update required",
+        "url": "hxxps://login-center-site[.]info/login",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=payroll@login-center-site.info spf=fail url=hxxps://login-center-site[.]info/login"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 3,
+      "severity": "High",
+      "rule": "Proxy: credentials submitted to uncategorized domain",
+      "source": "Web Proxy",
+      "host": "HR-PC-18",
+      "user": "h.zaki",
+      "summary": "POST with form data from HR-PC-18 to login-center-site.info",
+      "details": {
+        "src_ip": "10.11.126.224",
+        "dst_ip": "198.51.100.91",
+        "dst_port": 443,
+        "domain": "login-center-site.info",
+        "url": "https://login-center-site.info/login",
+        "action_taken": "Allowed",
+        "raw_log": "proxy POST https://login-center-site.info/login 200 bytes_out=412 category=uncategorized"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1056.003"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 5,
+      "severity": "Low",
+      "rule": "DNS: high query volume",
+      "source": "DNS Server",
+      "host": "EXEC-PC-29",
+      "user": "l.nabil",
+      "summary": "6921 DNS queries to telemetry.fabrikam-cdn.net in 10 minutes from EXEC-PC-29",
+      "details": {
+        "src_ip": "10.17.142.102",
+        "dst_ip": "10.10.0.53",
+        "dst_port": 53,
+        "protocol": "UDP",
+        "count": 6921,
+        "domain": "telemetry.fabrikam-cdn.net",
+        "raw_log": "dns client=10.17.142.102 qname=telemetry.fabrikam-cdn.net qtype=A count=6921/10min rcode=NOERROR"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1003"
+    },
+    {
+      "at": 9,
+      "severity": "High",
+      "rule": "VPN: login from new country",
+      "source": "VPN",
+      "host": "VPN-GW",
+      "user": "h.zaki",
+      "summary": "Successful VPN login from 198.51.100.91 (Turkey) 6 minutes after the credential submission",
+      "details": {
+        "src_ip": "198.51.100.91",
+        "dst_ip": "10.10.0.1",
+        "geo": "Turkey",
+        "mfa_result": "Not required (legacy profile)",
+        "raw_log": "vpn auth=OK user=h.zaki src=198.51.100.91 geo=Turkey mfa=none"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1004"
+    },
+    {
+      "at": 12,
+      "severity": "Medium",
+      "rule": "EDR: Encoded PowerShell command",
+      "source": "EDR",
+      "host": "FIN-PC-33",
+      "user": "SYSTEM",
+      "summary": "powershell.exe -EncodedCommand executed by SYSTEM, parent CcmExec.exe on FIN-PC-33",
+      "details": {
+        "host_ip": "10.12.175.36",
+        "process": "powershell.exe",
+        "parent_process": "CcmExec.exe",
+        "command_line": "powershell.exe -NoProfile -ExecutionPolicy Bypass -EncodedCommand JABwAGEAdABjAGgA...",
+        "raw_log": "EDR proc_start host=FIN-PC-33 user=SYSTEM image=powershell.exe parent=CcmExec.exe"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1005"
+    }
+  ],
+  "logs": [
+    {
+      "t": "08:03:00",
+      "src": "proxy",
+      "host": "HR-PC-18",
+      "user": "h.zaki",
+      "msg": "POST https://login-center-site.info/login 200 (form data submitted)"
+    },
+    {
+      "t": "08:03:21",
+      "src": "proxy",
+      "host": "FIN-PC-38",
+      "user": "f.samir",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:05:00",
+      "src": "dns",
+      "host": "EXEC-PC-29",
+      "user": "l.nabil",
+      "msg": "query telemetry.fabrikam-cdn.net A NOERROR (x6921 in 10 min)"
+    },
+    {
+      "t": "08:08:31",
+      "src": "proxy",
+      "host": "LEGAL-PC-32",
+      "user": "o.gamal",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "08:09:00",
+      "src": "vpn",
+      "host": "VPN-GW",
+      "user": "h.zaki",
+      "msg": "Login OK from 198.51.100.91 (Turkey)"
+    },
+    {
+      "t": "08:09:25",
+      "src": "windows",
+      "host": "EXEC-PC-20",
+      "user": "s.samir",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "08:12:00",
+      "src": "edr",
+      "host": "FIN-PC-33",
+      "user": "SYSTEM",
+      "msg": "Process start: CcmExec.exe -> powershell.exe -EncodedCommand ..."
+    },
+    {
+      "t": "08:13:47",
+      "src": "proxy",
+      "host": "HR-PC-24",
+      "user": "m.gamal",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:14:04",
+      "src": "proxy",
+      "host": "ENG-PC-38",
+      "user": "r.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:14:23",
+      "src": "dns",
+      "host": "FIN-PC-38",
+      "user": "a.zaki",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "08:17:00",
+      "src": "dns",
+      "host": "IT-PC-15",
+      "user": "h.hassan",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "08:28:31",
+      "src": "proxy",
+      "host": "IT-PC-30",
+      "user": "t.adel",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "login-center-site.info": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Credential harvesting page, registered 2 days ago"
+    },
+    "198.51.100.91": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Known Tor exit node"
+    },
+    "telemetry.fabrikam-cdn.net": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Telemetry endpoint of the corporate monitoring agent"
+    }
+  },
+  "expected_actions": [
+    "disable_account:h.zaki",
+    "block_ip:198.51.100.91",
+    "block_domain:login-center-site.info",
+    "reset_password:h.zaki",
+    "revoke_sessions:h.zaki",
+    "escalate_tier2",
+    "close_false_positive",
+    "close_false_positive"
+  ]
+}

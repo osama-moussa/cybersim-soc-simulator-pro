@@ -1,0 +1,121 @@
+{
+  "id": "sc-035",
+  "title": "Shift 035 - Afternoon Shift",
+  "category": "Web",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The WAF is reporting attack patterns against the public web server.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "Authorized external penetration test by RedLine Security: source 192.0.2.44, scope WEB-01, ticket PT-927."
+    ]
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "High",
+      "rule": "WAF: SQL injection attempts",
+      "source": "WAF",
+      "host": "WEB-01",
+      "user": "n/a",
+      "summary": "321 SQL injection payloads from 192.0.2.44 against /search within 5 minutes",
+      "details": {
+        "src_ip": "192.0.2.44",
+        "dst_ip": "172.16.10.5",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "count": 321,
+        "url": "https://www.corp.example/search?q=' OR 1=1--",
+        "action_taken": "Blocked",
+        "raw_log": "waf rule=942100 action=block src=192.0.2.44 uri=/search?q=%27%20OR%201%3D1-- count=321"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:30:00",
+      "src": "waf",
+      "host": "WEB-01",
+      "user": "n/a",
+      "msg": "BLOCK 192.0.2.44 GET /search?q=' OR 1=1-- rule=942100"
+    },
+    {
+      "t": "13:38:52",
+      "src": "proxy",
+      "host": "IT-PC-12",
+      "user": "l.gamal",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "13:39:10",
+      "src": "edr",
+      "host": "EXEC-PC-25",
+      "user": "m.farouk",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "13:47:55",
+      "src": "windows",
+      "host": "HR-PC-33",
+      "user": "y.adel",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:47:59",
+      "src": "windows",
+      "host": "IT-PC-25",
+      "user": "r.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:48:03",
+      "src": "proxy",
+      "host": "ENG-PC-18",
+      "user": "s.nabil",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "13:51:31",
+      "src": "dns",
+      "host": "LEGAL-PC-29",
+      "user": "r.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "13:51:45",
+      "src": "proxy",
+      "host": "IT-PC-23",
+      "user": "y.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "13:59:42",
+      "src": "proxy",
+      "host": "LEGAL-PC-14",
+      "user": "a.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {
+    "192.0.2.44": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Registered penetration-test source (RedLine Security)"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

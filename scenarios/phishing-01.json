@@ -1,0 +1,104 @@
+{
+  "id": "phishing-01",
+  "title": "Phishing to Credential Theft",
+  "difficulty": "Tier 1",
+  "shiftStart": "09:00",
+  "briefing": "Morning shift, Acme Corp. HR reported that several employees received an email about a 'payroll update'. Triage all incoming alerts, determine which are real threats, and escalate as needed. Not every alert is malicious.",
+  "alerts": [
+    {
+      "id": "A-1001",
+      "at": 2,
+      "severity": "Medium",
+      "rule": "Suspicious URL in Inbound Email",
+      "ruleId": "EML-0412",
+      "source": "Email Security Gateway",
+      "host": "HR-PC-07",
+      "user": "a.hassan",
+      "summary": "Inbound email contains a URL flagged as newly registered domain",
+      "details": {
+        "Detected At": "09:02:05",
+        "Product Action": "Delivered",
+        "Sender": "payroll-update@hr-portaI.com",
+        "Sender IP": "203.0.113.77",
+        "Recipient": "a.hassan@acme.local",
+        "Subject": "Action Required: Payroll Update Q4",
+        "Message ID": "<7f3a91c2@mail.hr-portaI.com>",
+        "SPF": "fail",
+        "DKIM": "none",
+        "Attachment": "none",
+        "URL": "hxxp://hr-portaI[.]com/login",
+        "URL Domain Age": "2 days",
+        "Recipient Host": "HR-PC-07",
+        "Recipient Host IP": "10.10.20.47"
+      },
+      "truth": { "verdict": "TP", "severity": "High", "mitre": "T1566.002" }
+    },
+    {
+      "id": "A-1002",
+      "at": 6,
+      "severity": "Low",
+      "rule": "Multiple Failed Logons",
+      "ruleId": "WIN-4625-THR",
+      "source": "Windows Security Log",
+      "host": "FIN-PC-02",
+      "user": "m.samir",
+      "summary": "3 failed logons (Event 4625) within 2 minutes followed by a success",
+      "details": {
+        "Detected At": "09:05:40",
+        "Event IDs": "4625 x3, 4624",
+        "Logon Type": "2 (Interactive)",
+        "Failure Reason": "Unknown user name or bad password",
+        "Source Workstation": "FIN-PC-02",
+        "Source IP": "10.10.30.12",
+        "Target Account": "ACME\\m.samir",
+        "Time Window": "09:03:50 - 09:05:30",
+        "Subsequent Success": "Yes (09:05:30)"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "mitre": null }
+    },
+    {
+      "id": "A-1003",
+      "at": 9,
+      "severity": "High",
+      "rule": "VPN Login from Unusual Country",
+      "ruleId": "VPN-GEO-007",
+      "source": "VPN Gateway",
+      "host": "VPN-GW-01",
+      "user": "a.hassan",
+      "summary": "Successful VPN login from a country never seen for this user",
+      "details": {
+        "Detected At": "09:08:58",
+        "Source IP": "185.220.101.45",
+        "Geo Location": "Germany (AS205100)",
+        "Destination IP": "198.51.100.10",
+        "Destination Port": "443",
+        "Protocol": "TCP/SSL-VPN",
+        "Auth Method": "Password only (no MFA prompt)",
+        "Assigned Internal IP": "10.10.99.15",
+        "User Usual Country": "Egypt",
+        "Previous Login": "Yesterday 17:12 from 10.10.20.47 (office)",
+        "Time Since Phish Click": "6 min"
+      },
+      "truth": { "verdict": "TP", "severity": "Critical", "mitre": "T1078" }
+    }
+  ],
+  "logs": [
+    { "t": "09:01:20", "src": "email", "host": "MAIL-GW", "user": "a.hassan", "msg": "Delivered from payroll-update@hr-portaI.com (203.0.113.77) to a.hassan@acme.local" },
+    { "t": "09:02:11", "src": "proxy", "host": "HR-PC-07", "user": "a.hassan", "srcIp": "10.10.20.47", "dstIp": "203.0.113.80", "msg": "GET hr-portaI.com/login 200" },
+    { "t": "09:02:40", "src": "proxy", "host": "HR-PC-07", "user": "a.hassan", "srcIp": "10.10.20.47", "dstIp": "203.0.113.80", "msg": "POST hr-portaI.com/login 200 (form submitted)" },
+    { "t": "09:03:50", "src": "windows", "host": "FIN-PC-02", "user": "m.samir", "srcIp": "10.10.30.12", "msg": "4625 failed logon (bad password)" },
+    { "t": "09:05:30", "src": "windows", "host": "FIN-PC-02", "user": "m.samir", "srcIp": "10.10.30.12", "msg": "4624 successful logon (interactive)" },
+    { "t": "09:08:55", "src": "vpn", "host": "VPN-GW-01", "user": "a.hassan", "srcIp": "185.220.101.45", "msg": "Login OK, assigned 10.10.99.15" }
+  ],
+  "iocs": {
+    "185.220.101.45": { "type": "ip", "reputation": "malicious", "note": "Known Tor exit node" },
+    "203.0.113.77": { "type": "ip", "reputation": "malicious", "note": "Sender mail server, linked to phishing campaigns" },
+    "hr-portaI.com": { "type": "domain", "reputation": "malicious", "note": "Typosquat (capital I instead of l), registered 2 days ago" }
+  },
+  "expected_actions": [
+    "disable_account:a.hassan",
+    "block_ip:185.220.101.45",
+    "block_domain:hr-portaI.com",
+    "reset_password:a.hassan"
+  ]
+}

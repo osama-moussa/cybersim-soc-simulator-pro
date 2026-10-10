@@ -1,0 +1,117 @@
+{
+  "id": "sc-015",
+  "title": "Shift 015 - Evening Shift",
+  "category": "Endpoint",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "EDR reports PowerShell activity on a workstation.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2947",
+        "desc": "Monthly patch deployment through endpoint management (SCCM) - all workstations",
+        "owner": "IT Operations",
+        "window": "02:00-06:00"
+      }
+    ],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "EDR: Encoded PowerShell command",
+      "source": "EDR",
+      "host": "ENG-PC-16",
+      "user": "SYSTEM",
+      "summary": "powershell.exe -EncodedCommand executed by SYSTEM, parent CcmExec.exe on ENG-PC-16",
+      "details": {
+        "host_ip": "10.16.137.248",
+        "process": "powershell.exe",
+        "parent_process": "CcmExec.exe",
+        "command_line": "powershell.exe -NoProfile -ExecutionPolicy Bypass -EncodedCommand JABwAGEAdABjAGgA...",
+        "raw_log": "EDR proc_start host=ENG-PC-16 user=SYSTEM image=powershell.exe parent=CcmExec.exe"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "19:00:00",
+      "src": "edr",
+      "host": "ENG-PC-16",
+      "user": "SYSTEM",
+      "msg": "Process start: CcmExec.exe -> powershell.exe -EncodedCommand ..."
+    },
+    {
+      "t": "19:09:28",
+      "src": "dns",
+      "host": "SALES-PC-02",
+      "user": "f.khaled",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "19:09:54",
+      "src": "email",
+      "host": "FIN-PC-30",
+      "user": "a.samir",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:13:39",
+      "src": "proxy",
+      "host": "FIN-PC-37",
+      "user": "a.mansour",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "19:15:05",
+      "src": "email",
+      "host": "SALES-PC-12",
+      "user": "f.samir",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:17:48",
+      "src": "proxy",
+      "host": "FIN-PC-21",
+      "user": "a.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:18:54",
+      "src": "proxy",
+      "host": "HR-PC-27",
+      "user": "a.saleh",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "19:20:26",
+      "src": "dns",
+      "host": "HR-PC-03",
+      "user": "t.saleh",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:26:24",
+      "src": "proxy",
+      "host": "IT-PC-21",
+      "user": "h.saleh",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

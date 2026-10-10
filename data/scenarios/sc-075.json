@@ -1,0 +1,157 @@
+{
+  "id": "sc-075",
+  "title": "Shift 075 - Morning Shift",
+  "category": "Identity",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The SIEM reports repeated authentication failures for a user account.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "HR notice: Youssef Farouk returned from annual leave today."
+    ]
+  },
+  "assets": {
+    "users": {
+      "y.farouk": "EXEC-PC-13"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Multiple failed logons",
+      "source": "Windows Security",
+      "host": "EXEC-PC-13",
+      "user": "y.farouk",
+      "summary": "6 failed logons (4625) within 3 minutes followed by a successful logon (4624)",
+      "details": {
+        "src_ip": "10.17.211.7",
+        "host_ip": "10.17.211.7",
+        "event_id": 4625,
+        "count": 6,
+        "logon_type": "Interactive (2)",
+        "raw_log": "4625 x6 Account=y.farouk Status=0xC000006A (bad password); then 4624 success"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "07:56:30",
+      "src": "windows",
+      "host": "FIN-PC-34",
+      "user": "m.adel",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "07:57:00",
+      "src": "windows",
+      "host": "EXEC-PC-13",
+      "user": "y.farouk",
+      "msg": "4625 failed logon (bad password) attempt 1"
+    },
+    {
+      "t": "07:57:12",
+      "src": "windows",
+      "host": "SALES-PC-38",
+      "user": "h.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "07:57:20",
+      "src": "windows",
+      "host": "EXEC-PC-13",
+      "user": "y.farouk",
+      "msg": "4625 failed logon (bad password) attempt 2"
+    },
+    {
+      "t": "07:57:40",
+      "src": "windows",
+      "host": "EXEC-PC-13",
+      "user": "y.farouk",
+      "msg": "4625 failed logon (bad password) attempt 3"
+    },
+    {
+      "t": "07:58:00",
+      "src": "windows",
+      "host": "EXEC-PC-13",
+      "user": "y.farouk",
+      "msg": "4625 failed logon (bad password) attempt 4"
+    },
+    {
+      "t": "07:58:20",
+      "src": "windows",
+      "host": "EXEC-PC-13",
+      "user": "y.farouk",
+      "msg": "4625 failed logon (bad password) attempt 5"
+    },
+    {
+      "t": "07:58:40",
+      "src": "windows",
+      "host": "EXEC-PC-13",
+      "user": "y.farouk",
+      "msg": "4625 failed logon (bad password) attempt 6"
+    },
+    {
+      "t": "07:59:50",
+      "src": "proxy",
+      "host": "EXEC-PC-02",
+      "user": "a.ibrahim",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "07:59:55",
+      "src": "windows",
+      "host": "EXEC-PC-13",
+      "user": "y.farouk",
+      "msg": "4624 successful logon (interactive)"
+    },
+    {
+      "t": "08:01:34",
+      "src": "proxy",
+      "host": "SALES-PC-23",
+      "user": "m.saleh",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:02:34",
+      "src": "proxy",
+      "host": "IT-PC-34",
+      "user": "f.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:06:46",
+      "src": "proxy",
+      "host": "SALES-PC-15",
+      "user": "r.gamal",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:28:08",
+      "src": "dns",
+      "host": "SALES-PC-36",
+      "user": "y.ibrahim",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:29:22",
+      "src": "email",
+      "host": "ENG-PC-12",
+      "user": "k.nabil",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

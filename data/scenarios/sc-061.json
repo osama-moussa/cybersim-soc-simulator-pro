@@ -1,0 +1,132 @@
+{
+  "id": "sc-061",
+  "title": "Shift 061 - Morning Shift",
+  "category": "Data Loss",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "DLP reports a large outbound transfer from a server.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2473",
+        "desc": "Quarterly offsite backup replication to Fabrikam Cloud",
+        "owner": "Infrastructure Team",
+        "window": "night window"
+      }
+    ],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "svc.backup": "DB-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "High",
+      "rule": "DLP: large outbound transfer",
+      "source": "Firewall",
+      "host": "DB-01",
+      "user": "svc.backup",
+      "summary": "59 GB uploaded from DB-01 to backup.fabrikam-cloud.com over HTTPS in 40 minutes",
+      "details": {
+        "src_ip": "10.10.0.30",
+        "dst_ip": "192.0.2.156",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "domain": "backup.fabrikam-cloud.com",
+        "bytes_out": "59 GB",
+        "raw_log": "fw ALLOW 10.10.0.30 -> 192.0.2.156:443 bytes_out=59GB app=ssl sni=backup.fabrikam-cloud.com"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "05:55:56",
+      "src": "dns",
+      "host": "ENG-PC-40",
+      "user": "m.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "06:00:00",
+      "src": "proxy",
+      "host": "DB-01",
+      "user": "svc.backup",
+      "msg": "CONNECT backup.fabrikam-cloud.com:443 200 bytes_out=59GB"
+    },
+    {
+      "t": "06:05:04",
+      "src": "windows",
+      "host": "HR-PC-09",
+      "user": "m.saleh",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:06:27",
+      "src": "windows",
+      "host": "HR-PC-39",
+      "user": "h.farouk",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "06:09:48",
+      "src": "proxy",
+      "host": "ENG-PC-22",
+      "user": "y.fathy",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "06:13:35",
+      "src": "dns",
+      "host": "LEGAL-PC-13",
+      "user": "a.ibrahim",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "06:23:33",
+      "src": "windows",
+      "host": "ENG-PC-24",
+      "user": "r.gamal",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:26:31",
+      "src": "proxy",
+      "host": "FIN-PC-24",
+      "user": "k.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:28:14",
+      "src": "windows",
+      "host": "IT-PC-18",
+      "user": "n.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "backup.fabrikam-cloud.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Corporate-approved backup provider (contract on file)"
+    },
+    "192.0.2.156": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Fabrikam Cloud storage endpoint"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

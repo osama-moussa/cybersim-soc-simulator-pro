@@ -1,0 +1,140 @@
+{
+  "id": "sc-098",
+  "title": "Shift 098 - Afternoon Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Infrastructure monitoring reports abnormal server behavior.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Server: sustained high CPU",
+      "source": "Monitoring",
+      "host": "DB-01",
+      "user": "n/a",
+      "summary": "CPU at 97% for 45 minutes on DB-01",
+      "details": {
+        "host_ip": "10.10.0.30",
+        "process": "kworker-upd",
+        "count": 45,
+        "raw_log": "mon host=DB-01 cpu=97% duration=45m top_proc=kworker-upd"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1496"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 3,
+      "severity": "High",
+      "rule": "Network: connection to cryptomining pool",
+      "source": "Firewall",
+      "host": "DB-01",
+      "user": "n/a",
+      "summary": "DB-01 connected to mining pool pool.xmr-mine-hub.net:3333",
+      "details": {
+        "src_ip": "10.10.0.30",
+        "dst_ip": "192.0.2.203",
+        "dst_port": 3333,
+        "protocol": "TCP",
+        "domain": "pool.xmr-mine-hub.net",
+        "raw_log": "fw ALLOW 10.10.0.30 -> 192.0.2.203:3333 app=stratum"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1496"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:26:45",
+      "src": "edr",
+      "host": "ENG-PC-30",
+      "user": "y.fathy",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "13:33:00",
+      "src": "firewall",
+      "host": "DB-01",
+      "user": "n/a",
+      "msg": "ALLOW 10.10.0.30 -> 192.0.2.203:3333 stratum+tcp"
+    },
+    {
+      "t": "13:35:38",
+      "src": "windows",
+      "host": "IT-PC-34",
+      "user": "h.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:38:37",
+      "src": "email",
+      "host": "SALES-PC-37",
+      "user": "y.hassan",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "13:39:05",
+      "src": "dns",
+      "host": "IT-PC-16",
+      "user": "y.ibrahim",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "13:39:54",
+      "src": "proxy",
+      "host": "HR-PC-40",
+      "user": "t.nabil",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "13:43:07",
+      "src": "windows",
+      "host": "IT-PC-13",
+      "user": "a.hassan",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "13:44:04",
+      "src": "proxy",
+      "host": "IT-PC-33",
+      "user": "h.fathy",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "13:53:00",
+      "src": "email",
+      "host": "LEGAL-PC-19",
+      "user": "o.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {
+    "pool.xmr-mine-hub.net": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Cryptomining pool (Stratum protocol)"
+    }
+  },
+  "expected_actions": [
+    "kill_process",
+    "block_domain:pool.xmr-mine-hub.net"
+  ]
+}

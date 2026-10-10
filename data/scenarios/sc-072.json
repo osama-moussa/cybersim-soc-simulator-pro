@@ -1,0 +1,148 @@
+{
+  "id": "sc-072",
+  "title": "Shift 072 - Morning Shift",
+  "category": "Data Loss",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "DLP and endpoint tools raised alerts on a finance workstation.",
+  "startTime": "09:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "d.samir": "FIN-PC-13"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "EDR: archive utility staging large dataset",
+      "source": "EDR",
+      "host": "FIN-PC-13",
+      "user": "d.samir",
+      "summary": "7z.exe created a 5.4 GB encrypted archive on FIN-PC-13",
+      "details": {
+        "host_ip": "10.12.19.18",
+        "process": "7z.exe",
+        "parent_process": "cmd.exe",
+        "file_name": "C:\\Temp\\fin_data.7z",
+        "command_line": "7z.exe a -p******** C:\\Temp\\fin_data.7z \\\\FS-01\\Finance\\*",
+        "raw_log": "EDR proc=7z.exe args='a -p* fin_data.7z \\\\FS-01\\Finance' size=5.4GB"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1560.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 8,
+      "severity": "High",
+      "rule": "DLP: large outbound transfer to file-sharing site",
+      "source": "Firewall",
+      "host": "FIN-PC-13",
+      "user": "d.samir",
+      "summary": "5.4 GB uploaded from FIN-PC-13 to filedrop-share.net",
+      "details": {
+        "src_ip": "10.12.19.18",
+        "dst_ip": "203.0.113.225",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "domain": "filedrop-share.net",
+        "bytes_out": "5.4 GB",
+        "raw_log": "fw ALLOW 10.12.19.18 -> 203.0.113.225:443 bytes_out=5.4GB sni=filedrop-share.net"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1567.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "09:00:18",
+      "src": "proxy",
+      "host": "ENG-PC-08",
+      "user": "r.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "09:07:09",
+      "src": "windows",
+      "host": "LEGAL-PC-15",
+      "user": "a.mansour",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "09:08:00",
+      "src": "proxy",
+      "host": "FIN-PC-13",
+      "user": "d.samir",
+      "msg": "CONNECT filedrop-share.net:443 200 bytes_out=5.4GB"
+    },
+    {
+      "t": "09:08:02",
+      "src": "dns",
+      "host": "FIN-PC-33",
+      "user": "h.farouk",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "09:09:12",
+      "src": "proxy",
+      "host": "SALES-PC-18",
+      "user": "m.samir",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "09:21:59",
+      "src": "dns",
+      "host": "IT-PC-06",
+      "user": "m.samir",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "09:23:50",
+      "src": "windows",
+      "host": "SALES-PC-23",
+      "user": "a.samir",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "09:27:35",
+      "src": "windows",
+      "host": "HR-PC-02",
+      "user": "m.adel",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "09:29:44",
+      "src": "windows",
+      "host": "SALES-PC-15",
+      "user": "m.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "filedrop-share.net": {
+      "type": "domain",
+      "reputation": "suspicious",
+      "note": "Anonymous file-sharing service, not approved for corporate use"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:FIN-PC-13",
+    "block_domain:filedrop-share.net",
+    "disable_account:d.samir",
+    "preserve_evidence",
+    "escalate_tier2"
+  ]
+}

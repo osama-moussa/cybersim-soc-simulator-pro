@@ -1,0 +1,184 @@
+{
+  "id": "sc-046",
+  "title": "Shift 046 - Morning Shift",
+  "category": "Account Compromise",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "Several security tools are reporting activity tied to one user.",
+  "startTime": "09:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "s.gamal": "VPN-GW"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: suspicious link detected",
+      "source": "Email Gateway",
+      "host": "HR-PC-40",
+      "user": "s.gamal",
+      "summary": "Email from payroll@payroll-access-desk.info contains a link to hxxps://payroll-access-desk[.]info/login",
+      "details": {
+        "email_from": "payroll@payroll-access-desk.info",
+        "email_to": "s.gamal@corp.example",
+        "subject": "Payroll update required",
+        "url": "hxxps://payroll-access-desk[.]info/login",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=payroll@payroll-access-desk.info spf=fail url=hxxps://payroll-access-desk[.]info/login"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 3,
+      "severity": "High",
+      "rule": "Proxy: credentials submitted to uncategorized domain",
+      "source": "Web Proxy",
+      "host": "HR-PC-40",
+      "user": "s.gamal",
+      "summary": "POST with form data from HR-PC-40 to payroll-access-desk.info",
+      "details": {
+        "src_ip": "10.11.72.67",
+        "dst_ip": "203.0.113.122",
+        "dst_port": 443,
+        "domain": "payroll-access-desk.info",
+        "url": "https://payroll-access-desk.info/login",
+        "action_taken": "Allowed",
+        "raw_log": "proxy POST https://payroll-access-desk.info/login 200 bytes_out=412 category=uncategorized"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1056.003"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 9,
+      "severity": "High",
+      "rule": "VPN: login from new country",
+      "source": "VPN",
+      "host": "VPN-GW",
+      "user": "s.gamal",
+      "summary": "Successful VPN login from 203.0.113.122 (Indonesia) 6 minutes after the credential submission",
+      "details": {
+        "src_ip": "203.0.113.122",
+        "dst_ip": "10.10.0.1",
+        "geo": "Indonesia",
+        "mfa_result": "Not required (legacy profile)",
+        "raw_log": "vpn auth=OK user=s.gamal src=203.0.113.122 geo=Indonesia mfa=none"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "09:03:00",
+      "src": "proxy",
+      "host": "HR-PC-40",
+      "user": "s.gamal",
+      "msg": "POST https://payroll-access-desk.info/login 200 (form data submitted)"
+    },
+    {
+      "t": "09:03:43",
+      "src": "proxy",
+      "host": "FIN-PC-21",
+      "user": "a.gamal",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "09:06:42",
+      "src": "windows",
+      "host": "HR-PC-33",
+      "user": "d.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "09:08:44",
+      "src": "windows",
+      "host": "HR-PC-20",
+      "user": "y.nabil",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "09:09:00",
+      "src": "vpn",
+      "host": "VPN-GW",
+      "user": "s.gamal",
+      "msg": "Login OK from 203.0.113.122 (Indonesia)"
+    },
+    {
+      "t": "09:19:28",
+      "src": "proxy",
+      "host": "IT-PC-12",
+      "user": "m.ibrahim",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "09:21:06",
+      "src": "proxy",
+      "host": "HR-PC-15",
+      "user": "m.gamal",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "09:24:59",
+      "src": "windows",
+      "host": "ENG-PC-32",
+      "user": "k.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "09:25:36",
+      "src": "edr",
+      "host": "HR-PC-03",
+      "user": "h.saleh",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "09:27:35",
+      "src": "email",
+      "host": "ENG-PC-16",
+      "user": "d.nabil",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {
+    "payroll-access-desk.info": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Credential harvesting page, registered 2 days ago"
+    },
+    "203.0.113.122": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Known Tor exit node"
+    }
+  },
+  "expected_actions": [
+    "disable_account:s.gamal",
+    "block_ip:203.0.113.122",
+    "block_domain:payroll-access-desk.info",
+    "reset_password:s.gamal",
+    "revoke_sessions:s.gamal",
+    "escalate_tier2"
+  ]
+}

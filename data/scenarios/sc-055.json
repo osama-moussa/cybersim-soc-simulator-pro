@@ -1,0 +1,159 @@
+{
+  "id": "sc-055",
+  "title": "Shift 055 - Morning Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A user workstation downloaded a file from the internet.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "r.mansour": "IT-PC-27"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Proxy: executable from uncategorized domain",
+      "source": "Web Proxy",
+      "host": "IT-PC-27",
+      "user": "r.mansour",
+      "summary": "r.mansour downloaded document_315.exe from office-365-update-now.net",
+      "details": {
+        "src_ip": "10.13.4.71",
+        "dst_ip": "203.0.113.134",
+        "dst_port": 443,
+        "domain": "office-365-update-now.net",
+        "url": "https://office-365-update-now.net/document_315.exe",
+        "file_name": "document_315.exe",
+        "action_taken": "Allowed",
+        "raw_log": "proxy GET https://office-365-update-now.net/document_315.exe 200 type=application/x-msdownload"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 1,
+      "severity": "Medium",
+      "rule": "AV: malware detected",
+      "source": "EDR",
+      "host": "IT-PC-27",
+      "user": "r.mansour",
+      "summary": "Trojan.AsyncRAT detected in C:\\Users\\r.mansour\\Downloads\\document_315.exe; file quarantined",
+      "details": {
+        "host_ip": "10.13.4.71",
+        "file_name": "document_315.exe",
+        "file_hash": "9ea8778628d9b78dbd0d17774d0df8f202786f01771683ca1ca019a927e3a45f",
+        "process": "chrome.exe",
+        "action_taken": "Quarantined",
+        "raw_log": "EDR detect=Trojan.AsyncRAT path=C:\\Users\\r.mansour\\Downloads\\document_315.exe action=quarantine"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "05:55:13",
+      "src": "proxy",
+      "host": "IT-PC-30",
+      "user": "m.adel",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "06:00:00",
+      "src": "proxy",
+      "host": "IT-PC-27",
+      "user": "r.mansour",
+      "msg": "GET https://office-365-update-now.net/document_315.exe 200"
+    },
+    {
+      "t": "06:01:00",
+      "src": "edr",
+      "host": "IT-PC-27",
+      "user": "r.mansour",
+      "msg": "Quarantined document_315.exe (Trojan.AsyncRAT) sha256=9ea8778628d9b78d..."
+    },
+    {
+      "t": "06:01:29",
+      "src": "windows",
+      "host": "SALES-PC-34",
+      "user": "t.mansour",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:02:07",
+      "src": "proxy",
+      "host": "LEGAL-PC-35",
+      "user": "s.hassan",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:07:23",
+      "src": "windows",
+      "host": "HR-PC-24",
+      "user": "h.fathy",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "06:15:04",
+      "src": "email",
+      "host": "EXEC-PC-19",
+      "user": "r.hassan",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "06:17:16",
+      "src": "proxy",
+      "host": "HR-PC-35",
+      "user": "d.gamal",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "06:17:53",
+      "src": "proxy",
+      "host": "SALES-PC-40",
+      "user": "l.saleh",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "06:19:25",
+      "src": "email",
+      "host": "IT-PC-16",
+      "user": "k.saleh",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {
+    "9ea8778628d9b78dbd0d17774d0df8f202786f01771683ca1ca019a927e3a45f": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Trojan.AsyncRAT (61/70 engines)"
+    },
+    "office-365-update-now.net": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Malware distribution host"
+    }
+  },
+  "expected_actions": [
+    "confirm_quarantine",
+    "block_hash:9ea8778628d9b78dbd0d17774d0df8f202786f01771683ca1ca019a927e3a45f",
+    "block_domain:office-365-update-now.net"
+  ]
+}

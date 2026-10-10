@@ -1,0 +1,144 @@
+{
+  "id": "sc-059",
+  "title": "Shift 059 - Afternoon Shift",
+  "category": "Web",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "The public web server is generating several alerts.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "IUSR": "WEB-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "High",
+      "rule": "File integrity: new .aspx file in web root",
+      "source": "FIM",
+      "host": "WEB-01",
+      "user": "IUSR",
+      "summary": "New file /inetpub/wwwroot/uploads/cache.aspx created by the web service account",
+      "details": {
+        "host_ip": "172.16.10.5",
+        "process": "w3wp.exe",
+        "file_name": "/inetpub/wwwroot/uploads/cache.aspx",
+        "raw_log": "FIM create path=/inetpub/wwwroot/uploads/cache.aspx owner=IUSR proc=w3wp.exe"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1505.003"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 4,
+      "severity": "Critical",
+      "rule": "Firewall: outbound reverse shell from web server",
+      "source": "Firewall",
+      "host": "WEB-01",
+      "user": "IUSR",
+      "summary": "WEB-01 opened an outbound connection to 198.51.100.143:4444",
+      "details": {
+        "src_ip": "172.16.10.5",
+        "dst_ip": "198.51.100.143",
+        "dst_port": 4444,
+        "protocol": "TCP",
+        "action_taken": "Allowed",
+        "raw_log": "fw ALLOW 172.16.10.5 -> 198.51.100.143:4444 app=unknown"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1059"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:57:03",
+      "src": "dns",
+      "host": "HR-PC-24",
+      "user": "o.nabil",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "15:58:56",
+      "src": "proxy",
+      "host": "SALES-PC-18",
+      "user": "n.hassan",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "16:04:00",
+      "src": "firewall",
+      "host": "WEB-01",
+      "user": "IUSR",
+      "msg": "ALLOW 172.16.10.5 -> 198.51.100.143:4444"
+    },
+    {
+      "t": "16:15:20",
+      "src": "email",
+      "host": "IT-PC-22",
+      "user": "a.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "16:15:43",
+      "src": "dns",
+      "host": "EXEC-PC-04",
+      "user": "k.mansour",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "16:19:54",
+      "src": "proxy",
+      "host": "SALES-PC-12",
+      "user": "a.mansour",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:26:34",
+      "src": "dns",
+      "host": "ENG-PC-34",
+      "user": "r.farouk",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "16:27:38",
+      "src": "proxy",
+      "host": "FIN-PC-39",
+      "user": "a.ibrahim",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:27:49",
+      "src": "proxy",
+      "host": "EXEC-PC-40",
+      "user": "m.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {
+    "198.51.100.143": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Attacker listener, seen in web-shell campaigns"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:WEB-01",
+    "block_ip:198.51.100.143",
+    "preserve_evidence",
+    "escalate_tier2"
+  ]
+}

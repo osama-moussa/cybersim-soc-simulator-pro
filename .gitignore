@@ -1,0 +1,105 @@
+# CyberSim SOC Simulator - .gitignore
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor and IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+
+# Temporary Files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# Backup Files
+*.bak
+*.backup
+*~
+
+# Node.js (if future enhancements include Node.js)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build Output (for future build processes)
+dist/
+build/
+out/
+
+# Documentation Build
+docs/_build/
+site/
+
+# Testing
+coverage/
+.nyc_output
+.coverage
+
+# Misc
+*.pid
+*.seed
+*.pid.lock
+.sass-cache/
+.connect.lock
+.typings/
+
+# MacOS
+Icon?
+
+# Windows
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs
+logs
+*.log
+
+# Optional: Future database files
+*.sqlite
+*.db
+
+# Optional: Future configuration files that might contain sensitive data
+config.json
+secrets.json
+
+# GitHub Pages (these are auto-generated)
+_site/
+.jekyll-cache/
+.jekyll-metadata

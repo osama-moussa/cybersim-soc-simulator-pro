@@ -1,0 +1,117 @@
+{
+  "id": "sc-043",
+  "title": "Shift 043 - Afternoon Shift",
+  "category": "Network",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The perimeter firewall reports inbound probing.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Firewall: external port scan",
+      "source": "Firewall",
+      "host": "FW-EDGE",
+      "user": "n/a",
+      "summary": "198.51.100.46 probed 3501 ports across the perimeter range",
+      "details": {
+        "src_ip": "198.51.100.46",
+        "dst_ip": "198.18.0.10",
+        "protocol": "TCP",
+        "count": 3501,
+        "action_taken": "Dropped",
+        "raw_log": "fw DROP 198.51.100.46 -> 198.18.0.0/24 tcp ports=3501 flags=SYN"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1595"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:55:41",
+      "src": "proxy",
+      "host": "LEGAL-PC-12",
+      "user": "s.mansour",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "15:59:58",
+      "src": "proxy",
+      "host": "FIN-PC-25",
+      "user": "m.hassan",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:00:00",
+      "src": "firewall",
+      "host": "FW-EDGE",
+      "user": "n/a",
+      "msg": "DROP 198.51.100.46 -> 198.18.0.10 tcp SYN sweep (3501 ports)"
+    },
+    {
+      "t": "16:03:00",
+      "src": "edr",
+      "host": "SALES-PC-22",
+      "user": "o.khaled",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "16:09:39",
+      "src": "windows",
+      "host": "EXEC-PC-15",
+      "user": "m.ibrahim",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "16:12:36",
+      "src": "edr",
+      "host": "LEGAL-PC-01",
+      "user": "a.hassan",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "16:13:30",
+      "src": "proxy",
+      "host": "HR-PC-39",
+      "user": "a.samir",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "16:18:24",
+      "src": "windows",
+      "host": "LEGAL-PC-01",
+      "user": "m.samir",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "16:26:36",
+      "src": "windows",
+      "host": "IT-PC-27",
+      "user": "l.ibrahim",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "198.51.100.46": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Internet-wide scanner seen across many honeypots"
+    }
+  },
+  "expected_actions": [
+    "block_ip:198.51.100.46"
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "id": "sc-005",
+  "title": "Shift 005 - Morning Shift",
+  "category": "Data Loss",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "DLP reports a large outbound transfer from a server.",
+  "startTime": "09:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2571",
+        "desc": "Quarterly offsite backup replication to Fabrikam Cloud",
+        "owner": "Infrastructure Team",
+        "window": "night window"
+      }
+    ],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "svc.backup": "DB-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "High",
+      "rule": "DLP: large outbound transfer",
+      "source": "Firewall",
+      "host": "DB-01",
+      "user": "svc.backup",
+      "summary": "12 GB uploaded from DB-01 to backup.fabrikam-cloud.com over HTTPS in 40 minutes",
+      "details": {
+        "src_ip": "10.10.0.30",
+        "dst_ip": "198.51.100.22",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "domain": "backup.fabrikam-cloud.com",
+        "bytes_out": "12 GB",
+        "raw_log": "fw ALLOW 10.10.0.30 -> 198.51.100.22:443 bytes_out=12GB app=ssl sni=backup.fabrikam-cloud.com"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "08:59:04",
+      "src": "windows",
+      "host": "SALES-PC-36",
+      "user": "a.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "08:59:40",
+      "src": "proxy",
+      "host": "ENG-PC-39",
+      "user": "k.nabil",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "09:00:00",
+      "src": "proxy",
+      "host": "DB-01",
+      "user": "svc.backup",
+      "msg": "CONNECT backup.fabrikam-cloud.com:443 200 bytes_out=12GB"
+    },
+    {
+      "t": "09:02:09",
+      "src": "windows",
+      "host": "LEGAL-PC-16",
+      "user": "f.nabil",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "09:13:52",
+      "src": "dns",
+      "host": "FIN-PC-20",
+      "user": "t.khaled",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "09:15:26",
+      "src": "windows",
+      "host": "IT-PC-21",
+      "user": "a.khaled",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "09:17:44",
+      "src": "email",
+      "host": "HR-PC-04",
+      "user": "k.mansour",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "09:18:16",
+      "src": "dns",
+      "host": "SALES-PC-33",
+      "user": "h.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "09:29:18",
+      "src": "dns",
+      "host": "EXEC-PC-33",
+      "user": "h.samir",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    }
+  ],
+  "iocs": {
+    "backup.fabrikam-cloud.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Corporate-approved backup provider (contract on file)"
+    },
+    "198.51.100.22": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Fabrikam Cloud storage endpoint"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

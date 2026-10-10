@@ -1,0 +1,1002 @@
+[
+  {
+    "id": "sc-001",
+    "title": "Shift 001 - Morning Shift",
+    "category": "Intrusion",
+    "outcome": "mixed",
+    "difficulty": "Tier 3",
+    "alerts": 5,
+    "startTime": "06:00:00",
+    "file": "sc-001.json"
+  },
+  {
+    "id": "sc-002",
+    "title": "Shift 002 - Afternoon Shift",
+    "category": "Network",
+    "outcome": "mixed",
+    "difficulty": "Tier 2",
+    "alerts": 3,
+    "startTime": "16:00:00",
+    "file": "sc-002.json"
+  },
+  {
+    "id": "sc-003",
+    "title": "Shift 003 - Afternoon Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "16:00:00",
+    "file": "sc-003.json"
+  },
+  {
+    "id": "sc-004",
+    "title": "Shift 004 - Night Shift",
+    "category": "Web",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "22:00:00",
+    "file": "sc-004.json"
+  },
+  {
+    "id": "sc-005",
+    "title": "Shift 005 - Morning Shift",
+    "category": "Data Loss",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "09:00:00",
+    "file": "sc-005.json"
+  },
+  {
+    "id": "sc-006",
+    "title": "Shift 006 - Morning Shift",
+    "category": "Phishing",
+    "outcome": "mixed",
+    "difficulty": "Tier 2",
+    "alerts": 4,
+    "startTime": "08:00:00",
+    "file": "sc-006.json"
+  },
+  {
+    "id": "sc-007",
+    "title": "Shift 007 - Morning Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "09:00:00",
+    "file": "sc-007.json"
+  },
+  {
+    "id": "sc-008",
+    "title": "Shift 008 - Morning Shift",
+    "category": "Phishing",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "08:00:00",
+    "file": "sc-008.json"
+  },
+  {
+    "id": "sc-009",
+    "title": "Shift 009 - Evening Shift",
+    "category": "Network",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-009.json"
+  },
+  {
+    "id": "sc-010",
+    "title": "Shift 010 - Afternoon Shift",
+    "category": "Identity",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "16:00:00",
+    "file": "sc-010.json"
+  },
+  {
+    "id": "sc-011",
+    "title": "Shift 011 - Morning Shift",
+    "category": "Network",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "09:00:00",
+    "file": "sc-011.json"
+  },
+  {
+    "id": "sc-012",
+    "title": "Shift 012 - Afternoon Shift",
+    "category": "Ransomware",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 4,
+    "startTime": "16:00:00",
+    "file": "sc-012.json"
+  },
+  {
+    "id": "sc-013",
+    "title": "Shift 013 - Morning Shift",
+    "category": "Web",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "09:00:00",
+    "file": "sc-013.json"
+  },
+  {
+    "id": "sc-014",
+    "title": "Shift 014 - Morning Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "09:00:00",
+    "file": "sc-014.json"
+  },
+  {
+    "id": "sc-015",
+    "title": "Shift 015 - Evening Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-015.json"
+  },
+  {
+    "id": "sc-016",
+    "title": "Shift 016 - Evening Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-016.json"
+  },
+  {
+    "id": "sc-017",
+    "title": "Shift 017 - Night Shift",
+    "category": "Account Compromise",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 3,
+    "startTime": "22:00:00",
+    "file": "sc-017.json"
+  },
+  {
+    "id": "sc-018",
+    "title": "Shift 018 - Afternoon Shift",
+    "category": "Active Directory",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 2,
+    "startTime": "16:00:00",
+    "file": "sc-018.json"
+  },
+  {
+    "id": "sc-019",
+    "title": "Shift 019 - Night Shift",
+    "category": "Phishing",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "02:30:00",
+    "file": "sc-019.json"
+  },
+  {
+    "id": "sc-020",
+    "title": "Shift 020 - Afternoon Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "13:30:00",
+    "file": "sc-020.json"
+  },
+  {
+    "id": "sc-021",
+    "title": "Shift 021 - Night Shift",
+    "category": "Policy",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "22:00:00",
+    "file": "sc-021.json"
+  },
+  {
+    "id": "sc-022",
+    "title": "Shift 022 - Night Shift",
+    "category": "Network",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-022.json"
+  },
+  {
+    "id": "sc-023",
+    "title": "Shift 023 - Afternoon Shift",
+    "category": "Web",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "16:00:00",
+    "file": "sc-023.json"
+  },
+  {
+    "id": "sc-024",
+    "title": "Shift 024 - Afternoon Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "13:30:00",
+    "file": "sc-024.json"
+  },
+  {
+    "id": "sc-025",
+    "title": "Shift 025 - Evening Shift",
+    "category": "Data Loss",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 2,
+    "startTime": "19:00:00",
+    "file": "sc-025.json"
+  },
+  {
+    "id": "sc-026",
+    "title": "Shift 026 - Morning Shift",
+    "category": "Intrusion",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 3,
+    "startTime": "06:00:00",
+    "file": "sc-026.json"
+  },
+  {
+    "id": "sc-027",
+    "title": "Shift 027 - Evening Shift",
+    "category": "Identity",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-027.json"
+  },
+  {
+    "id": "sc-028",
+    "title": "Shift 028 - Morning Shift",
+    "category": "Account Compromise",
+    "outcome": "mixed",
+    "difficulty": "Tier 3",
+    "alerts": 5,
+    "startTime": "08:00:00",
+    "file": "sc-028.json"
+  },
+  {
+    "id": "sc-029",
+    "title": "Shift 029 - Night Shift",
+    "category": "Network",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-029.json"
+  },
+  {
+    "id": "sc-030",
+    "title": "Shift 030 - Night Shift",
+    "category": "Ransomware",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 4,
+    "startTime": "02:30:00",
+    "file": "sc-030.json"
+  },
+  {
+    "id": "sc-031",
+    "title": "Shift 031 - Evening Shift",
+    "category": "Phishing",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "19:00:00",
+    "file": "sc-031.json"
+  },
+  {
+    "id": "sc-032",
+    "title": "Shift 032 - Morning Shift",
+    "category": "Insider Threat",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 2,
+    "startTime": "08:00:00",
+    "file": "sc-032.json"
+  },
+  {
+    "id": "sc-033",
+    "title": "Shift 033 - Afternoon Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "13:30:00",
+    "file": "sc-033.json"
+  },
+  {
+    "id": "sc-034",
+    "title": "Shift 034 - Night Shift",
+    "category": "Network",
+    "outcome": "mixed",
+    "difficulty": "Tier 2",
+    "alerts": 3,
+    "startTime": "22:00:00",
+    "file": "sc-034.json"
+  },
+  {
+    "id": "sc-035",
+    "title": "Shift 035 - Afternoon Shift",
+    "category": "Web",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "13:30:00",
+    "file": "sc-035.json"
+  },
+  {
+    "id": "sc-036",
+    "title": "Shift 036 - Afternoon Shift",
+    "category": "Policy",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "13:30:00",
+    "file": "sc-036.json"
+  },
+  {
+    "id": "sc-037",
+    "title": "Shift 037 - Morning Shift",
+    "category": "Phishing",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "06:00:00",
+    "file": "sc-037.json"
+  },
+  {
+    "id": "sc-038",
+    "title": "Shift 038 - Morning Shift",
+    "category": "Network",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "09:00:00",
+    "file": "sc-038.json"
+  },
+  {
+    "id": "sc-039",
+    "title": "Shift 039 - Night Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "22:00:00",
+    "file": "sc-039.json"
+  },
+  {
+    "id": "sc-040",
+    "title": "Shift 040 - Morning Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "08:00:00",
+    "file": "sc-040.json"
+  },
+  {
+    "id": "sc-041",
+    "title": "Shift 041 - Night Shift",
+    "category": "Account Compromise",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 3,
+    "startTime": "22:00:00",
+    "file": "sc-041.json"
+  },
+  {
+    "id": "sc-042",
+    "title": "Shift 042 - Night Shift",
+    "category": "Network",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-042.json"
+  },
+  {
+    "id": "sc-043",
+    "title": "Shift 043 - Afternoon Shift",
+    "category": "Network",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "16:00:00",
+    "file": "sc-043.json"
+  },
+  {
+    "id": "sc-044",
+    "title": "Shift 044 - Afternoon Shift",
+    "category": "Data Loss",
+    "outcome": "mixed",
+    "difficulty": "Tier 3",
+    "alerts": 4,
+    "startTime": "13:30:00",
+    "file": "sc-044.json"
+  },
+  {
+    "id": "sc-045",
+    "title": "Shift 045 - Afternoon Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "16:00:00",
+    "file": "sc-045.json"
+  },
+  {
+    "id": "sc-046",
+    "title": "Shift 046 - Morning Shift",
+    "category": "Account Compromise",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 3,
+    "startTime": "09:00:00",
+    "file": "sc-046.json"
+  },
+  {
+    "id": "sc-047",
+    "title": "Shift 047 - Night Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-047.json"
+  },
+  {
+    "id": "sc-048",
+    "title": "Shift 048 - Morning Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "08:00:00",
+    "file": "sc-048.json"
+  },
+  {
+    "id": "sc-049",
+    "title": "Shift 049 - Night Shift",
+    "category": "Web",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 2,
+    "startTime": "02:30:00",
+    "file": "sc-049.json"
+  },
+  {
+    "id": "sc-050",
+    "title": "Shift 050 - Morning Shift",
+    "category": "Account Compromise",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 3,
+    "startTime": "06:00:00",
+    "file": "sc-050.json"
+  },
+  {
+    "id": "sc-051",
+    "title": "Shift 051 - Night Shift",
+    "category": "Identity",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-051.json"
+  },
+  {
+    "id": "sc-052",
+    "title": "Shift 052 - Afternoon Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "13:30:00",
+    "file": "sc-052.json"
+  },
+  {
+    "id": "sc-053",
+    "title": "Shift 053 - Morning Shift",
+    "category": "Insider Threat",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 2,
+    "startTime": "06:00:00",
+    "file": "sc-053.json"
+  },
+  {
+    "id": "sc-054",
+    "title": "Shift 054 - Morning Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "08:00:00",
+    "file": "sc-054.json"
+  },
+  {
+    "id": "sc-055",
+    "title": "Shift 055 - Morning Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "06:00:00",
+    "file": "sc-055.json"
+  },
+  {
+    "id": "sc-056",
+    "title": "Shift 056 - Night Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "22:00:00",
+    "file": "sc-056.json"
+  },
+  {
+    "id": "sc-057",
+    "title": "Shift 057 - Afternoon Shift",
+    "category": "Identity",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "13:30:00",
+    "file": "sc-057.json"
+  },
+  {
+    "id": "sc-058",
+    "title": "Shift 058 - Morning Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "06:00:00",
+    "file": "sc-058.json"
+  },
+  {
+    "id": "sc-059",
+    "title": "Shift 059 - Afternoon Shift",
+    "category": "Web",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 2,
+    "startTime": "16:00:00",
+    "file": "sc-059.json"
+  },
+  {
+    "id": "sc-060",
+    "title": "Shift 060 - Afternoon Shift",
+    "category": "Network",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "13:30:00",
+    "file": "sc-060.json"
+  },
+  {
+    "id": "sc-061",
+    "title": "Shift 061 - Morning Shift",
+    "category": "Data Loss",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "06:00:00",
+    "file": "sc-061.json"
+  },
+  {
+    "id": "sc-062",
+    "title": "Shift 062 - Night Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "22:00:00",
+    "file": "sc-062.json"
+  },
+  {
+    "id": "sc-063",
+    "title": "Shift 063 - Afternoon Shift",
+    "category": "Intrusion",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 3,
+    "startTime": "13:30:00",
+    "file": "sc-063.json"
+  },
+  {
+    "id": "sc-064",
+    "title": "Shift 064 - Evening Shift",
+    "category": "Policy",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-064.json"
+  },
+  {
+    "id": "sc-065",
+    "title": "Shift 065 - Night Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "22:00:00",
+    "file": "sc-065.json"
+  },
+  {
+    "id": "sc-066",
+    "title": "Shift 066 - Evening Shift",
+    "category": "Network",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-066.json"
+  },
+  {
+    "id": "sc-067",
+    "title": "Shift 067 - Night Shift",
+    "category": "Ransomware",
+    "outcome": "mixed",
+    "difficulty": "Tier 3",
+    "alerts": 6,
+    "startTime": "02:30:00",
+    "file": "sc-067.json"
+  },
+  {
+    "id": "sc-068",
+    "title": "Shift 068 - Morning Shift",
+    "category": "Identity",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "06:00:00",
+    "file": "sc-068.json"
+  },
+  {
+    "id": "sc-069",
+    "title": "Shift 069 - Afternoon Shift",
+    "category": "Intrusion",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 3,
+    "startTime": "16:00:00",
+    "file": "sc-069.json"
+  },
+  {
+    "id": "sc-070",
+    "title": "Shift 070 - Morning Shift",
+    "category": "Network",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "06:00:00",
+    "file": "sc-070.json"
+  },
+  {
+    "id": "sc-071",
+    "title": "Shift 071 - Night Shift",
+    "category": "Data Loss",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-071.json"
+  },
+  {
+    "id": "sc-072",
+    "title": "Shift 072 - Morning Shift",
+    "category": "Data Loss",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 2,
+    "startTime": "09:00:00",
+    "file": "sc-072.json"
+  },
+  {
+    "id": "sc-073",
+    "title": "Shift 073 - Evening Shift",
+    "category": "Malware",
+    "outcome": "mixed",
+    "difficulty": "Tier 2",
+    "alerts": 4,
+    "startTime": "19:00:00",
+    "file": "sc-073.json"
+  },
+  {
+    "id": "sc-074",
+    "title": "Shift 074 - Morning Shift",
+    "category": "Malware",
+    "outcome": "mixed",
+    "difficulty": "Tier 2",
+    "alerts": 4,
+    "startTime": "08:00:00",
+    "file": "sc-074.json"
+  },
+  {
+    "id": "sc-075",
+    "title": "Shift 075 - Morning Shift",
+    "category": "Identity",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "08:00:00",
+    "file": "sc-075.json"
+  },
+  {
+    "id": "sc-076",
+    "title": "Shift 076 - Night Shift",
+    "category": "Web",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-076.json"
+  },
+  {
+    "id": "sc-077",
+    "title": "Shift 077 - Night Shift",
+    "category": "Identity",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-077.json"
+  },
+  {
+    "id": "sc-078",
+    "title": "Shift 078 - Night Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "02:30:00",
+    "file": "sc-078.json"
+  },
+  {
+    "id": "sc-079",
+    "title": "Shift 079 - Morning Shift",
+    "category": "Data Loss",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 2,
+    "startTime": "06:00:00",
+    "file": "sc-079.json"
+  },
+  {
+    "id": "sc-080",
+    "title": "Shift 080 - Afternoon Shift",
+    "category": "Web",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 2,
+    "startTime": "16:00:00",
+    "file": "sc-080.json"
+  },
+  {
+    "id": "sc-081",
+    "title": "Shift 081 - Night Shift",
+    "category": "Ransomware",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 4,
+    "startTime": "02:30:00",
+    "file": "sc-081.json"
+  },
+  {
+    "id": "sc-082",
+    "title": "Shift 082 - Afternoon Shift",
+    "category": "Insider Threat",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 2,
+    "startTime": "16:00:00",
+    "file": "sc-082.json"
+  },
+  {
+    "id": "sc-083",
+    "title": "Shift 083 - Evening Shift",
+    "category": "Identity",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-083.json"
+  },
+  {
+    "id": "sc-084",
+    "title": "Shift 084 - Night Shift",
+    "category": "Intrusion",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 3,
+    "startTime": "02:30:00",
+    "file": "sc-084.json"
+  },
+  {
+    "id": "sc-085",
+    "title": "Shift 085 - Morning Shift",
+    "category": "Endpoint",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "08:00:00",
+    "file": "sc-085.json"
+  },
+  {
+    "id": "sc-086",
+    "title": "Shift 086 - Morning Shift",
+    "category": "Network",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "06:00:00",
+    "file": "sc-086.json"
+  },
+  {
+    "id": "sc-087",
+    "title": "Shift 087 - Night Shift",
+    "category": "Intrusion",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 3,
+    "startTime": "22:00:00",
+    "file": "sc-087.json"
+  },
+  {
+    "id": "sc-088",
+    "title": "Shift 088 - Morning Shift",
+    "category": "Active Directory",
+    "outcome": "mixed",
+    "difficulty": "Tier 3",
+    "alerts": 4,
+    "startTime": "09:00:00",
+    "file": "sc-088.json"
+  },
+  {
+    "id": "sc-089",
+    "title": "Shift 089 - Morning Shift",
+    "category": "Active Directory",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 2,
+    "startTime": "08:00:00",
+    "file": "sc-089.json"
+  },
+  {
+    "id": "sc-090",
+    "title": "Shift 090 - Afternoon Shift",
+    "category": "Intrusion",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 3,
+    "startTime": "13:30:00",
+    "file": "sc-090.json"
+  },
+  {
+    "id": "sc-091",
+    "title": "Shift 091 - Morning Shift",
+    "category": "Account Compromise",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 3,
+    "startTime": "08:00:00",
+    "file": "sc-091.json"
+  },
+  {
+    "id": "sc-092",
+    "title": "Shift 092 - Morning Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "09:00:00",
+    "file": "sc-092.json"
+  },
+  {
+    "id": "sc-093",
+    "title": "Shift 093 - Morning Shift",
+    "category": "Phishing",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "09:00:00",
+    "file": "sc-093.json"
+  },
+  {
+    "id": "sc-094",
+    "title": "Shift 094 - Evening Shift",
+    "category": "Phishing",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "19:00:00",
+    "file": "sc-094.json"
+  },
+  {
+    "id": "sc-095",
+    "title": "Shift 095 - Morning Shift",
+    "category": "Identity",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "08:00:00",
+    "file": "sc-095.json"
+  },
+  {
+    "id": "sc-096",
+    "title": "Shift 096 - Evening Shift",
+    "category": "Web",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-096.json"
+  },
+  {
+    "id": "sc-097",
+    "title": "Shift 097 - Morning Shift",
+    "category": "Active Directory",
+    "outcome": "escalation",
+    "difficulty": "Tier 3",
+    "alerts": 2,
+    "startTime": "09:00:00",
+    "file": "sc-097.json"
+  },
+  {
+    "id": "sc-098",
+    "title": "Shift 098 - Afternoon Shift",
+    "category": "Malware",
+    "outcome": "true_positive",
+    "difficulty": "Tier 1",
+    "alerts": 2,
+    "startTime": "13:30:00",
+    "file": "sc-098.json"
+  },
+  {
+    "id": "sc-099",
+    "title": "Shift 099 - Evening Shift",
+    "category": "Network",
+    "outcome": "false_positive",
+    "difficulty": "Tier 1",
+    "alerts": 1,
+    "startTime": "19:00:00",
+    "file": "sc-099.json"
+  },
+  {
+    "id": "sc-100",
+    "title": "Shift 100 - Evening Shift",
+    "category": "Account Compromise",
+    "outcome": "escalation",
+    "difficulty": "Tier 2",
+    "alerts": 3,
+    "startTime": "19:00:00",
+    "file": "sc-100.json"
+  }
+]

@@ -1,0 +1,120 @@
+{
+  "id": "sc-036",
+  "title": "Shift 036 - Afternoon Shift",
+  "category": "Policy",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Proxy logs show unusual traffic from a user workstation.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "a.khaled": "LEGAL-PC-12"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Network: Tor relay connection",
+      "source": "Firewall",
+      "host": "LEGAL-PC-12",
+      "user": "a.khaled",
+      "summary": "LEGAL-PC-12 connected to a Tor relay at 203.0.113.8:9001",
+      "details": {
+        "src_ip": "10.15.125.15",
+        "dst_ip": "203.0.113.8",
+        "dst_port": 9001,
+        "protocol": "TCP",
+        "action_taken": "Allowed",
+        "raw_log": "fw ALLOW 10.15.125.15 -> 203.0.113.8:9001 app=tor"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1090.003"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:30:00",
+      "src": "firewall",
+      "host": "LEGAL-PC-12",
+      "user": "a.khaled",
+      "msg": "ALLOW 10.15.125.15 -> 203.0.113.8:9001 tor"
+    },
+    {
+      "t": "13:35:07",
+      "src": "edr",
+      "host": "EXEC-PC-15",
+      "user": "h.khaled",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "13:38:09",
+      "src": "email",
+      "host": "IT-PC-30",
+      "user": "y.hassan",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "13:38:21",
+      "src": "dns",
+      "host": "LEGAL-PC-02",
+      "user": "a.saleh",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "13:38:26",
+      "src": "email",
+      "host": "HR-PC-16",
+      "user": "s.ibrahim",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "13:41:30",
+      "src": "edr",
+      "host": "LEGAL-PC-36",
+      "user": "t.adel",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "13:56:42",
+      "src": "proxy",
+      "host": "LEGAL-PC-23",
+      "user": "h.gamal",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "13:56:43",
+      "src": "proxy",
+      "host": "ENG-PC-14",
+      "user": "m.hassan",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "13:58:49",
+      "src": "windows",
+      "host": "SALES-PC-38",
+      "user": "s.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "203.0.113.8": {
+      "type": "ip",
+      "reputation": "suspicious",
+      "note": "Tor relay (anonymizer), policy violation if unapproved"
+    }
+  },
+  "expected_actions": [
+    "notify_manager",
+    "document_policy_violation"
+  ]
+}

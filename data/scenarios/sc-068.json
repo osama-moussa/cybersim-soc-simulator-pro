@@ -1,0 +1,117 @@
+{
+  "id": "sc-068",
+  "title": "Shift 068 - Morning Shift",
+  "category": "Identity",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The identity provider reports many failed sign-ins.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Identity: password spray pattern",
+      "source": "Identity Provider",
+      "host": "IDP",
+      "user": "multiple",
+      "summary": "198.51.100.178 attempted one logon each against 62 accounts; 62 failures, 0 successes",
+      "details": {
+        "src_ip": "198.51.100.178",
+        "count": 62,
+        "geo": "Vietnam",
+        "protocol": "HTTPS",
+        "raw_log": "idp signin_failed src=198.51.100.178 accounts=62 error=50126 successes=0"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1110.003"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "06:00:00",
+      "src": "idp",
+      "host": "IDP",
+      "user": "multiple",
+      "msg": "62 failed sign-ins from 198.51.100.178 (error 50126), 0 successes"
+    },
+    {
+      "t": "06:04:50",
+      "src": "dns",
+      "host": "FIN-PC-30",
+      "user": "m.samir",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "06:07:20",
+      "src": "proxy",
+      "host": "LEGAL-PC-31",
+      "user": "s.fathy",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "06:07:29",
+      "src": "dns",
+      "host": "FIN-PC-33",
+      "user": "m.samir",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "06:08:56",
+      "src": "dns",
+      "host": "ENG-PC-01",
+      "user": "n.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "06:14:19",
+      "src": "proxy",
+      "host": "FIN-PC-19",
+      "user": "n.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:22:40",
+      "src": "proxy",
+      "host": "SALES-PC-05",
+      "user": "r.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "06:24:31",
+      "src": "proxy",
+      "host": "IT-PC-37",
+      "user": "s.ibrahim",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "06:29:54",
+      "src": "windows",
+      "host": "LEGAL-PC-11",
+      "user": "l.farouk",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "198.51.100.178": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Known password spraying infrastructure"
+    }
+  },
+  "expected_actions": [
+    "block_ip:198.51.100.178",
+    "enforce_mfa"
+  ]
+}

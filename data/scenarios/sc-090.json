@@ -1,0 +1,178 @@
+{
+  "id": "sc-090",
+  "title": "Shift 090 - Afternoon Shift",
+  "category": "Intrusion",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "The Linux application server has produced multiple alerts.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "root": "APP-02",
+      "svc_deploy": "APP-02"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "SSH: brute force attempts",
+      "source": "Linux Auth",
+      "host": "APP-02",
+      "user": "root",
+      "summary": "550 failed SSH logins from 192.0.2.119 in 10 minutes",
+      "details": {
+        "src_ip": "192.0.2.119",
+        "dst_ip": "10.10.0.50",
+        "dst_port": 22,
+        "protocol": "SSH",
+        "count": 550,
+        "raw_log": "sshd Failed password for root from 192.0.2.119 (x550)"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1110"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 8,
+      "severity": "High",
+      "rule": "SSH: successful login after brute force",
+      "source": "Linux Auth",
+      "host": "APP-02",
+      "user": "svc_deploy",
+      "summary": "Successful SSH login for svc_deploy from 192.0.2.119 after the failed attempts",
+      "details": {
+        "src_ip": "192.0.2.119",
+        "dst_ip": "10.10.0.50",
+        "dst_port": 22,
+        "protocol": "SSH",
+        "raw_log": "sshd Accepted password for svc_deploy from 192.0.2.119 port 62084 ssh2"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 11,
+      "severity": "Critical",
+      "rule": "Linux: new user + cron persistence",
+      "source": "EDR",
+      "host": "APP-02",
+      "user": "svc_deploy",
+      "summary": "User 'support01' created and a root cron job added on APP-02",
+      "details": {
+        "host_ip": "10.10.0.50",
+        "process": "useradd",
+        "parent_process": "bash",
+        "command_line": "useradd -m -G sudo support01; echo '* * * * * root /tmp/.x' >> /etc/crontab",
+        "raw_log": "auditd useradd name=support01 groups=sudo; crontab modified by svc_deploy"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1136.001"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:26:59",
+      "src": "windows",
+      "host": "ENG-PC-26",
+      "user": "m.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:29:14",
+      "src": "proxy",
+      "host": "IT-PC-05",
+      "user": "f.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "13:31:01",
+      "src": "dns",
+      "host": "LEGAL-PC-07",
+      "user": "a.farouk",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "13:31:07",
+      "src": "proxy",
+      "host": "HR-PC-32",
+      "user": "m.ibrahim",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "13:38:00",
+      "src": "linux",
+      "host": "APP-02",
+      "user": "svc_deploy",
+      "msg": "sshd: Accepted password for svc_deploy from 192.0.2.119"
+    },
+    {
+      "t": "13:41:00",
+      "src": "linux",
+      "host": "APP-02",
+      "user": "svc_deploy",
+      "msg": "useradd: new user name=support01"
+    },
+    {
+      "t": "13:46:24",
+      "src": "dns",
+      "host": "ENG-PC-16",
+      "user": "s.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "13:46:32",
+      "src": "dns",
+      "host": "EXEC-PC-23",
+      "user": "s.gamal",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "13:52:02",
+      "src": "dns",
+      "host": "LEGAL-PC-10",
+      "user": "l.ibrahim",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "13:55:38",
+      "src": "proxy",
+      "host": "LEGAL-PC-06",
+      "user": "r.saleh",
+      "msg": "GET https://intranet.corp.example/home 200"
+    }
+  ],
+  "iocs": {
+    "192.0.2.119": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "SSH brute force source, associated with botnet intrusions"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:APP-02",
+    "block_ip:192.0.2.119",
+    "disable_account:svc_deploy",
+    "disable_account:support01",
+    "escalate_tier2",
+    "initiate_incident_response"
+  ]
+}

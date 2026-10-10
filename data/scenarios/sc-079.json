@@ -1,0 +1,148 @@
+{
+  "id": "sc-079",
+  "title": "Shift 079 - Morning Shift",
+  "category": "Data Loss",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "DLP and endpoint tools raised alerts on a finance workstation.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "s.adel": "FIN-PC-32"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "EDR: archive utility staging large dataset",
+      "source": "EDR",
+      "host": "FIN-PC-32",
+      "user": "s.adel",
+      "summary": "7z.exe created a 5.9 GB encrypted archive on FIN-PC-32",
+      "details": {
+        "host_ip": "10.12.78.144",
+        "process": "7z.exe",
+        "parent_process": "cmd.exe",
+        "file_name": "C:\\Temp\\fin_data.7z",
+        "command_line": "7z.exe a -p******** C:\\Temp\\fin_data.7z \\\\FS-01\\Finance\\*",
+        "raw_log": "EDR proc=7z.exe args='a -p* fin_data.7z \\\\FS-01\\Finance' size=5.9GB"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1560.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 8,
+      "severity": "High",
+      "rule": "DLP: large outbound transfer to file-sharing site",
+      "source": "Firewall",
+      "host": "FIN-PC-32",
+      "user": "s.adel",
+      "summary": "5.9 GB uploaded from FIN-PC-32 to filedrop-share.net",
+      "details": {
+        "src_ip": "10.12.78.144",
+        "dst_ip": "203.0.113.106",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "domain": "filedrop-share.net",
+        "bytes_out": "5.9 GB",
+        "raw_log": "fw ALLOW 10.12.78.144 -> 203.0.113.106:443 bytes_out=5.9GB sni=filedrop-share.net"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1567.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "05:58:14",
+      "src": "email",
+      "host": "IT-PC-02",
+      "user": "o.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "06:07:27",
+      "src": "windows",
+      "host": "LEGAL-PC-24",
+      "user": "a.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "06:08:00",
+      "src": "proxy",
+      "host": "FIN-PC-32",
+      "user": "s.adel",
+      "msg": "CONNECT filedrop-share.net:443 200 bytes_out=5.9GB"
+    },
+    {
+      "t": "06:11:43",
+      "src": "edr",
+      "host": "IT-PC-33",
+      "user": "h.khaled",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "06:15:07",
+      "src": "email",
+      "host": "IT-PC-40",
+      "user": "m.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "06:16:40",
+      "src": "dns",
+      "host": "LEGAL-PC-35",
+      "user": "a.nabil",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "06:18:43",
+      "src": "email",
+      "host": "IT-PC-02",
+      "user": "r.saleh",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "06:19:28",
+      "src": "windows",
+      "host": "ENG-PC-30",
+      "user": "l.hassan",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:22:17",
+      "src": "windows",
+      "host": "HR-PC-33",
+      "user": "m.hassan",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "filedrop-share.net": {
+      "type": "domain",
+      "reputation": "suspicious",
+      "note": "Anonymous file-sharing service, not approved for corporate use"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:FIN-PC-32",
+    "block_domain:filedrop-share.net",
+    "disable_account:s.adel",
+    "preserve_evidence",
+    "escalate_tier2"
+  ]
+}

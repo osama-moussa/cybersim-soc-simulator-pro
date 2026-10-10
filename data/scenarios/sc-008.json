@@ -1,0 +1,122 @@
+{
+  "id": "sc-008",
+  "title": "Shift 008 - Morning Shift",
+  "category": "Phishing",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Email security quarantined a message for a user.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "d.adel": "SALES-PC-39"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Email: bulk sender flagged as phishing",
+      "source": "Email Gateway",
+      "host": "SALES-PC-39",
+      "user": "d.adel",
+      "summary": "Message from news@mail.northwind-news.com flagged: bulk sender, tracking links",
+      "details": {
+        "email_from": "news@mail.northwind-news.com",
+        "email_to": "d.adel@corp.example",
+        "subject": "October product update",
+        "spf": "pass",
+        "dkim": "pass",
+        "dmarc": "pass",
+        "action_taken": "Quarantined",
+        "raw_log": "mail from=news@mail.northwind-news.com spf=pass dkim=pass dmarc=pass bulk=yes list-unsubscribe=present"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "07:57:10",
+      "src": "dns",
+      "host": "IT-PC-14",
+      "user": "m.adel",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "08:00:00",
+      "src": "email",
+      "host": "MAIL-01",
+      "user": "d.adel",
+      "msg": "Quarantined: 'October product update' from news@mail.northwind-news.com"
+    },
+    {
+      "t": "08:04:49",
+      "src": "dns",
+      "host": "IT-PC-32",
+      "user": "a.ibrahim",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "08:05:35",
+      "src": "windows",
+      "host": "EXEC-PC-17",
+      "user": "s.hassan",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "08:08:20",
+      "src": "proxy",
+      "host": "IT-PC-30",
+      "user": "k.nabil",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:10:14",
+      "src": "dns",
+      "host": "LEGAL-PC-08",
+      "user": "y.adel",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:11:29",
+      "src": "proxy",
+      "host": "SALES-PC-04",
+      "user": "l.adel",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:19:59",
+      "src": "dns",
+      "host": "ENG-PC-12",
+      "user": "m.farouk",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:27:04",
+      "src": "dns",
+      "host": "ENG-PC-04",
+      "user": "m.gamal",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    }
+  ],
+  "iocs": {
+    "mail.northwind-news.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Legitimate marketing platform; vendor newsletter, SPF/DKIM/DMARC aligned"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive",
+    "release_email"
+  ]
+}

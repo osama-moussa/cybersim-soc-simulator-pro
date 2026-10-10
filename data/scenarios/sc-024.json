@@ -1,0 +1,120 @@
+{
+  "id": "sc-024",
+  "title": "Shift 024 - Afternoon Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "EDR detected newly installed software.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "f.ibrahim": "LEGAL-PC-34"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "EDR: potentially unwanted program installed",
+      "source": "EDR",
+      "host": "LEGAL-PC-34",
+      "user": "f.ibrahim",
+      "summary": "Adware 'WebSearchHelper' installed on LEGAL-PC-34",
+      "details": {
+        "host_ip": "10.15.227.92",
+        "file_name": "websearchhelper_setup.exe",
+        "file_hash": "09ece3949cc278db8aebf5c485dd244476bdf3a5801faecc2bde974cbe7eddff",
+        "process": "setup.exe",
+        "action_taken": "Detected",
+        "raw_log": "EDR detect=PUP.WebSearchHelper host=LEGAL-PC-34"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:30:00",
+      "src": "edr",
+      "host": "LEGAL-PC-34",
+      "user": "f.ibrahim",
+      "msg": "PUP.WebSearchHelper installed (browser extension + scheduled task)"
+    },
+    {
+      "t": "13:34:05",
+      "src": "dns",
+      "host": "SALES-PC-22",
+      "user": "t.zaki",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "13:34:30",
+      "src": "windows",
+      "host": "IT-PC-07",
+      "user": "h.mansour",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:37:48",
+      "src": "proxy",
+      "host": "EXEC-PC-25",
+      "user": "n.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "13:38:26",
+      "src": "windows",
+      "host": "EXEC-PC-37",
+      "user": "a.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:40:02",
+      "src": "windows",
+      "host": "HR-PC-06",
+      "user": "r.samir",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "13:44:03",
+      "src": "proxy",
+      "host": "IT-PC-22",
+      "user": "d.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "13:44:10",
+      "src": "dns",
+      "host": "ENG-PC-29",
+      "user": "h.gamal",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "13:51:08",
+      "src": "edr",
+      "host": "EXEC-PC-03",
+      "user": "r.fathy",
+      "msg": "Scheduled scan completed, 0 detections"
+    }
+  ],
+  "iocs": {
+    "09ece3949cc278db8aebf5c485dd244476bdf3a5801faecc2bde974cbe7eddff": {
+      "type": "hash",
+      "reputation": "suspicious",
+      "note": "Adware bundler, medium confidence"
+    }
+  },
+  "expected_actions": [
+    "uninstall_pup",
+    "scan_host"
+  ]
+}

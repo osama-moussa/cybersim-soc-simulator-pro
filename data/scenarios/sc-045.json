@@ -1,0 +1,128 @@
+{
+  "id": "sc-045",
+  "title": "Shift 045 - Afternoon Shift",
+  "category": "Endpoint",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "EDR flagged remote execution activity on a server.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2686",
+        "desc": "Monthly patch validation on FS-01 by IT Operations",
+        "owner": "IT Operations",
+        "window": "08:00-12:00"
+      }
+    ],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "adm.hassan": "FS-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "EDR: Remote service created (PsExec)",
+      "source": "EDR",
+      "host": "FS-01",
+      "user": "adm.hassan",
+      "summary": "PSEXESVC service installed on FS-01 by adm.hassan from IT-PC-28",
+      "details": {
+        "src_ip": "10.13.193.24",
+        "dst_ip": "10.10.0.20",
+        "host_ip": "10.10.0.20",
+        "process": "PSEXESVC.exe",
+        "parent_process": "services.exe",
+        "event_id": 7045,
+        "command_line": "psexec.exe \\\\FS-01 -s cmd /c gpupdate /force",
+        "raw_log": "EventID=7045 ServiceName=PSEXESVC ImagePath=%SystemRoot%\\PSEXESVC.exe Host=FS-01"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:57:10",
+      "src": "edr",
+      "host": "FIN-PC-04",
+      "user": "a.samir",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "15:59:00",
+      "src": "windows",
+      "host": "IT-PC-28",
+      "user": "adm.hassan",
+      "msg": "4648 explicit credential logon to FS-01"
+    },
+    {
+      "t": "16:04:12",
+      "src": "proxy",
+      "host": "ENG-PC-27",
+      "user": "h.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:08:54",
+      "src": "proxy",
+      "host": "HR-PC-06",
+      "user": "y.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "16:13:13",
+      "src": "dns",
+      "host": "LEGAL-PC-34",
+      "user": "s.hassan",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "16:14:58",
+      "src": "windows",
+      "host": "IT-PC-38",
+      "user": "h.adel",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "16:17:30",
+      "src": "dns",
+      "host": "HR-PC-15",
+      "user": "o.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "16:19:57",
+      "src": "dns",
+      "host": "IT-PC-08",
+      "user": "s.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "16:24:52",
+      "src": "windows",
+      "host": "ENG-PC-21",
+      "user": "m.farouk",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "10.13.193.24": {
+      "type": "ip",
+      "reputation": "benign",
+      "note": "IT administrator workstation (IT-PC-28)"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

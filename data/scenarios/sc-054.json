@@ -1,0 +1,128 @@
+{
+  "id": "sc-054",
+  "title": "Shift 054 - Morning Shift",
+  "category": "Endpoint",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The web proxy flagged a software download.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "IT Helpdesk ticket INC-12855: Salma Zaki requested approved software NorthwindZip."
+    ]
+  },
+  "assets": {
+    "users": {
+      "s.zaki": "ENG-PC-33"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Proxy: suspicious executable download",
+      "source": "Web Proxy",
+      "host": "ENG-PC-33",
+      "user": "s.zaki",
+      "summary": "s.zaki downloaded NorthwindZip_setup_4.7.exe from downloads.contoso-tools.com (uncategorized, newly seen)",
+      "details": {
+        "src_ip": "10.16.236.141",
+        "dst_ip": "192.0.2.146",
+        "dst_port": 443,
+        "url": "https://downloads.contoso-tools.com/NorthwindZip_setup_4.7.exe",
+        "file_name": "NorthwindZip_setup_4.7.exe",
+        "file_hash": "537d461c509a7b09ec49ed7957197caa88697a219765a68e2ca0bf2c44ece9c4",
+        "action_taken": "Allowed",
+        "raw_log": "proxy GET https://downloads.contoso-tools.com/NorthwindZip_setup_4.7.exe 200 type=application/x-msdownload"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "07:58:59",
+      "src": "dns",
+      "host": "HR-PC-06",
+      "user": "n.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "07:59:20",
+      "src": "edr",
+      "host": "LEGAL-PC-31",
+      "user": "m.hassan",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "08:00:00",
+      "src": "proxy",
+      "host": "ENG-PC-33",
+      "user": "s.zaki",
+      "msg": "GET https://downloads.contoso-tools.com/NorthwindZip_setup_4.7.exe 200"
+    },
+    {
+      "t": "08:07:51",
+      "src": "proxy",
+      "host": "LEGAL-PC-03",
+      "user": "s.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:18:40",
+      "src": "proxy",
+      "host": "ENG-PC-17",
+      "user": "s.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:19:04",
+      "src": "dns",
+      "host": "HR-PC-38",
+      "user": "d.ibrahim",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:19:55",
+      "src": "proxy",
+      "host": "LEGAL-PC-10",
+      "user": "h.samir",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:24:11",
+      "src": "proxy",
+      "host": "ENG-PC-26",
+      "user": "r.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:27:09",
+      "src": "dns",
+      "host": "SALES-PC-25",
+      "user": "k.ibrahim",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    }
+  ],
+  "iocs": {
+    "537d461c509a7b09ec49ed7957197caa88697a219765a68e2ca0bf2c44ece9c4": {
+      "type": "hash",
+      "reputation": "clean",
+      "note": "Signed by Contoso Software Ltd, known-good (0/68 detections)"
+    },
+    "downloads.contoso-tools.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Vendor distribution domain, 6 years old"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

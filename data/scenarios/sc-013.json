@@ -1,0 +1,121 @@
+{
+  "id": "sc-013",
+  "title": "Shift 013 - Morning Shift",
+  "category": "Web",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The WAF is blocking attacks on the public web server.",
+  "startTime": "09:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "Change calendar and pentest register: no authorized testing scheduled today."
+    ]
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "WAF: SQL injection attempts",
+      "source": "WAF",
+      "host": "WEB-01",
+      "user": "n/a",
+      "summary": "136 SQL injection payloads from 198.51.100.168 against /login within 5 minutes",
+      "details": {
+        "src_ip": "198.51.100.168",
+        "dst_ip": "172.16.10.5",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "count": 136,
+        "url": "https://www.corp.example/login?user=admin'--",
+        "action_taken": "Blocked",
+        "raw_log": "waf rule=942100 action=block src=198.51.100.168 uri=/login count=136"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1190"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "08:56:43",
+      "src": "proxy",
+      "host": "ENG-PC-07",
+      "user": "m.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "09:00:00",
+      "src": "waf",
+      "host": "WEB-01",
+      "user": "n/a",
+      "msg": "BLOCK 198.51.100.168 POST /login rule=942100"
+    },
+    {
+      "t": "09:04:58",
+      "src": "dns",
+      "host": "ENG-PC-33",
+      "user": "o.adel",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "09:05:42",
+      "src": "dns",
+      "host": "HR-PC-10",
+      "user": "s.gamal",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "09:21:12",
+      "src": "email",
+      "host": "EXEC-PC-20",
+      "user": "a.nabil",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "09:22:43",
+      "src": "proxy",
+      "host": "LEGAL-PC-06",
+      "user": "d.farouk",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "09:23:53",
+      "src": "dns",
+      "host": "ENG-PC-20",
+      "user": "m.zaki",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "09:27:08",
+      "src": "windows",
+      "host": "EXEC-PC-22",
+      "user": "n.nabil",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "09:29:34",
+      "src": "windows",
+      "host": "LEGAL-PC-15",
+      "user": "m.fathy",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "198.51.100.168": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Automated exploitation scanner"
+    }
+  },
+  "expected_actions": [
+    "block_ip:198.51.100.168"
+  ]
+}

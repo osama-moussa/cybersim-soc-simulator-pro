@@ -1,0 +1,140 @@
+{
+  "id": "sc-056",
+  "title": "Shift 056 - Night Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Infrastructure monitoring reports abnormal server behavior.",
+  "startTime": "22:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Server: sustained high CPU",
+      "source": "Monitoring",
+      "host": "APP-02",
+      "user": "n/a",
+      "summary": "CPU at 97% for 45 minutes on APP-02",
+      "details": {
+        "host_ip": "10.10.0.50",
+        "process": "kworker-upd",
+        "count": 45,
+        "raw_log": "mon host=APP-02 cpu=97% duration=45m top_proc=kworker-upd"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1496"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 3,
+      "severity": "High",
+      "rule": "Network: connection to cryptomining pool",
+      "source": "Firewall",
+      "host": "APP-02",
+      "user": "n/a",
+      "summary": "APP-02 connected to mining pool xmr-eu.cryptopool-x.com:3333",
+      "details": {
+        "src_ip": "10.10.0.50",
+        "dst_ip": "203.0.113.189",
+        "dst_port": 3333,
+        "protocol": "TCP",
+        "domain": "xmr-eu.cryptopool-x.com",
+        "raw_log": "fw ALLOW 10.10.0.50 -> 203.0.113.189:3333 app=stratum"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1496"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "21:57:54",
+      "src": "dns",
+      "host": "SALES-PC-10",
+      "user": "s.hassan",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:03:00",
+      "src": "firewall",
+      "host": "APP-02",
+      "user": "n/a",
+      "msg": "ALLOW 10.10.0.50 -> 203.0.113.189:3333 stratum+tcp"
+    },
+    {
+      "t": "22:04:13",
+      "src": "proxy",
+      "host": "LEGAL-PC-07",
+      "user": "a.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "22:08:46",
+      "src": "email",
+      "host": "SALES-PC-22",
+      "user": "s.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "22:10:39",
+      "src": "windows",
+      "host": "EXEC-PC-29",
+      "user": "a.khaled",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "22:13:13",
+      "src": "windows",
+      "host": "LEGAL-PC-18",
+      "user": "f.ibrahim",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "22:19:53",
+      "src": "proxy",
+      "host": "EXEC-PC-36",
+      "user": "a.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:24:01",
+      "src": "proxy",
+      "host": "ENG-PC-11",
+      "user": "a.ibrahim",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "22:27:35",
+      "src": "proxy",
+      "host": "EXEC-PC-22",
+      "user": "d.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    }
+  ],
+  "iocs": {
+    "xmr-eu.cryptopool-x.com": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Cryptomining pool (Stratum protocol)"
+    }
+  },
+  "expected_actions": [
+    "kill_process",
+    "block_domain:xmr-eu.cryptopool-x.com"
+  ]
+}

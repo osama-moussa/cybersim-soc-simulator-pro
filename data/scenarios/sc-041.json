@@ -1,0 +1,184 @@
+{
+  "id": "sc-041",
+  "title": "Shift 041 - Night Shift",
+  "category": "Account Compromise",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "Several security tools are reporting activity tied to one user.",
+  "startTime": "22:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "d.ibrahim": "VPN-GW"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: suspicious link detected",
+      "source": "Email Gateway",
+      "host": "HR-PC-34",
+      "user": "d.ibrahim",
+      "summary": "Email from payroll@sso-access-desk.info contains a link to hxxps://sso-access-desk[.]info/login",
+      "details": {
+        "email_from": "payroll@sso-access-desk.info",
+        "email_to": "d.ibrahim@corp.example",
+        "subject": "Payroll update required",
+        "url": "hxxps://sso-access-desk[.]info/login",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=payroll@sso-access-desk.info spf=fail url=hxxps://sso-access-desk[.]info/login"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 3,
+      "severity": "High",
+      "rule": "Proxy: credentials submitted to uncategorized domain",
+      "source": "Web Proxy",
+      "host": "HR-PC-34",
+      "user": "d.ibrahim",
+      "summary": "POST with form data from HR-PC-34 to sso-access-desk.info",
+      "details": {
+        "src_ip": "10.11.46.88",
+        "dst_ip": "203.0.113.17",
+        "dst_port": 443,
+        "domain": "sso-access-desk.info",
+        "url": "https://sso-access-desk.info/login",
+        "action_taken": "Allowed",
+        "raw_log": "proxy POST https://sso-access-desk.info/login 200 bytes_out=412 category=uncategorized"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1056.003"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 9,
+      "severity": "High",
+      "rule": "VPN: login from new country",
+      "source": "VPN",
+      "host": "VPN-GW",
+      "user": "d.ibrahim",
+      "summary": "Successful VPN login from 203.0.113.17 (Romania) 6 minutes after the credential submission",
+      "details": {
+        "src_ip": "203.0.113.17",
+        "dst_ip": "10.10.0.1",
+        "geo": "Romania",
+        "mfa_result": "Not required (legacy profile)",
+        "raw_log": "vpn auth=OK user=d.ibrahim src=203.0.113.17 geo=Romania mfa=none"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "21:56:49",
+      "src": "windows",
+      "host": "HR-PC-03",
+      "user": "s.ibrahim",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "21:57:10",
+      "src": "proxy",
+      "host": "FIN-PC-10",
+      "user": "o.nabil",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:01:21",
+      "src": "dns",
+      "host": "SALES-PC-29",
+      "user": "o.zaki",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:03:00",
+      "src": "proxy",
+      "host": "HR-PC-34",
+      "user": "d.ibrahim",
+      "msg": "POST https://sso-access-desk.info/login 200 (form data submitted)"
+    },
+    {
+      "t": "22:05:02",
+      "src": "proxy",
+      "host": "SALES-PC-05",
+      "user": "m.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "22:09:00",
+      "src": "vpn",
+      "host": "VPN-GW",
+      "user": "d.ibrahim",
+      "msg": "Login OK from 203.0.113.17 (Romania)"
+    },
+    {
+      "t": "22:13:21",
+      "src": "proxy",
+      "host": "HR-PC-40",
+      "user": "s.ibrahim",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:17:04",
+      "src": "windows",
+      "host": "LEGAL-PC-12",
+      "user": "h.mansour",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "22:25:08",
+      "src": "dns",
+      "host": "LEGAL-PC-40",
+      "user": "f.saleh",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "22:27:34",
+      "src": "windows",
+      "host": "LEGAL-PC-21",
+      "user": "d.hassan",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "sso-access-desk.info": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Credential harvesting page, registered 2 days ago"
+    },
+    "203.0.113.17": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Known Tor exit node"
+    }
+  },
+  "expected_actions": [
+    "disable_account:d.ibrahim",
+    "block_ip:203.0.113.17",
+    "block_domain:sso-access-desk.info",
+    "reset_password:d.ibrahim",
+    "revoke_sessions:d.ibrahim",
+    "escalate_tier2"
+  ]
+}

@@ -1,0 +1,159 @@
+{
+  "id": "sc-092",
+  "title": "Shift 092 - Morning Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A user workstation downloaded a file from the internet.",
+  "startTime": "09:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "f.ibrahim": "SALES-PC-16"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Proxy: executable from uncategorized domain",
+      "source": "Web Proxy",
+      "host": "SALES-PC-16",
+      "user": "f.ibrahim",
+      "summary": "f.ibrahim downloaded invoice_983.exe from sso-access-site.co",
+      "details": {
+        "src_ip": "10.14.118.26",
+        "dst_ip": "192.0.2.225",
+        "dst_port": 443,
+        "domain": "sso-access-site.co",
+        "url": "https://sso-access-site.co/invoice_983.exe",
+        "file_name": "invoice_983.exe",
+        "action_taken": "Allowed",
+        "raw_log": "proxy GET https://sso-access-site.co/invoice_983.exe 200 type=application/x-msdownload"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 1,
+      "severity": "Medium",
+      "rule": "AV: malware detected",
+      "source": "EDR",
+      "host": "SALES-PC-16",
+      "user": "f.ibrahim",
+      "summary": "Trojan.AsyncRAT detected in C:\\Users\\f.ibrahim\\Downloads\\invoice_983.exe; file quarantined",
+      "details": {
+        "host_ip": "10.14.118.26",
+        "file_name": "invoice_983.exe",
+        "file_hash": "be8c61cb88c0726e66eea89f470c1c00f8ec0e3f69b89215060e4a75099220ea",
+        "process": "chrome.exe",
+        "action_taken": "Quarantined",
+        "raw_log": "EDR detect=Trojan.AsyncRAT path=C:\\Users\\f.ibrahim\\Downloads\\invoice_983.exe action=quarantine"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "08:56:00",
+      "src": "email",
+      "host": "EXEC-PC-12",
+      "user": "s.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "09:00:00",
+      "src": "proxy",
+      "host": "SALES-PC-16",
+      "user": "f.ibrahim",
+      "msg": "GET https://sso-access-site.co/invoice_983.exe 200"
+    },
+    {
+      "t": "09:01:00",
+      "src": "edr",
+      "host": "SALES-PC-16",
+      "user": "f.ibrahim",
+      "msg": "Quarantined invoice_983.exe (Trojan.AsyncRAT) sha256=be8c61cb88c0726e..."
+    },
+    {
+      "t": "09:01:12",
+      "src": "proxy",
+      "host": "IT-PC-12",
+      "user": "d.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "09:02:06",
+      "src": "proxy",
+      "host": "SALES-PC-30",
+      "user": "a.samir",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "09:03:15",
+      "src": "proxy",
+      "host": "ENG-PC-24",
+      "user": "h.adel",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "09:05:20",
+      "src": "proxy",
+      "host": "SALES-PC-08",
+      "user": "s.adel",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "09:15:46",
+      "src": "proxy",
+      "host": "IT-PC-04",
+      "user": "r.gamal",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "09:24:02",
+      "src": "edr",
+      "host": "FIN-PC-03",
+      "user": "d.saleh",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "09:25:32",
+      "src": "windows",
+      "host": "SALES-PC-16",
+      "user": "t.samir",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "be8c61cb88c0726e66eea89f470c1c00f8ec0e3f69b89215060e4a75099220ea": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Trojan.AsyncRAT (61/70 engines)"
+    },
+    "sso-access-site.co": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Malware distribution host"
+    }
+  },
+  "expected_actions": [
+    "confirm_quarantine",
+    "block_hash:be8c61cb88c0726e66eea89f470c1c00f8ec0e3f69b89215060e4a75099220ea",
+    "block_domain:sso-access-site.co"
+  ]
+}

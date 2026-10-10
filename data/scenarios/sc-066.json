@@ -1,0 +1,131 @@
+{
+  "id": "sc-066",
+  "title": "Shift 066 - Evening Shift",
+  "category": "Network",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Network IDS is reporting scanning activity against internal servers.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2863",
+        "desc": "Weekly authenticated vulnerability scan of server VLAN",
+        "owner": "Security Engineering",
+        "window": "all day"
+      }
+    ],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "IDS: Port scan detected",
+      "source": "Network IDS",
+      "host": "APP-02",
+      "user": "n/a",
+      "summary": "Internal host 10.10.5.5 probed 1397 TCP ports on APP-02 within 60 seconds",
+      "details": {
+        "src_ip": "10.10.5.5",
+        "dst_ip": "10.10.0.50",
+        "protocol": "TCP",
+        "count": 1397,
+        "action_taken": "Alert only",
+        "raw_log": "IDS sid=2010935 SCAN 10.10.5.5 -> 10.10.0.50 ports=1397 window=60s"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:55:35",
+      "src": "proxy",
+      "host": "FIN-PC-32",
+      "user": "f.gamal",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "18:58:11",
+      "src": "dns",
+      "host": "HR-PC-10",
+      "user": "s.mansour",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "18:59:00",
+      "src": "windows",
+      "host": "SEC-SCAN-01",
+      "user": "svc.scanner",
+      "msg": "4624 service logon (scheduled task: WeeklyVulnScan)"
+    },
+    {
+      "t": "19:00:00",
+      "src": "firewall",
+      "host": "APP-02",
+      "user": "n/a",
+      "msg": "ALLOW 10.10.5.5 -> 10.10.0.50 tcp multi-port sweep (1397 ports)"
+    },
+    {
+      "t": "19:00:09",
+      "src": "dns",
+      "host": "FIN-PC-14",
+      "user": "s.khaled",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "19:03:15",
+      "src": "dns",
+      "host": "EXEC-PC-10",
+      "user": "s.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:04:20",
+      "src": "proxy",
+      "host": "FIN-PC-20",
+      "user": "a.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "19:15:05",
+      "src": "dns",
+      "host": "IT-PC-28",
+      "user": "a.gamal",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:16:08",
+      "src": "email",
+      "host": "LEGAL-PC-18",
+      "user": "l.nabil",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:20:08",
+      "src": "proxy",
+      "host": "SALES-PC-18",
+      "user": "s.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "10.10.5.5": {
+      "type": "ip",
+      "reputation": "benign",
+      "note": "Authorized internal vulnerability scanner (SEC-SCAN-01)"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

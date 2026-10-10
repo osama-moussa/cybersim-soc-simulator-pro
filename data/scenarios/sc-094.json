@@ -1,0 +1,153 @@
+{
+  "id": "sc-094",
+  "title": "Shift 094 - Evening Shift",
+  "category": "Phishing",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Email security flagged a suspicious message delivered to a user.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "m.khaled": "IT-PC-31"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: suspicious link detected",
+      "source": "Email Gateway",
+      "host": "IT-PC-31",
+      "user": "m.khaled",
+      "summary": "Email from security-alert@payroll-update-desk.com contains a link to hxxps://payroll-update-desk[.]com/verify",
+      "details": {
+        "email_from": "security-alert@payroll-update-desk.com",
+        "email_to": "m.khaled@corp.example",
+        "subject": "Shared document: Q3 salary review",
+        "url": "hxxps://payroll-update-desk[.]com/verify",
+        "src_ip": "198.51.100.233",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=security-alert@payroll-update-desk.com spf=fail dkim=none url=hxxps://payroll-update-desk[.]com/verify"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 4,
+      "severity": "Low",
+      "rule": "Proxy: request blocked (phishing category)",
+      "source": "Web Proxy",
+      "host": "IT-PC-31",
+      "user": "m.khaled",
+      "summary": "m.khaled attempted to open payroll-update-desk.com; request blocked by policy",
+      "details": {
+        "src_ip": "10.13.205.235",
+        "dst_ip": "198.51.100.233",
+        "dst_port": 443,
+        "domain": "payroll-update-desk.com",
+        "url": "https://payroll-update-desk.com/verify",
+        "action_taken": "Blocked",
+        "raw_log": "proxy GET https://payroll-update-desk.com/verify 403 category=phishing"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:58:53",
+      "src": "proxy",
+      "host": "LEGAL-PC-08",
+      "user": "m.nabil",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "19:04:00",
+      "src": "proxy",
+      "host": "IT-PC-31",
+      "user": "m.khaled",
+      "msg": "GET https://payroll-update-desk.com/verify 403 (blocked: phishing)"
+    },
+    {
+      "t": "19:04:00",
+      "src": "dns",
+      "host": "IT-PC-31",
+      "user": "m.khaled",
+      "msg": "query payroll-update-desk.com A NOERROR"
+    },
+    {
+      "t": "19:06:53",
+      "src": "email",
+      "host": "LEGAL-PC-15",
+      "user": "f.zaki",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:10:48",
+      "src": "dns",
+      "host": "EXEC-PC-38",
+      "user": "o.ibrahim",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:12:14",
+      "src": "dns",
+      "host": "SALES-PC-16",
+      "user": "o.samir",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:14:10",
+      "src": "windows",
+      "host": "HR-PC-29",
+      "user": "n.zaki",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "19:18:06",
+      "src": "proxy",
+      "host": "HR-PC-38",
+      "user": "f.ibrahim",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "19:18:31",
+      "src": "proxy",
+      "host": "SALES-PC-35",
+      "user": "s.hassan",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "19:23:04",
+      "src": "proxy",
+      "host": "IT-PC-40",
+      "user": "o.zaki",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "payroll-update-desk.com": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Phishing kit hosting, registered 3 days ago"
+    }
+  },
+  "expected_actions": [
+    "delete_email",
+    "block_domain:payroll-update-desk.com"
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "id": "sc-097",
+  "title": "Shift 097 - Morning Shift",
+  "category": "Active Directory",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "The domain controller is reporting unusual directory activity.",
+  "startTime": "09:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "n.khaled": "DC-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "AD: Kerberoasting (multiple TGS requests, RC4)",
+      "source": "Windows Security",
+      "host": "DC-01",
+      "user": "n.khaled",
+      "summary": "53 service ticket requests with RC4 encryption by n.khaled in 2 minutes",
+      "details": {
+        "src_ip": "10.13.39.103",
+        "dst_ip": "10.10.0.10",
+        "event_id": 4769,
+        "protocol": "Kerberos",
+        "raw_log": "4769 TicketEncryptionType=0x17 client=n.khaled src=10.13.39.103 burst=yes"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1558.003"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 9,
+      "severity": "Critical",
+      "rule": "AD: directory replication from non-DC (DCSync)",
+      "source": "Windows Security",
+      "host": "DC-01",
+      "user": "n.khaled",
+      "summary": "Replication request (DS-Replication-Get-Changes) from IT-PC-21, which is not a domain controller",
+      "details": {
+        "src_ip": "10.13.39.103",
+        "dst_ip": "10.10.0.10",
+        "event_id": 4662,
+        "protocol": "MS-DRSR",
+        "raw_log": "4662 Properties={1131f6aa-...} SubjectUser=n.khaled src=10.13.39.103"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1003.006"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "08:59:06",
+      "src": "edr",
+      "host": "IT-PC-32",
+      "user": "s.mansour",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "09:00:56",
+      "src": "email",
+      "host": "EXEC-PC-37",
+      "user": "s.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "09:04:21",
+      "src": "windows",
+      "host": "LEGAL-PC-27",
+      "user": "a.samir",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "09:05:55",
+      "src": "dns",
+      "host": "FIN-PC-34",
+      "user": "a.fathy",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "09:09:00",
+      "src": "windows",
+      "host": "DC-01",
+      "user": "n.khaled",
+      "msg": "4662 replication rights used by n.khaled from 10.13.39.103"
+    },
+    {
+      "t": "09:15:26",
+      "src": "dns",
+      "host": "FIN-PC-08",
+      "user": "a.fathy",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "09:20:17",
+      "src": "email",
+      "host": "LEGAL-PC-12",
+      "user": "h.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "09:22:31",
+      "src": "edr",
+      "host": "EXEC-PC-09",
+      "user": "m.adel",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "09:27:46",
+      "src": "dns",
+      "host": "EXEC-PC-11",
+      "user": "t.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "disable_account:n.khaled",
+    "isolate_host:IT-PC-21",
+    "reset_krbtgt_twice",
+    "escalate_tier2",
+    "initiate_incident_response"
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "id": "sc-010",
+  "title": "Shift 010 - Afternoon Shift",
+  "category": "Identity",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The SIEM reports repeated authentication failures for a user account.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "HR notice: Omar Samir returned from annual leave today."
+    ]
+  },
+  "assets": {
+    "users": {
+      "o.samir": "ENG-PC-19"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Multiple failed logons",
+      "source": "Windows Security",
+      "host": "ENG-PC-19",
+      "user": "o.samir",
+      "summary": "4 failed logons (4625) within 3 minutes followed by a successful logon (4624)",
+      "details": {
+        "src_ip": "10.16.233.107",
+        "host_ip": "10.16.233.107",
+        "event_id": 4625,
+        "count": 4,
+        "logon_type": "Interactive (2)",
+        "raw_log": "4625 x4 Account=o.samir Status=0xC000006A (bad password); then 4624 success"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:57:00",
+      "src": "windows",
+      "host": "ENG-PC-19",
+      "user": "o.samir",
+      "msg": "4625 failed logon (bad password) attempt 1"
+    },
+    {
+      "t": "15:57:20",
+      "src": "windows",
+      "host": "ENG-PC-19",
+      "user": "o.samir",
+      "msg": "4625 failed logon (bad password) attempt 2"
+    },
+    {
+      "t": "15:57:32",
+      "src": "email",
+      "host": "ENG-PC-09",
+      "user": "a.farouk",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "15:57:40",
+      "src": "windows",
+      "host": "ENG-PC-19",
+      "user": "o.samir",
+      "msg": "4625 failed logon (bad password) attempt 3"
+    },
+    {
+      "t": "15:58:00",
+      "src": "windows",
+      "host": "ENG-PC-19",
+      "user": "o.samir",
+      "msg": "4625 failed logon (bad password) attempt 4"
+    },
+    {
+      "t": "15:59:55",
+      "src": "windows",
+      "host": "ENG-PC-19",
+      "user": "o.samir",
+      "msg": "4624 successful logon (interactive)"
+    },
+    {
+      "t": "16:01:31",
+      "src": "proxy",
+      "host": "HR-PC-05",
+      "user": "y.fathy",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "16:08:38",
+      "src": "proxy",
+      "host": "SALES-PC-21",
+      "user": "a.mansour",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:11:20",
+      "src": "email",
+      "host": "ENG-PC-35",
+      "user": "n.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "16:20:18",
+      "src": "email",
+      "host": "EXEC-PC-34",
+      "user": "m.zaki",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "16:21:42",
+      "src": "windows",
+      "host": "ENG-PC-22",
+      "user": "y.zaki",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "16:21:50",
+      "src": "proxy",
+      "host": "EXEC-PC-36",
+      "user": "l.fathy",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:24:06",
+      "src": "dns",
+      "host": "LEGAL-PC-37",
+      "user": "m.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

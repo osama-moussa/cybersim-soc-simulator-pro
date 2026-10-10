@@ -1,0 +1,142 @@
+{
+  "id": "sc-062",
+  "title": "Shift 062 - Night Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "EDR reports removable media activity.",
+  "startTime": "22:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "h.fathy": "SALES-PC-32"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "EDR: USB mass storage connected",
+      "source": "EDR",
+      "host": "SALES-PC-32",
+      "user": "h.fathy",
+      "summary": "USB storage device connected to SALES-PC-32",
+      "details": {
+        "host_ip": "10.14.154.120",
+        "process": "System",
+        "raw_log": "EDR device_connect class=USB-MassStorage vid=0951 pid=1666"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1091"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 1,
+      "severity": "Medium",
+      "rule": "EDR: autorun executable blocked",
+      "source": "EDR",
+      "host": "SALES-PC-32",
+      "user": "h.fathy",
+      "summary": "Executable launched from removable drive blocked on SALES-PC-32",
+      "details": {
+        "host_ip": "10.14.154.120",
+        "file_name": "E:\\setup_driver.exe",
+        "file_hash": "e3506d4f9c34e4f3f64bae63573bc4c432038e764088f8ff76446084d4da85d0",
+        "process": "explorer.exe",
+        "action_taken": "Blocked",
+        "raw_log": "EDR block image=E:\\setup_driver.exe parent=explorer.exe"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1091"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "22:01:00",
+      "src": "edr",
+      "host": "SALES-PC-32",
+      "user": "h.fathy",
+      "msg": "Blocked execution of E:\\setup_driver.exe (removable media)"
+    },
+    {
+      "t": "22:09:47",
+      "src": "proxy",
+      "host": "ENG-PC-27",
+      "user": "s.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:13:21",
+      "src": "dns",
+      "host": "FIN-PC-20",
+      "user": "s.mansour",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "22:16:31",
+      "src": "edr",
+      "host": "ENG-PC-10",
+      "user": "t.mansour",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "22:20:21",
+      "src": "proxy",
+      "host": "EXEC-PC-29",
+      "user": "k.fathy",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:20:53",
+      "src": "email",
+      "host": "FIN-PC-03",
+      "user": "d.gamal",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "22:23:49",
+      "src": "dns",
+      "host": "HR-PC-14",
+      "user": "a.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:25:17",
+      "src": "proxy",
+      "host": "EXEC-PC-13",
+      "user": "m.samir",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:27:57",
+      "src": "proxy",
+      "host": "ENG-PC-11",
+      "user": "n.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "e3506d4f9c34e4f3f64bae63573bc4c432038e764088f8ff76446084d4da85d0": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Worm dropper commonly spread via USB"
+    }
+  },
+  "expected_actions": [
+    "block_hash:e3506d4f9c34e4f3f64bae63573bc4c432038e764088f8ff76446084d4da85d0",
+    "scan_host",
+    "retrieve_usb_device"
+  ]
+}

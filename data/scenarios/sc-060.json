@@ -1,0 +1,126 @@
+{
+  "id": "sc-060",
+  "title": "Shift 060 - Afternoon Shift",
+  "category": "Network",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A Linux server is reporting authentication failures.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "root": "WEB-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "SSH: brute force attempts",
+      "source": "Linux Auth",
+      "host": "WEB-01",
+      "user": "root",
+      "summary": "302 failed SSH logins from 203.0.113.121 in 10 minutes; no successful login observed",
+      "details": {
+        "src_ip": "203.0.113.121",
+        "dst_ip": "172.16.10.5",
+        "dst_port": 22,
+        "protocol": "SSH",
+        "count": 302,
+        "raw_log": "sshd Failed password for root from 203.0.113.121 port 52239 ssh2 (x302)"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1110"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:25:13",
+      "src": "dns",
+      "host": "EXEC-PC-07",
+      "user": "l.nabil",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "13:30:00",
+      "src": "linux",
+      "host": "WEB-01",
+      "user": "root",
+      "msg": "sshd: Failed password for root from 203.0.113.121 port 58129 ssh2"
+    },
+    {
+      "t": "13:31:00",
+      "src": "proxy",
+      "host": "EXEC-PC-16",
+      "user": "k.fathy",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "13:36:32",
+      "src": "proxy",
+      "host": "FIN-PC-39",
+      "user": "s.fathy",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "13:40:00",
+      "src": "linux",
+      "host": "WEB-01",
+      "user": "n/a",
+      "msg": "sshd: no 'Accepted' entries for 203.0.113.121 in the last 60 minutes"
+    },
+    {
+      "t": "13:43:17",
+      "src": "proxy",
+      "host": "ENG-PC-01",
+      "user": "t.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "13:47:30",
+      "src": "email",
+      "host": "SALES-PC-21",
+      "user": "a.mansour",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "13:48:01",
+      "src": "edr",
+      "host": "LEGAL-PC-12",
+      "user": "a.ibrahim",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "13:52:47",
+      "src": "windows",
+      "host": "IT-PC-30",
+      "user": "a.samir",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:54:54",
+      "src": "dns",
+      "host": "ENG-PC-01",
+      "user": "d.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    }
+  ],
+  "iocs": {
+    "203.0.113.121": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Reported for mass SSH brute force"
+    }
+  },
+  "expected_actions": [
+    "block_ip:203.0.113.121"
+  ]
+}

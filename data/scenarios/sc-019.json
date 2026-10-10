@@ -1,0 +1,153 @@
+{
+  "id": "sc-019",
+  "title": "Shift 019 - Night Shift",
+  "category": "Phishing",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Email security flagged a suspicious message delivered to a user.",
+  "startTime": "02:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "f.farouk": "EXEC-PC-24"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: suspicious link detected",
+      "source": "Email Gateway",
+      "host": "EXEC-PC-24",
+      "user": "f.farouk",
+      "summary": "Email from it-support@verify-online-hub.com contains a link to hxxps://verify-online-hub[.]com/verify",
+      "details": {
+        "email_from": "it-support@verify-online-hub.com",
+        "email_to": "f.farouk@corp.example",
+        "subject": "Invoice overdue - review attached",
+        "url": "hxxps://verify-online-hub[.]com/verify",
+        "src_ip": "192.0.2.132",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=it-support@verify-online-hub.com spf=fail dkim=none url=hxxps://verify-online-hub[.]com/verify"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 4,
+      "severity": "Low",
+      "rule": "Proxy: request blocked (phishing category)",
+      "source": "Web Proxy",
+      "host": "EXEC-PC-24",
+      "user": "f.farouk",
+      "summary": "f.farouk attempted to open verify-online-hub.com; request blocked by policy",
+      "details": {
+        "src_ip": "10.17.239.61",
+        "dst_ip": "192.0.2.132",
+        "dst_port": 443,
+        "domain": "verify-online-hub.com",
+        "url": "https://verify-online-hub.com/verify",
+        "action_taken": "Blocked",
+        "raw_log": "proxy GET https://verify-online-hub.com/verify 403 category=phishing"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "02:26:48",
+      "src": "windows",
+      "host": "LEGAL-PC-16",
+      "user": "y.mansour",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "02:28:19",
+      "src": "dns",
+      "host": "EXEC-PC-30",
+      "user": "o.ibrahim",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "02:29:47",
+      "src": "dns",
+      "host": "ENG-PC-14",
+      "user": "a.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "02:30:04",
+      "src": "dns",
+      "host": "SALES-PC-40",
+      "user": "y.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "02:34:00",
+      "src": "proxy",
+      "host": "EXEC-PC-24",
+      "user": "f.farouk",
+      "msg": "GET https://verify-online-hub.com/verify 403 (blocked: phishing)"
+    },
+    {
+      "t": "02:34:00",
+      "src": "dns",
+      "host": "EXEC-PC-24",
+      "user": "f.farouk",
+      "msg": "query verify-online-hub.com A NOERROR"
+    },
+    {
+      "t": "02:36:31",
+      "src": "proxy",
+      "host": "ENG-PC-22",
+      "user": "h.khaled",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "02:38:00",
+      "src": "proxy",
+      "host": "EXEC-PC-34",
+      "user": "f.nabil",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "02:47:48",
+      "src": "proxy",
+      "host": "ENG-PC-38",
+      "user": "n.mansour",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "02:59:42",
+      "src": "windows",
+      "host": "IT-PC-14",
+      "user": "h.ibrahim",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "verify-online-hub.com": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Phishing kit hosting, registered 3 days ago"
+    }
+  },
+  "expected_actions": [
+    "delete_email",
+    "block_domain:verify-online-hub.com"
+  ]
+}

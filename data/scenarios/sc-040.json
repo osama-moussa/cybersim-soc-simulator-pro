@@ -1,0 +1,140 @@
+{
+  "id": "sc-040",
+  "title": "Shift 040 - Morning Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Infrastructure monitoring reports abnormal server behavior.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Server: sustained high CPU",
+      "source": "Monitoring",
+      "host": "APP-02",
+      "user": "n/a",
+      "summary": "CPU at 97% for 45 minutes on APP-02",
+      "details": {
+        "host_ip": "10.10.0.50",
+        "process": "kworker-upd",
+        "count": 45,
+        "raw_log": "mon host=APP-02 cpu=97% duration=45m top_proc=kworker-upd"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1496"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 3,
+      "severity": "High",
+      "rule": "Network: connection to cryptomining pool",
+      "source": "Firewall",
+      "host": "APP-02",
+      "user": "n/a",
+      "summary": "APP-02 connected to mining pool pool.xmr-mine-hub.net:3333",
+      "details": {
+        "src_ip": "10.10.0.50",
+        "dst_ip": "198.51.100.177",
+        "dst_port": 3333,
+        "protocol": "TCP",
+        "domain": "pool.xmr-mine-hub.net",
+        "raw_log": "fw ALLOW 10.10.0.50 -> 198.51.100.177:3333 app=stratum"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1496"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "07:55:45",
+      "src": "proxy",
+      "host": "EXEC-PC-16",
+      "user": "m.saleh",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:00:00",
+      "src": "email",
+      "host": "FIN-PC-38",
+      "user": "n.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "08:02:30",
+      "src": "proxy",
+      "host": "EXEC-PC-37",
+      "user": "h.gamal",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:03:00",
+      "src": "firewall",
+      "host": "APP-02",
+      "user": "n/a",
+      "msg": "ALLOW 10.10.0.50 -> 198.51.100.177:3333 stratum+tcp"
+    },
+    {
+      "t": "08:08:14",
+      "src": "email",
+      "host": "FIN-PC-10",
+      "user": "o.nabil",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "08:14:40",
+      "src": "edr",
+      "host": "LEGAL-PC-35",
+      "user": "h.samir",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "08:24:01",
+      "src": "proxy",
+      "host": "EXEC-PC-32",
+      "user": "s.farouk",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:24:56",
+      "src": "windows",
+      "host": "EXEC-PC-26",
+      "user": "h.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "08:28:35",
+      "src": "proxy",
+      "host": "SALES-PC-22",
+      "user": "n.adel",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "pool.xmr-mine-hub.net": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Cryptomining pool (Stratum protocol)"
+    }
+  },
+  "expected_actions": [
+    "kill_process",
+    "block_domain:pool.xmr-mine-hub.net"
+  ]
+}

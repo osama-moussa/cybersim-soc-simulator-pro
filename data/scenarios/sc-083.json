@@ -1,0 +1,171 @@
+{
+  "id": "sc-083",
+  "title": "Shift 083 - Evening Shift",
+  "category": "Identity",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The SIEM reports repeated authentication failures for a user account.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "HR notice: Rana Zaki returned from annual leave today."
+    ]
+  },
+  "assets": {
+    "users": {
+      "r.zaki": "SALES-PC-30"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Multiple failed logons",
+      "source": "Windows Security",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "summary": "8 failed logons (4625) within 3 minutes followed by a successful logon (4624)",
+      "details": {
+        "src_ip": "10.14.180.89",
+        "host_ip": "10.14.180.89",
+        "event_id": 4625,
+        "count": 8,
+        "logon_type": "Interactive (2)",
+        "raw_log": "4625 x8 Account=r.zaki Status=0xC000006A (bad password); then 4624 success"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:55:32",
+      "src": "email",
+      "host": "IT-PC-05",
+      "user": "f.saleh",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "18:55:59",
+      "src": "proxy",
+      "host": "IT-PC-06",
+      "user": "a.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "18:57:00",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4625 failed logon (bad password) attempt 1"
+    },
+    {
+      "t": "18:57:20",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4625 failed logon (bad password) attempt 2"
+    },
+    {
+      "t": "18:57:40",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4625 failed logon (bad password) attempt 3"
+    },
+    {
+      "t": "18:57:57",
+      "src": "email",
+      "host": "LEGAL-PC-31",
+      "user": "y.saleh",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "18:58:00",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4625 failed logon (bad password) attempt 4"
+    },
+    {
+      "t": "18:58:20",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4625 failed logon (bad password) attempt 5"
+    },
+    {
+      "t": "18:58:40",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4625 failed logon (bad password) attempt 6"
+    },
+    {
+      "t": "18:59:00",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4625 failed logon (bad password) attempt 7"
+    },
+    {
+      "t": "18:59:20",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4625 failed logon (bad password) attempt 8"
+    },
+    {
+      "t": "18:59:55",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "r.zaki",
+      "msg": "4624 successful logon (interactive)"
+    },
+    {
+      "t": "19:05:08",
+      "src": "windows",
+      "host": "FIN-PC-21",
+      "user": "l.adel",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "19:06:25",
+      "src": "proxy",
+      "host": "FIN-PC-16",
+      "user": "s.zaki",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:06:32",
+      "src": "windows",
+      "host": "HR-PC-36",
+      "user": "y.khaled",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "19:07:57",
+      "src": "proxy",
+      "host": "FIN-PC-33",
+      "user": "h.ibrahim",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "19:27:36",
+      "src": "proxy",
+      "host": "HR-PC-35",
+      "user": "y.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

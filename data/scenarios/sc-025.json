@@ -1,0 +1,148 @@
+{
+  "id": "sc-025",
+  "title": "Shift 025 - Evening Shift",
+  "category": "Data Loss",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "DLP and endpoint tools raised alerts on a finance workstation.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "a.gamal": "FIN-PC-37"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "EDR: archive utility staging large dataset",
+      "source": "EDR",
+      "host": "FIN-PC-37",
+      "user": "a.gamal",
+      "summary": "7z.exe created a 5.4 GB encrypted archive on FIN-PC-37",
+      "details": {
+        "host_ip": "10.12.28.67",
+        "process": "7z.exe",
+        "parent_process": "cmd.exe",
+        "file_name": "C:\\Temp\\fin_data.7z",
+        "command_line": "7z.exe a -p******** C:\\Temp\\fin_data.7z \\\\FS-01\\Finance\\*",
+        "raw_log": "EDR proc=7z.exe args='a -p* fin_data.7z \\\\FS-01\\Finance' size=5.4GB"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1560.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 8,
+      "severity": "High",
+      "rule": "DLP: large outbound transfer to file-sharing site",
+      "source": "Firewall",
+      "host": "FIN-PC-37",
+      "user": "a.gamal",
+      "summary": "5.4 GB uploaded from FIN-PC-37 to filedrop-share.net",
+      "details": {
+        "src_ip": "10.12.28.67",
+        "dst_ip": "198.51.100.171",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "domain": "filedrop-share.net",
+        "bytes_out": "5.4 GB",
+        "raw_log": "fw ALLOW 10.12.28.67 -> 198.51.100.171:443 bytes_out=5.4GB sni=filedrop-share.net"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1567.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:56:08",
+      "src": "proxy",
+      "host": "FIN-PC-11",
+      "user": "k.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "18:59:20",
+      "src": "email",
+      "host": "FIN-PC-14",
+      "user": "y.zaki",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:01:31",
+      "src": "email",
+      "host": "EXEC-PC-21",
+      "user": "y.ibrahim",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:08:00",
+      "src": "proxy",
+      "host": "FIN-PC-37",
+      "user": "a.gamal",
+      "msg": "CONNECT filedrop-share.net:443 200 bytes_out=5.4GB"
+    },
+    {
+      "t": "19:12:35",
+      "src": "email",
+      "host": "ENG-PC-13",
+      "user": "k.mansour",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:19:12",
+      "src": "windows",
+      "host": "LEGAL-PC-29",
+      "user": "a.hassan",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "19:23:35",
+      "src": "dns",
+      "host": "FIN-PC-39",
+      "user": "m.hassan",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:24:20",
+      "src": "windows",
+      "host": "SALES-PC-30",
+      "user": "k.mansour",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "19:25:22",
+      "src": "windows",
+      "host": "EXEC-PC-05",
+      "user": "h.hassan",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "filedrop-share.net": {
+      "type": "domain",
+      "reputation": "suspicious",
+      "note": "Anonymous file-sharing service, not approved for corporate use"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:FIN-PC-37",
+    "block_domain:filedrop-share.net",
+    "disable_account:a.gamal",
+    "preserve_evidence",
+    "escalate_tier2"
+  ]
+}

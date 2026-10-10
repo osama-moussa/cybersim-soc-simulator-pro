@@ -1,0 +1,122 @@
+{
+  "id": "sc-029",
+  "title": "Shift 029 - Night Shift",
+  "category": "Network",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "DNS monitoring reports unusual query volume from a workstation.",
+  "startTime": "02:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "IT bulletin: new monitoring agent rolled out to workstations this week."
+    ]
+  },
+  "assets": {
+    "users": {
+      "r.khaled": "IT-PC-09"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "DNS: high query volume",
+      "source": "DNS Server",
+      "host": "IT-PC-09",
+      "user": "r.khaled",
+      "summary": "6457 DNS queries to telemetry.fabrikam-cdn.net in 10 minutes from IT-PC-09",
+      "details": {
+        "src_ip": "10.13.250.229",
+        "dst_ip": "10.10.0.53",
+        "dst_port": 53,
+        "protocol": "UDP",
+        "count": 6457,
+        "domain": "telemetry.fabrikam-cdn.net",
+        "raw_log": "dns client=10.13.250.229 qname=telemetry.fabrikam-cdn.net qtype=A count=6457/10min rcode=NOERROR"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "02:28:46",
+      "src": "windows",
+      "host": "EXEC-PC-02",
+      "user": "t.gamal",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "02:29:20",
+      "src": "dns",
+      "host": "EXEC-PC-29",
+      "user": "m.hassan",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "02:29:49",
+      "src": "windows",
+      "host": "LEGAL-PC-25",
+      "user": "l.nabil",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "02:30:00",
+      "src": "dns",
+      "host": "IT-PC-09",
+      "user": "r.khaled",
+      "msg": "query telemetry.fabrikam-cdn.net A NOERROR (x6457 in 10 min)"
+    },
+    {
+      "t": "02:33:12",
+      "src": "windows",
+      "host": "ENG-PC-07",
+      "user": "y.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "02:36:58",
+      "src": "email",
+      "host": "EXEC-PC-23",
+      "user": "d.mansour",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:38:58",
+      "src": "proxy",
+      "host": "ENG-PC-11",
+      "user": "s.samir",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "02:39:24",
+      "src": "dns",
+      "host": "SALES-PC-06",
+      "user": "l.khaled",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "02:58:17",
+      "src": "windows",
+      "host": "ENG-PC-11",
+      "user": "h.nabil",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "telemetry.fabrikam-cdn.net": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Telemetry endpoint of the corporate monitoring agent"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

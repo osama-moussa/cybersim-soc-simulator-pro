@@ -1,0 +1,178 @@
+{
+  "id": "sc-063",
+  "title": "Shift 063 - Afternoon Shift",
+  "category": "Intrusion",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "Network analytics and endpoint tools are reporting related findings.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "a.mansour": "FS-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "DNS: periodic beaconing to rare domain",
+      "source": "Network Analytics",
+      "host": "ENG-PC-37",
+      "user": "a.mansour",
+      "summary": "ENG-PC-37 queried office-365-access-desk.info every 60 seconds for the last 2 hours",
+      "details": {
+        "src_ip": "10.16.43.104",
+        "dst_ip": "10.10.0.53",
+        "dst_port": 53,
+        "protocol": "UDP",
+        "count": 120,
+        "domain": "office-365-access-desk.info",
+        "raw_log": "dns client=10.16.43.104 qname=office-365-access-desk.info interval=60s jitter=2s count=120"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1071.004"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 10,
+      "severity": "High",
+      "rule": "SMB: admin share access from workstation",
+      "source": "Windows Security",
+      "host": "FS-01",
+      "user": "a.mansour",
+      "summary": "a.mansour accessed \\\\FS-01\\C$ from ENG-PC-37",
+      "details": {
+        "src_ip": "10.16.43.104",
+        "dst_ip": "10.10.0.20",
+        "protocol": "SMB",
+        "event_id": 5140,
+        "raw_log": "5140 share=\\\\*\\C$ src=10.16.43.104 user=a.mansour host=FS-01"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1021.002"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 14,
+      "severity": "Critical",
+      "rule": "EDR: LSASS memory access",
+      "source": "EDR",
+      "host": "FS-01",
+      "user": "a.mansour",
+      "summary": "Credential dumping behavior (LSASS read) on FS-01",
+      "details": {
+        "host_ip": "10.10.0.20",
+        "process": "rundll32.exe",
+        "parent_process": "cmd.exe",
+        "command_line": "rundll32.exe comsvcs.dll, MiniDump 624 C:\\Windows\\Temp\\l.dmp full",
+        "raw_log": "EDR access target=lsass.exe src=rundll32.exe rights=PROCESS_VM_READ"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1003.001"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:30:00",
+      "src": "dns",
+      "host": "ENG-PC-37",
+      "user": "a.mansour",
+      "msg": "query office-365-access-desk.info A NOERROR (every 60s)"
+    },
+    {
+      "t": "13:30:38",
+      "src": "email",
+      "host": "SALES-PC-11",
+      "user": "n.ibrahim",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "13:31:21",
+      "src": "windows",
+      "host": "EXEC-PC-29",
+      "user": "s.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:32:16",
+      "src": "proxy",
+      "host": "ENG-PC-05",
+      "user": "m.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "13:35:14",
+      "src": "proxy",
+      "host": "ENG-PC-03",
+      "user": "y.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "13:36:12",
+      "src": "windows",
+      "host": "EXEC-PC-03",
+      "user": "s.adel",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "13:40:00",
+      "src": "windows",
+      "host": "FS-01",
+      "user": "a.mansour",
+      "msg": "5140 admin share C$ accessed from 10.16.43.104"
+    },
+    {
+      "t": "13:41:04",
+      "src": "dns",
+      "host": "HR-PC-31",
+      "user": "s.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "13:45:57",
+      "src": "proxy",
+      "host": "FIN-PC-22",
+      "user": "s.fathy",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "13:56:24",
+      "src": "windows",
+      "host": "EXEC-PC-13",
+      "user": "t.zaki",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "office-365-access-desk.info": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "C2 framework beacon infrastructure"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:ENG-PC-37",
+    "isolate_host:FS-01",
+    "block_domain:office-365-access-desk.info",
+    "reset_password:a.mansour",
+    "escalate_tier2",
+    "initiate_incident_response"
+  ]
+}

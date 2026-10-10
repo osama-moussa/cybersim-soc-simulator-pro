@@ -1,0 +1,128 @@
+{
+  "id": "sc-033",
+  "title": "Shift 033 - Afternoon Shift",
+  "category": "Endpoint",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "EDR flagged remote execution activity on a server.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2020",
+        "desc": "Monthly patch validation on DB-01 by IT Operations",
+        "owner": "IT Operations",
+        "window": "08:00-12:00"
+      }
+    ],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "adm.adel": "DB-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "EDR: Remote service created (PsExec)",
+      "source": "EDR",
+      "host": "DB-01",
+      "user": "adm.adel",
+      "summary": "PSEXESVC service installed on DB-01 by adm.adel from IT-PC-19",
+      "details": {
+        "src_ip": "10.13.44.219",
+        "dst_ip": "10.10.0.30",
+        "host_ip": "10.10.0.30",
+        "process": "PSEXESVC.exe",
+        "parent_process": "services.exe",
+        "event_id": 7045,
+        "command_line": "psexec.exe \\\\DB-01 -s cmd /c gpupdate /force",
+        "raw_log": "EventID=7045 ServiceName=PSEXESVC ImagePath=%SystemRoot%\\PSEXESVC.exe Host=DB-01"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:25:16",
+      "src": "proxy",
+      "host": "LEGAL-PC-03",
+      "user": "h.ibrahim",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "13:25:22",
+      "src": "windows",
+      "host": "HR-PC-34",
+      "user": "f.khaled",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "13:25:59",
+      "src": "email",
+      "host": "IT-PC-33",
+      "user": "n.fathy",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "13:28:50",
+      "src": "dns",
+      "host": "SALES-PC-29",
+      "user": "d.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "13:29:00",
+      "src": "windows",
+      "host": "IT-PC-19",
+      "user": "adm.adel",
+      "msg": "4648 explicit credential logon to DB-01"
+    },
+    {
+      "t": "13:30:37",
+      "src": "windows",
+      "host": "HR-PC-16",
+      "user": "s.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:39:18",
+      "src": "dns",
+      "host": "FIN-PC-18",
+      "user": "a.gamal",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "13:48:10",
+      "src": "proxy",
+      "host": "FIN-PC-09",
+      "user": "k.zaki",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "13:57:17",
+      "src": "proxy",
+      "host": "SALES-PC-31",
+      "user": "f.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    }
+  ],
+  "iocs": {
+    "10.13.44.219": {
+      "type": "ip",
+      "reputation": "benign",
+      "note": "IT administrator workstation (IT-PC-19)"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

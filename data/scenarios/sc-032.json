@@ -1,0 +1,138 @@
+{
+  "id": "sc-032",
+  "title": "Shift 032 - Morning Shift",
+  "category": "Insider Threat",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "DLP raised alerts on a user in the legal department.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "HR (confidential): Farida Mansour submitted a resignation letter last week."
+    ]
+  },
+  "assets": {
+    "users": {
+      "f.mansour": "LEGAL-PC-17"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "DLP: mass download from document repository",
+      "source": "DLP",
+      "host": "LEGAL-PC-17",
+      "user": "f.mansour",
+      "summary": "f.mansour downloaded 2984 files from the contracts repository in 20 minutes",
+      "details": {
+        "src_ip": "10.15.133.2",
+        "host_ip": "10.15.133.2",
+        "protocol": "HTTPS",
+        "count": 2511,
+        "raw_log": "dlp download repo=Contracts user=f.mansour files>1800 window=20m"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1530"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 10,
+      "severity": "High",
+      "rule": "EDR: bulk copy to USB storage",
+      "source": "EDR",
+      "host": "LEGAL-PC-17",
+      "user": "f.mansour",
+      "summary": "9 GB copied to removable media on LEGAL-PC-17",
+      "details": {
+        "host_ip": "10.15.133.2",
+        "process": "explorer.exe",
+        "file_name": "E:\\Contracts_Archive\\",
+        "raw_log": "EDR file_copy dest=E:\\ size>8GB user=f.mansour"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1052.001"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "07:58:45",
+      "src": "email",
+      "host": "SALES-PC-29",
+      "user": "a.ibrahim",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "08:00:39",
+      "src": "dns",
+      "host": "FIN-PC-29",
+      "user": "m.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "08:01:03",
+      "src": "dns",
+      "host": "LEGAL-PC-15",
+      "user": "y.khaled",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:10:00",
+      "src": "edr",
+      "host": "LEGAL-PC-17",
+      "user": "f.mansour",
+      "msg": "Bulk file copy to E:\\ (removable media)"
+    },
+    {
+      "t": "08:15:13",
+      "src": "windows",
+      "host": "IT-PC-37",
+      "user": "a.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "08:17:39",
+      "src": "edr",
+      "host": "ENG-PC-35",
+      "user": "y.fathy",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "08:24:40",
+      "src": "dns",
+      "host": "ENG-PC-28",
+      "user": "r.khaled",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:26:41",
+      "src": "proxy",
+      "host": "SALES-PC-17",
+      "user": "r.nabil",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "08:28:38",
+      "src": "windows",
+      "host": "SALES-PC-13",
+      "user": "m.khaled",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "preserve_evidence",
+    "notify_hr_legal",
+    "escalate_tier2"
+  ]
+}

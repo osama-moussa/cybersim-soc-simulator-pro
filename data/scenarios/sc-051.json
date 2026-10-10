@@ -1,0 +1,127 @@
+{
+  "id": "sc-051",
+  "title": "Shift 051 - Night Shift",
+  "category": "Identity",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The VPN gateway is reporting a login from an unusual location.",
+  "startTime": "02:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "Travel notice: Salma Hassan is on approved business travel to Netherlands this week (TRV-501)."
+    ]
+  },
+  "assets": {
+    "users": {
+      "s.hassan": "VPN-GW"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "VPN: login from new country",
+      "source": "VPN",
+      "host": "VPN-GW",
+      "user": "s.hassan",
+      "summary": "Successful VPN login from 198.51.100.229 (Netherlands), first time seen for s.hassan",
+      "details": {
+        "src_ip": "198.51.100.229",
+        "dst_ip": "10.10.0.1",
+        "geo": "Netherlands",
+        "mfa_result": "Passed (push approved)",
+        "raw_log": "vpn auth=OK user=s.hassan src=198.51.100.229 geo=Netherlands mfa=push_approved device=corp-laptop"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "16:30:00",
+      "src": "vpn",
+      "host": "VPN-GW",
+      "user": "s.hassan",
+      "msg": "Logout from 10.10.0.1 session ended normally"
+    },
+    {
+      "t": "02:28:32",
+      "src": "proxy",
+      "host": "EXEC-PC-04",
+      "user": "s.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "02:30:00",
+      "src": "vpn",
+      "host": "VPN-GW",
+      "user": "s.hassan",
+      "msg": "Login OK from 198.51.100.229 (Netherlands) device=corp-laptop MFA=approved"
+    },
+    {
+      "t": "02:33:14",
+      "src": "proxy",
+      "host": "FIN-PC-02",
+      "user": "l.hassan",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "02:35:24",
+      "src": "windows",
+      "host": "SALES-PC-06",
+      "user": "d.saleh",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "02:37:49",
+      "src": "proxy",
+      "host": "FIN-PC-28",
+      "user": "n.zaki",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "02:42:38",
+      "src": "proxy",
+      "host": "SALES-PC-25",
+      "user": "m.hassan",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "02:43:50",
+      "src": "windows",
+      "host": "ENG-PC-30",
+      "user": "o.gamal",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "02:56:52",
+      "src": "proxy",
+      "host": "EXEC-PC-19",
+      "user": "m.ibrahim",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "02:57:40",
+      "src": "email",
+      "host": "FIN-PC-30",
+      "user": "s.hassan",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {
+    "198.51.100.229": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Residential ISP in Netherlands, no malicious reports"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

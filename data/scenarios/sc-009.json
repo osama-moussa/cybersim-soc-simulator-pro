@@ -1,0 +1,122 @@
+{
+  "id": "sc-009",
+  "title": "Shift 009 - Evening Shift",
+  "category": "Network",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "DNS monitoring reports unusual query volume from a workstation.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "IT bulletin: new monitoring agent rolled out to workstations this week."
+    ]
+  },
+  "assets": {
+    "users": {
+      "s.farouk": "ENG-PC-18"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "DNS: high query volume",
+      "source": "DNS Server",
+      "host": "ENG-PC-18",
+      "user": "s.farouk",
+      "summary": "4610 DNS queries to telemetry.fabrikam-cdn.net in 10 minutes from ENG-PC-18",
+      "details": {
+        "src_ip": "10.16.230.208",
+        "dst_ip": "10.10.0.53",
+        "dst_port": 53,
+        "protocol": "UDP",
+        "count": 4610,
+        "domain": "telemetry.fabrikam-cdn.net",
+        "raw_log": "dns client=10.16.230.208 qname=telemetry.fabrikam-cdn.net qtype=A count=4610/10min rcode=NOERROR"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:59:33",
+      "src": "edr",
+      "host": "LEGAL-PC-02",
+      "user": "y.gamal",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "19:00:00",
+      "src": "dns",
+      "host": "ENG-PC-18",
+      "user": "s.farouk",
+      "msg": "query telemetry.fabrikam-cdn.net A NOERROR (x4610 in 10 min)"
+    },
+    {
+      "t": "19:02:20",
+      "src": "edr",
+      "host": "HR-PC-11",
+      "user": "n.fathy",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "19:07:39",
+      "src": "proxy",
+      "host": "SALES-PC-04",
+      "user": "d.adel",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:13:04",
+      "src": "dns",
+      "host": "LEGAL-PC-16",
+      "user": "n.gamal",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:14:09",
+      "src": "windows",
+      "host": "HR-PC-34",
+      "user": "m.saleh",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "19:14:59",
+      "src": "dns",
+      "host": "SALES-PC-39",
+      "user": "o.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:16:26",
+      "src": "proxy",
+      "host": "IT-PC-11",
+      "user": "k.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "19:27:19",
+      "src": "proxy",
+      "host": "LEGAL-PC-06",
+      "user": "s.ibrahim",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {
+    "telemetry.fabrikam-cdn.net": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Telemetry endpoint of the corporate monitoring agent"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "id": "sc-018",
+  "title": "Shift 018 - Afternoon Shift",
+  "category": "Active Directory",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "The domain controller is reporting unusual directory activity.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "a.adel": "DC-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "AD: Kerberoasting (multiple TGS requests, RC4)",
+      "source": "Windows Security",
+      "host": "DC-01",
+      "user": "a.adel",
+      "summary": "58 service ticket requests with RC4 encryption by a.adel in 2 minutes",
+      "details": {
+        "src_ip": "10.13.46.227",
+        "dst_ip": "10.10.0.10",
+        "event_id": 4769,
+        "protocol": "Kerberos",
+        "raw_log": "4769 TicketEncryptionType=0x17 client=a.adel src=10.13.46.227 burst=yes"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1558.003"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 9,
+      "severity": "Critical",
+      "rule": "AD: directory replication from non-DC (DCSync)",
+      "source": "Windows Security",
+      "host": "DC-01",
+      "user": "a.adel",
+      "summary": "Replication request (DS-Replication-Get-Changes) from IT-PC-22, which is not a domain controller",
+      "details": {
+        "src_ip": "10.13.46.227",
+        "dst_ip": "10.10.0.10",
+        "event_id": 4662,
+        "protocol": "MS-DRSR",
+        "raw_log": "4662 Properties={1131f6aa-...} SubjectUser=a.adel src=10.13.46.227"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1003.006"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:57:09",
+      "src": "proxy",
+      "host": "LEGAL-PC-27",
+      "user": "m.samir",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "15:57:33",
+      "src": "proxy",
+      "host": "LEGAL-PC-34",
+      "user": "d.saleh",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "15:58:07",
+      "src": "edr",
+      "host": "FIN-PC-06",
+      "user": "y.mansour",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "16:02:59",
+      "src": "proxy",
+      "host": "SALES-PC-08",
+      "user": "h.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "16:06:20",
+      "src": "windows",
+      "host": "LEGAL-PC-28",
+      "user": "a.farouk",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "16:09:00",
+      "src": "windows",
+      "host": "DC-01",
+      "user": "a.adel",
+      "msg": "4662 replication rights used by a.adel from 10.13.46.227"
+    },
+    {
+      "t": "16:10:25",
+      "src": "proxy",
+      "host": "ENG-PC-27",
+      "user": "f.nabil",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "16:18:27",
+      "src": "dns",
+      "host": "ENG-PC-16",
+      "user": "s.khaled",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "16:24:31",
+      "src": "dns",
+      "host": "SALES-PC-21",
+      "user": "n.hassan",
+      "msg": "query intranet.corp.example A NOERROR"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "disable_account:a.adel",
+    "isolate_host:IT-PC-22",
+    "reset_krbtgt_twice",
+    "escalate_tier2",
+    "initiate_incident_response"
+  ]
+}

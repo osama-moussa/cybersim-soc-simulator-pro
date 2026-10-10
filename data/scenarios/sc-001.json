@@ -1,0 +1,502 @@
+{
+  "id": "sc-001",
+  "title": "Shift 001 - Morning Shift (2h)",
+  "category": "Intrusion",
+  "outcome": "mixed",
+  "difficulty": "Tier 3",
+  "briefing": "Two-hour morning shift (06:00-08:00 UTC). Alerts arrive from several sources at irregular times. Judge each alert on its own evidence, check the notices before closing anything, and follow the SOC Tier 1 playbook.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "PT-817: Authorized external penetration test by RedLine Security. Source 203.0.113.52, scope WEB-01.",
+      "INC-97017: IT Helpdesk approved software NorthwindZip for Tarek Adel (t.adel).",
+      "CHG-4420: Approved internal vulnerability scan from scanner SEC-SCAN-01 (10.20.0.15), 06:30-07:00 UTC, subnet 10.10.0.0/24.",
+      "CHG-4431: IT admin l.fathy approved to add service account svc-patch to local Administrators on IT-PC-31 (patching project), 06:30-07:00 UTC.",
+      "SEC-TEST-9: Security team is running EDR detection tests on IT-PC-10 today (EICAR test file).",
+      "Corporate VPN egress IPs: 198.51.100.20 - 198.51.100.25 (Frankfurt gateway). MFA is enforced on VPN.",
+      "INC-97102: Finance audit export approved for r.ahmed on FIN-PC-08, encrypted USB device serial USB-0042.",
+      "MKT-221: Marketing campaign 'Autumn Sale' email blast at 07:45 UTC to 18,000 recipients, landing page /autumn-sale on WEB-01.",
+      "SEC-AW-22: Authorized phishing simulation by the Security Awareness team, 07:30-08:00 UTC, sender domain corp-training-portal.example."
+    ]
+  },
+  "assets": {
+    "users": {
+      "m.salah": "SALES-PC-12",
+      "s.mostafa": "HR-PC-18",
+      "k.nabil": "FIN-PC-21",
+      "a.fathy": "FS-01",
+      "t.adel": "HR-PC-40",
+      "l.fathy": "IT-PC-31",
+      "k.hassan": "IT-PC-10",
+      "j.mahmoud": "SALES-PC-30",
+      "r.ahmed": "FIN-PC-08",
+      "n.mansour": "LEGAL-PC-22",
+      "s.ibrahim": "HR-PC-25"
+    },
+    "hosts": [
+      "SALES-PC-12", "HR-PC-18", "FIN-PC-21", "ENG-PC-16", "FS-01", "HR-PC-40",
+      "IT-PC-31", "IT-PC-10", "SALES-PC-30", "FIN-PC-08", "LEGAL-PC-22", "HR-PC-25",
+      "WEB-01", "LNX-WEB-02", "SEC-SCAN-01"
+    ]
+  },
+  "alerts": [
+    {
+      "at": 3,
+      "severity": "Medium",
+      "rule": "Windows: multiple failed logons",
+      "source": "Windows Security",
+      "host": "SALES-PC-12",
+      "user": "m.salah",
+      "summary": "6 failed logons for m.salah on SALES-PC-12 within 2 minutes, followed by a successful logon",
+      "details": {
+        "src_ip": "10.11.30.12",
+        "dst_ip": "10.10.0.10",
+        "protocol": "Kerberos",
+        "event_id": 4625,
+        "count": 6,
+        "logon_type": 2,
+        "raw_log": "4625 x6 user=m.salah src=10.11.30.12 logon_type=2 then 4624 user=m.salah src=10.11.30.12 logon_type=2"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1001"
+    },
+    {
+      "at": 9,
+      "severity": "Medium",
+      "rule": "Email: user reported phishing",
+      "source": "Email Security",
+      "host": "HR-PC-18",
+      "user": "s.mostafa",
+      "summary": "s.mostafa reported 'Urgent: Your password expires in 24 hours' from it-support@micr0soft-security.com (13 recipients)",
+      "details": {
+        "sender": "it-support@micr0soft-security.com",
+        "recipients": 13,
+        "subject": "Urgent: Your password expires in 24 hours",
+        "url": "hxxp://micr0soft-security.com/login/verify",
+        "attachment": "none",
+        "spf": "fail",
+        "raw_log": "mail-gw delivered from=it-support@micr0soft-security.com rcpt_count=13 spf=fail dkim=none subject='Urgent: Your password expires in 24 hours'"
+      },
+      "truth": { "verdict": "TP", "severity": "High", "escalate": true, "mitre": "T1566.002" },
+      "id": "A-1002"
+    },
+    {
+      "at": 17,
+      "severity": "Medium",
+      "rule": "DNS: periodic beaconing to rare domain",
+      "source": "Network Analytics",
+      "host": "ENG-PC-16",
+      "user": "a.fathy",
+      "summary": "ENG-PC-16 queried secure-center-team.info every 60 seconds for the last 40 minutes",
+      "details": {
+        "src_ip": "10.16.1.3",
+        "dst_ip": "10.10.0.53",
+        "dst_port": 53,
+        "protocol": "UDP",
+        "count": 40,
+        "domain": "secure-center-team.info",
+        "raw_log": "dns client=10.16.1.3 qname=secure-center-team.info interval=60s jitter=2s count=40"
+      },
+      "truth": { "verdict": "TP", "severity": "High", "escalate": true, "mitre": "T1071.004" },
+      "id": "A-1003"
+    },
+    {
+      "at": 24,
+      "severity": "High",
+      "rule": "WAF: SQL injection attempts",
+      "source": "WAF",
+      "host": "WEB-01",
+      "user": "n/a",
+      "summary": "254 SQL injection payloads from 203.0.113.52 against /search within 5 minutes",
+      "details": {
+        "src_ip": "203.0.113.52",
+        "dst_ip": "172.16.10.5",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "count": 254,
+        "url": "https://www.corp.example/search?q=' OR 1=1--",
+        "action_taken": "Blocked",
+        "raw_log": "waf rule=942100 action=block src=203.0.113.52 uri=/search?q=%27%20OR%201%3D1-- count=254"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1004"
+    },
+    {
+      "at": 31,
+      "severity": "Medium",
+      "rule": "Proxy: suspicious executable download",
+      "source": "Web Proxy",
+      "host": "HR-PC-40",
+      "user": "t.adel",
+      "summary": "t.adel downloaded NorthwindZip_setup_9.8.exe from downloads.contoso-tools.com (uncategorized, newly seen)",
+      "details": {
+        "src_ip": "10.11.59.67",
+        "dst_ip": "192.0.2.86",
+        "dst_port": 443,
+        "url": "https://downloads.contoso-tools.com/NorthwindZip_setup_9.8.exe",
+        "file_name": "NorthwindZip_setup_9.8.exe",
+        "file_hash": "bb5f61a8039ba4d20fd9aff195d1d13849b6e572609f6b62f30cd4af14e170c0",
+        "action_taken": "Allowed",
+        "raw_log": "proxy GET https://downloads.contoso-tools.com/NorthwindZip_setup_9.8.exe 200 type=application/x-msdownload"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1005"
+    },
+    {
+      "at": 38,
+      "severity": "Medium",
+      "rule": "IDS: internal port scan",
+      "source": "IDS",
+      "host": "SEC-SCAN-01",
+      "user": "n/a",
+      "summary": "TCP SYN sweep from 10.20.0.15 across 10.10.0.0/24, ports 1-1024",
+      "details": {
+        "src_ip": "10.20.0.15",
+        "dst_ip": "10.10.0.0/24",
+        "protocol": "TCP",
+        "count": 61440,
+        "signature": "ET SCAN Potential SYN Sweep",
+        "raw_log": "ids sig='ET SCAN Potential SYN Sweep' src=10.20.0.15 dst=10.10.0.0/24 ports=1-1024"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1006"
+    },
+    {
+      "at": 44,
+      "severity": "High",
+      "rule": "Windows: member added to local Administrators group",
+      "source": "Windows Security",
+      "host": "IT-PC-31",
+      "user": "l.fathy",
+      "summary": "l.fathy added svc-patch to the local Administrators group on IT-PC-31",
+      "details": {
+        "src_ip": "10.10.4.31",
+        "event_id": 4732,
+        "target_account": "svc-patch",
+        "group": "Administrators",
+        "performed_by": "l.fathy",
+        "raw_log": "4732 group=Administrators member=svc-patch by=l.fathy host=IT-PC-31"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1007"
+    },
+    {
+      "at": 52,
+      "severity": "High",
+      "rule": "SMB: admin share access from workstation",
+      "source": "Windows Security",
+      "host": "FS-01",
+      "user": "a.fathy",
+      "summary": "a.fathy accessed \\\\FS-01\\C$ from ENG-PC-16",
+      "details": {
+        "src_ip": "10.16.1.3",
+        "dst_ip": "10.10.0.20",
+        "protocol": "SMB",
+        "event_id": 5140,
+        "raw_log": "5140 share=\\\\*\\C$ src=10.16.1.3 user=a.fathy host=FS-01"
+      },
+      "truth": { "verdict": "TP", "severity": "High", "escalate": true, "mitre": "T1021.002" },
+      "id": "A-1008"
+    },
+    {
+      "at": 58,
+      "severity": "Critical",
+      "rule": "EDR: LSASS memory access",
+      "source": "EDR",
+      "host": "FS-01",
+      "user": "a.fathy",
+      "summary": "Credential dumping behavior (LSASS read) on FS-01",
+      "details": {
+        "host_ip": "10.10.0.20",
+        "process": "rundll32.exe",
+        "parent_process": "cmd.exe",
+        "command_line": "rundll32.exe comsvcs.dll, MiniDump 624 C:\\Windows\\Temp\\l.dmp full",
+        "raw_log": "EDR access target=lsass.exe src=rundll32.exe rights=PROCESS_VM_READ"
+      },
+      "truth": { "verdict": "TP", "severity": "Critical", "escalate": true, "mitre": "T1003.001" },
+      "id": "A-1009"
+    },
+    {
+      "at": 66,
+      "severity": "High",
+      "rule": "EDR: malware detected",
+      "source": "EDR",
+      "host": "IT-PC-10",
+      "user": "k.hassan",
+      "summary": "EICAR-Test-File detected and quarantined on IT-PC-10",
+      "details": {
+        "host_ip": "10.10.4.10",
+        "file_name": "eicar.com",
+        "file_path": "C:\\Users\\k.hassan\\Downloads\\eicar.com",
+        "detection": "EICAR-Test-File",
+        "action_taken": "Quarantined",
+        "raw_log": "edr detect name=EICAR-Test-File path=C:\\Users\\k.hassan\\Downloads\\eicar.com action=quarantine"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1010"
+    },
+    {
+      "at": 73,
+      "severity": "High",
+      "rule": "Cloud: impossible travel sign-in",
+      "source": "Identity Provider",
+      "host": "n/a",
+      "user": "j.mahmoud",
+      "summary": "j.mahmoud signed in from Egypt and then from Germany 21 minutes apart",
+      "details": {
+        "first_ip": "192.0.2.150",
+        "first_location": "Alexandria, EG",
+        "first_time": "06:50:12",
+        "src_ip": "198.51.100.20",
+        "location": "Frankfurt, DE",
+        "time": "07:11:40",
+        "app": "Microsoft 365",
+        "mfa": "passed",
+        "raw_log": "idp signin user=j.mahmoud ip=198.51.100.20 country=DE app=M365 mfa=passed"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1011"
+    },
+    {
+      "at": 80,
+      "severity": "Medium",
+      "rule": "M365: inbox rule forwarding to external address",
+      "source": "Microsoft 365 Audit",
+      "host": "n/a",
+      "user": "k.nabil",
+      "summary": "New inbox rule on k.nabil's mailbox forwards all mail to an external address",
+      "details": {
+        "src_ip": "192.0.2.133",
+        "operation": "New-InboxRule",
+        "rule_name": ".",
+        "forward_to": "k.nabil.archive@mailbox-secure.example",
+        "raw_log": "m365 op=New-InboxRule user=k.nabil rule='.' forwardTo=k.nabil.archive@mailbox-secure.example client_ip=192.0.2.133"
+      },
+      "truth": { "verdict": "TP", "severity": "High", "escalate": true, "mitre": "T1114.003" },
+      "id": "A-1012"
+    },
+    {
+      "at": 88,
+      "severity": "Medium",
+      "rule": "Linux: SSH failed logons followed by success",
+      "source": "Linux Auth Log",
+      "host": "LNX-WEB-02",
+      "user": "deploy",
+      "summary": "40 failed SSH logons for deploy from 192.0.2.77 in 6 minutes, then an accepted password logon",
+      "details": {
+        "src_ip": "192.0.2.77",
+        "dst_ip": "172.16.10.22",
+        "dst_port": 22,
+        "protocol": "SSH",
+        "count": 40,
+        "raw_log": "sshd Failed password for deploy from 192.0.2.77 (x40) ... sshd Accepted password for deploy from 192.0.2.77 port 51822"
+      },
+      "truth": { "verdict": "TP", "severity": "High", "escalate": true, "mitre": "T1110.001" },
+      "id": "A-1013"
+    },
+    {
+      "at": 95,
+      "severity": "Medium",
+      "rule": "Device control: USB storage with bulk file copy",
+      "source": "Endpoint DLP",
+      "host": "FIN-PC-08",
+      "user": "r.ahmed",
+      "summary": "38 files copied to a USB mass storage device on FIN-PC-08",
+      "details": {
+        "host_ip": "10.12.8.8",
+        "device_serial": "USB-0042",
+        "count": 38,
+        "folder": "audit_export_q3",
+        "raw_log": "devctl usb_attach serial=USB-0042 host=FIN-PC-08 files=38 folder=audit_export_q3"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1014"
+    },
+    {
+      "at": 101,
+      "severity": "Medium",
+      "rule": "DLP: large upload to personal cloud storage",
+      "source": "DLP",
+      "host": "LEGAL-PC-22",
+      "user": "n.mansour",
+      "summary": "2.1 GB archive uploaded to mega.nz from LEGAL-PC-22",
+      "details": {
+        "src_ip": "10.13.22.22",
+        "dst_ip": "192.0.2.201",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "file_name": "cases.7z",
+        "size": "2.1 GB",
+        "destination": "mega.nz",
+        "raw_log": "dlp upload user=n.mansour dest=mega.nz file=cases.7z size=2.1GB classification=confidential"
+      },
+      "truth": { "verdict": "TP", "severity": "High", "escalate": true, "mitre": "T1567.002" },
+      "id": "A-1015"
+    },
+    {
+      "at": 108,
+      "severity": "Medium",
+      "rule": "WAF: HTTP request spike",
+      "source": "WAF",
+      "host": "WEB-01",
+      "user": "n/a",
+      "summary": "Request rate on WEB-01 rose to 4,200 requests per minute, mostly to /autumn-sale",
+      "details": {
+        "dst_ip": "172.16.10.5",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "requests_per_min": 4200,
+        "top_url": "/autumn-sale",
+        "distinct_sources": 3100,
+        "raw_log": "waf rate_alert host=WEB-01 rpm=4200 top_uri=/autumn-sale sources=3100"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1016"
+    },
+    {
+      "at": 114,
+      "severity": "Medium",
+      "rule": "Email: user reported phishing",
+      "source": "Email Security",
+      "host": "HR-PC-25",
+      "user": "s.ibrahim",
+      "summary": "s.ibrahim reported 'Your benefits enrollment closes Friday' from benefits@corp-training-portal.example",
+      "details": {
+        "sender": "benefits@corp-training-portal.example",
+        "recipients": 120,
+        "subject": "Your benefits enrollment closes Friday",
+        "url": "https://corp-training-portal.example/benefits",
+        "attachment": "none",
+        "spf": "pass",
+        "raw_log": "mail-gw delivered from=benefits@corp-training-portal.example rcpt_count=120 spf=pass dkim=pass header=X-Phish-Sim:SEC-AW-22"
+      },
+      "truth": { "verdict": "FP", "severity": "Low", "escalate": false, "mitre": null },
+      "id": "A-1017"
+    }
+  ],
+  "logs": [
+    { "t": "05:40:00", "src": "dns", "host": "ENG-PC-16", "user": "a.fathy", "msg": "query secure-center-team.info A NOERROR (every 60s)" },
+    { "t": "05:58:26", "src": "proxy", "host": "HR-PC-25", "user": "s.ibrahim", "msg": "GET https://intranet.corp.example/home 200" },
+    { "t": "05:59:39", "src": "email", "host": "ENG-PC-27", "user": "o.farouk", "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example" },
+    { "t": "06:00:00", "src": "dns", "host": "ENG-PC-16", "user": "a.fathy", "msg": "query secure-center-team.info A NOERROR (every 60s)" },
+    { "t": "06:01:12", "src": "windows", "host": "SALES-PC-12", "user": "m.salah", "msg": "4625 failed logon type=2 (attempts 1-4 within 60s)" },
+    { "t": "06:02:10", "src": "email", "host": "mail-gw", "user": "n/a", "msg": "Delivered: 'Urgent: Your password expires in 24 hours' from it-support@micr0soft-security.com to 13 recipients (spf=fail)" },
+    { "t": "06:02:40", "src": "windows", "host": "SALES-PC-12", "user": "m.salah", "msg": "4625 failed logon type=2 (attempts 5-6)" },
+    { "t": "06:03:05", "src": "windows", "host": "SALES-PC-12", "user": "m.salah", "msg": "4624 logon success type=2 from 10.11.30.12 (same host, no other sources)" },
+    { "t": "06:04:21", "src": "proxy", "host": "HR-PC-18", "user": "s.mostafa", "msg": "GET http://micr0soft-security.com/login/verify 200" },
+    { "t": "06:04:44", "src": "windows", "host": "LEGAL-PC-05", "user": "n.adel", "msg": "4634 logoff" },
+    { "t": "06:06:55", "src": "proxy", "host": "FIN-PC-21", "user": "k.nabil", "msg": "GET http://micr0soft-security.com/login/verify 200" },
+    { "t": "06:07:40", "src": "proxy", "host": "FIN-PC-21", "user": "k.nabil", "msg": "POST http://micr0soft-security.com/login/verify 200 (form submitted)" },
+    { "t": "06:11:25", "src": "dns", "host": "SALES-PC-19", "user": "y.farouk", "msg": "query updates.contoso-tools.com A NOERROR" },
+    { "t": "06:17:00", "src": "dns", "host": "ENG-PC-16", "user": "a.fathy", "msg": "query secure-center-team.info A NOERROR (every 60s)" },
+    { "t": "06:20:42", "src": "dns", "host": "IT-PC-31", "user": "l.fathy", "msg": "query updates.contoso-tools.com A NOERROR" },
+    { "t": "06:21:46", "src": "email", "host": "IT-PC-10", "user": "n.zaki", "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example" },
+    { "t": "06:23:16", "src": "windows", "host": "IT-PC-10", "user": "k.hassan", "msg": "4634 logoff" },
+    { "t": "06:24:00", "src": "waf", "host": "WEB-01", "user": "n/a", "msg": "BLOCK 203.0.113.52 GET /search?q=' OR 1=1-- rule=942100" },
+    { "t": "06:28:09", "src": "dns", "host": "LEGAL-PC-22", "user": "n.mansour", "msg": "query updates.contoso-tools.com A NOERROR" },
+    { "t": "06:31:00", "src": "proxy", "host": "HR-PC-40", "user": "t.adel", "msg": "GET https://downloads.contoso-tools.com/NorthwindZip_setup_9.8.exe 200" },
+    { "t": "06:36:10", "src": "network", "host": "SEC-SCAN-01", "user": "n/a", "msg": "IDS ET SCAN Potential SYN Sweep src=10.20.0.15 dst=10.10.0.0/24 ports=1-1024" },
+    { "t": "06:42:30", "src": "windows", "host": "IT-PC-31", "user": "l.fathy", "msg": "4732 member svc-patch added to Administrators by l.fathy" },
+    { "t": "06:50:12", "src": "cloud", "host": "n/a", "user": "j.mahmoud", "msg": "sign-in success ip=192.0.2.150 country=EG app=M365 mfa=passed" },
+    { "t": "06:52:00", "src": "windows", "host": "FS-01", "user": "a.fathy", "msg": "5140 admin share C$ accessed from 10.16.1.3" },
+    { "t": "06:56:30", "src": "edr", "host": "FS-01", "user": "a.fathy", "msg": "process cmd.exe -> rundll32.exe comsvcs.dll, MiniDump 624 C:\\Windows\\Temp\\l.dmp full" },
+    { "t": "06:58:00", "src": "edr", "host": "FS-01", "user": "a.fathy", "msg": "access target=lsass.exe src=rundll32.exe rights=PROCESS_VM_READ" },
+    { "t": "07:05:30", "src": "edr", "host": "IT-PC-10", "user": "k.hassan", "msg": "detect EICAR-Test-File C:\\Users\\k.hassan\\Downloads\\eicar.com quarantined" },
+    { "t": "07:11:40", "src": "cloud", "host": "n/a", "user": "j.mahmoud", "msg": "sign-in success ip=198.51.100.20 country=DE app=M365 mfa=passed" },
+    { "t": "07:12:05", "src": "cloud", "host": "n/a", "user": "k.nabil", "msg": "sign-in success ip=192.0.2.133 country=RO app=Exchange Online auth=legacy mfa=not_required" },
+    { "t": "07:19:20", "src": "cloud", "host": "n/a", "user": "k.nabil", "msg": "New-InboxRule name='.' forwardTo=k.nabil.archive@mailbox-secure.example client_ip=192.0.2.133" },
+    { "t": "07:22:00", "src": "linux", "host": "LNX-WEB-02", "user": "deploy", "msg": "sshd Failed password for deploy from 192.0.2.77 port 51790 (x40 between 07:22 and 07:27)" },
+    { "t": "07:27:55", "src": "linux", "host": "LNX-WEB-02", "user": "deploy", "msg": "sshd Accepted password for deploy from 192.0.2.77 port 51822" },
+    { "t": "07:29:30", "src": "linux", "host": "LNX-WEB-02", "user": "deploy", "msg": "sudo: deploy : COMMAND=/bin/bash ; USER=root" },
+    { "t": "07:31:15", "src": "windows", "host": "LEGAL-PC-22", "user": "n.mansour", "msg": "Sysmon 1: 7z.exe a C:\\Users\\n.mansour\\AppData\\Local\\Temp\\cases.7z C:\\Legal\\Cases\\*" },
+    { "t": "07:33:30", "src": "windows", "host": "LEGAL-PC-22", "user": "n.mansour", "msg": "Sysmon 11: file created cases.7z size=2.1GB" },
+    { "t": "07:33:40", "src": "windows", "host": "FIN-PC-08", "user": "r.ahmed", "msg": "6416 new USB mass storage device attached serial=USB-0042" },
+    { "t": "07:34:50", "src": "windows", "host": "FIN-PC-08", "user": "r.ahmed", "msg": "Sysmon 11: 38 files copied to E:\\audit_export_q3" },
+    { "t": "07:36:00", "src": "proxy", "host": "LEGAL-PC-22", "user": "n.mansour", "msg": "POST https://mega.nz/upload 200 (upload started, 2.1 GB)" },
+    { "t": "07:41:00", "src": "dlp", "host": "LEGAL-PC-22", "user": "n.mansour", "msg": "upload completed dest=mega.nz file=cases.7z size=2.1GB classification=confidential" },
+    { "t": "07:45:00", "src": "email", "host": "mail-gw", "user": "n/a", "msg": "Marketing campaign 'Autumn Sale' sent to 18,000 recipients (MKT-221)" },
+    { "t": "07:46:30", "src": "waf", "host": "WEB-01", "user": "n/a", "msg": "rate 4200 rpm top_uri=/autumn-sale sources=3100 user_agents=browsers status=200" },
+    { "t": "07:51:00", "src": "email", "host": "mail-gw", "user": "n/a", "msg": "Delivered: 'Your benefits enrollment closes Friday' from benefits@corp-training-portal.example to 120 recipients (spf=pass dkim=pass X-Phish-Sim:SEC-AW-22)" },
+    { "t": "07:53:30", "src": "proxy", "host": "HR-PC-25", "user": "s.ibrahim", "msg": "GET https://corp-training-portal.example/benefits 200" }
+  ],
+  "iocs": {
+    "secure-center-team.info": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "C2 framework beacon infrastructure"
+    },
+    "micr0soft-security.com": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Phishing domain, look-alike of microsoft, registered 2026-10-06, credential harvesting page"
+    },
+    "203.0.113.52": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Registered penetration-test source (RedLine Security, PT-817)"
+    },
+    "10.20.0.15": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Internal approved vulnerability scanner SEC-SCAN-01"
+    },
+    "192.0.2.133": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Hosting provider in Romania, seen in credential-abuse reports"
+    },
+    "192.0.2.77": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Known SSH brute-force source, listed on multiple blocklists"
+    },
+    "198.51.100.20": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Corporate VPN egress (Frankfurt gateway)"
+    },
+    "mega.nz": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Legitimate file-sharing service, but personal cloud storage is blocked by company policy"
+    },
+    "corp-training-portal.example": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Authorized phishing simulation platform (SEC-AW-22)"
+    },
+    "bb5f61a8039ba4d20fd9aff195d1d13849b6e572609f6b62f30cd4af14e170c0": {
+      "type": "hash",
+      "reputation": "clean",
+      "note": "Signed by Contoso Software Ltd, known-good (0/68 detections)"
+    },
+    "downloads.contoso-tools.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Vendor distribution domain, 6 years old"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:ENG-PC-16",
+    "isolate_host:FS-01",
+    "isolate_host:LEGAL-PC-22",
+    "block_domain:secure-center-team.info",
+    "block_domain:micr0soft-security.com",
+    "block_domain:mega.nz",
+    "reset_password:a.fathy",
+    "reset_password:k.nabil",
+    "escalate_tier2",
+    "initiate_incident_response",
+    "close_false_positive",
+    "close_false_positive",
+    "close_false_positive",
+    "close_false_positive",
+    "close_false_positive",
+    "close_false_positive",
+    "close_false_positive",
+    "close_false_positive",
+    "close_false_positive",
+    "close_false_positive"
+  ]
+}

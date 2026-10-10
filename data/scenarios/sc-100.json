@@ -1,0 +1,167 @@
+{
+  "id": "sc-100",
+  "title": "Shift 100 - Evening Shift",
+  "category": "Account Compromise",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "The email security stack reported anomalies on a finance mailbox.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "h.fathy": "MAIL-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Identity: sign-in from new IP / location",
+      "source": "Identity Provider",
+      "host": "IDP",
+      "user": "h.fathy",
+      "summary": "Sign-in to h.fathy mailbox from 198.51.100.99 (Mexico), no MFA prompt",
+      "details": {
+        "src_ip": "198.51.100.99",
+        "geo": "Mexico",
+        "mfa_result": "Skipped (token replay)",
+        "raw_log": "idp signin user=h.fathy src=198.51.100.99 geo=Mexico mfa=skipped"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 6,
+      "severity": "High",
+      "rule": "Email: inbox rule forwarding to external address",
+      "source": "Email Gateway",
+      "host": "MAIL-01",
+      "user": "h.fathy",
+      "summary": "New inbox rule forwards all mail from h.fathy to h.fathy.backup@mailbox-fwd.net",
+      "details": {
+        "email_to": "h.fathy.backup@mailbox-fwd.net",
+        "src_ip": "198.51.100.99",
+        "action_taken": "Rule created",
+        "raw_log": "mail rule_create user=h.fathy forward_to=h.fathy.backup@mailbox-fwd.net src=198.51.100.99"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1114.003"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 15,
+      "severity": "High",
+      "rule": "Email: outbound payment-change request",
+      "source": "Email Gateway",
+      "host": "MAIL-01",
+      "user": "h.fathy",
+      "summary": "Mail sent from the mailbox to Accounts Payable requesting a bank account change",
+      "details": {
+        "email_from": "h.fathy@corp.example",
+        "email_to": "ap@corp.example",
+        "subject": "Updated bank details",
+        "src_ip": "198.51.100.99",
+        "raw_log": "mail out from=h.fathy to=ap subject='Updated bank details' src=198.51.100.99"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1534"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:59:50",
+      "src": "proxy",
+      "host": "FIN-PC-33",
+      "user": "h.ibrahim",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:02:55",
+      "src": "dns",
+      "host": "IT-PC-36",
+      "user": "o.samir",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "19:06:00",
+      "src": "email",
+      "host": "MAIL-01",
+      "user": "h.fathy",
+      "msg": "Inbox rule created: forward -> h.fathy.backup@mailbox-fwd.net"
+    },
+    {
+      "t": "19:06:09",
+      "src": "proxy",
+      "host": "ENG-PC-23",
+      "user": "a.fathy",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:06:36",
+      "src": "edr",
+      "host": "HR-PC-12",
+      "user": "h.saleh",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "19:09:18",
+      "src": "email",
+      "host": "LEGAL-PC-40",
+      "user": "n.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:12:37",
+      "src": "proxy",
+      "host": "FIN-PC-13",
+      "user": "a.khaled",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "19:14:06",
+      "src": "dns",
+      "host": "FIN-PC-05",
+      "user": "y.hassan",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "19:28:46",
+      "src": "windows",
+      "host": "IT-PC-39",
+      "user": "a.ibrahim",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "198.51.100.99": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Proxy / VPN exit used in mailbox takeover campaigns"
+    }
+  },
+  "expected_actions": [
+    "reset_password:h.fathy",
+    "revoke_sessions:h.fathy",
+    "remove_inbox_rule",
+    "notify_finance",
+    "block_ip:198.51.100.99",
+    "escalate_tier2"
+  ]
+}

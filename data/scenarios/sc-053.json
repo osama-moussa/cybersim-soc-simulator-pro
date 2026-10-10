@@ -1,0 +1,138 @@
+{
+  "id": "sc-053",
+  "title": "Shift 053 - Morning Shift",
+  "category": "Insider Threat",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "DLP raised alerts on a user in the legal department.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "HR (confidential): Heba Samir submitted a resignation letter last week."
+    ]
+  },
+  "assets": {
+    "users": {
+      "h.samir": "LEGAL-PC-13"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "DLP: mass download from document repository",
+      "source": "DLP",
+      "host": "LEGAL-PC-13",
+      "user": "h.samir",
+      "summary": "h.samir downloaded 3260 files from the contracts repository in 20 minutes",
+      "details": {
+        "src_ip": "10.15.161.44",
+        "host_ip": "10.15.161.44",
+        "protocol": "HTTPS",
+        "count": 2936,
+        "raw_log": "dlp download repo=Contracts user=h.samir files>1800 window=20m"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1530"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 10,
+      "severity": "High",
+      "rule": "EDR: bulk copy to USB storage",
+      "source": "EDR",
+      "host": "LEGAL-PC-13",
+      "user": "h.samir",
+      "summary": "23 GB copied to removable media on LEGAL-PC-13",
+      "details": {
+        "host_ip": "10.15.161.44",
+        "process": "explorer.exe",
+        "file_name": "E:\\Contracts_Archive\\",
+        "raw_log": "EDR file_copy dest=E:\\ size>8GB user=h.samir"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1052.001"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "05:59:27",
+      "src": "windows",
+      "host": "IT-PC-03",
+      "user": "m.zaki",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:07:47",
+      "src": "dns",
+      "host": "IT-PC-13",
+      "user": "a.gamal",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "06:10:00",
+      "src": "edr",
+      "host": "LEGAL-PC-13",
+      "user": "h.samir",
+      "msg": "Bulk file copy to E:\\ (removable media)"
+    },
+    {
+      "t": "06:13:03",
+      "src": "email",
+      "host": "LEGAL-PC-09",
+      "user": "m.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "06:13:03",
+      "src": "windows",
+      "host": "IT-PC-29",
+      "user": "y.adel",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:24:05",
+      "src": "proxy",
+      "host": "ENG-PC-20",
+      "user": "s.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:26:18",
+      "src": "edr",
+      "host": "EXEC-PC-28",
+      "user": "h.adel",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "06:27:01",
+      "src": "proxy",
+      "host": "SALES-PC-24",
+      "user": "h.fathy",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:27:28",
+      "src": "proxy",
+      "host": "LEGAL-PC-02",
+      "user": "t.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {},
+  "expected_actions": [
+    "preserve_evidence",
+    "notify_hr_legal",
+    "escalate_tier2"
+  ]
+}

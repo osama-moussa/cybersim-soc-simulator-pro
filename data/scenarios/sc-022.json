@@ -1,0 +1,117 @@
+{
+  "id": "sc-022",
+  "title": "Shift 022 - Night Shift",
+  "category": "Network",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The perimeter firewall reports inbound probing.",
+  "startTime": "02:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {}
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Firewall: external port scan",
+      "source": "Firewall",
+      "host": "FW-EDGE",
+      "user": "n/a",
+      "summary": "203.0.113.209 probed 1778 ports across the perimeter range",
+      "details": {
+        "src_ip": "203.0.113.209",
+        "dst_ip": "198.18.0.10",
+        "protocol": "TCP",
+        "count": 1778,
+        "action_taken": "Dropped",
+        "raw_log": "fw DROP 203.0.113.209 -> 198.18.0.0/24 tcp ports=1778 flags=SYN"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1595"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "02:28:39",
+      "src": "dns",
+      "host": "FIN-PC-13",
+      "user": "h.khaled",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "02:30:00",
+      "src": "firewall",
+      "host": "FW-EDGE",
+      "user": "n/a",
+      "msg": "DROP 203.0.113.209 -> 198.18.0.10 tcp SYN sweep (1778 ports)"
+    },
+    {
+      "t": "02:32:33",
+      "src": "dns",
+      "host": "HR-PC-38",
+      "user": "m.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "02:34:09",
+      "src": "dns",
+      "host": "HR-PC-18",
+      "user": "s.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "02:36:42",
+      "src": "email",
+      "host": "LEGAL-PC-04",
+      "user": "a.nabil",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:51:37",
+      "src": "edr",
+      "host": "ENG-PC-04",
+      "user": "m.saleh",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "02:54:30",
+      "src": "proxy",
+      "host": "EXEC-PC-18",
+      "user": "f.ibrahim",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "02:55:19",
+      "src": "proxy",
+      "host": "HR-PC-39",
+      "user": "l.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "02:56:19",
+      "src": "edr",
+      "host": "HR-PC-31",
+      "user": "f.zaki",
+      "msg": "Scheduled scan completed, 0 detections"
+    }
+  ],
+  "iocs": {
+    "203.0.113.209": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Internet-wide scanner seen across many honeypots"
+    }
+  },
+  "expected_actions": [
+    "block_ip:203.0.113.209"
+  ]
+}

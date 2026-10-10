@@ -1,0 +1,202 @@
+{
+  "id": "sc-034",
+  "title": "Shift 034 - Night Shift",
+  "category": "Network",
+  "outcome": "mixed",
+  "difficulty": "Tier 2",
+  "briefing": "Busy shift: alerts are arriving from several sources. Judge each one on its own evidence.",
+  "startTime": "22:00:00",
+  "context": {
+    "change_calendar": [
+      {
+        "id": "CHG-2417",
+        "desc": "Monthly patch validation on APP-02 by IT Operations",
+        "owner": "IT Operations",
+        "window": "08:00-12:00"
+      },
+      {
+        "id": "CHG-2973",
+        "desc": "Monthly patch deployment through endpoint management (SCCM) - all workstations",
+        "owner": "IT Operations",
+        "window": "02:00-06:00"
+      }
+    ],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "adm.hassan": "APP-02"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Firewall: external port scan",
+      "source": "Firewall",
+      "host": "FW-EDGE",
+      "user": "n/a",
+      "summary": "203.0.113.181 probed 1427 ports across the perimeter range",
+      "details": {
+        "src_ip": "203.0.113.181",
+        "dst_ip": "198.18.0.10",
+        "protocol": "TCP",
+        "count": 1427,
+        "action_taken": "Dropped",
+        "raw_log": "fw DROP 203.0.113.181 -> 198.18.0.0/24 tcp ports=1427 flags=SYN"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1595"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 3,
+      "severity": "Medium",
+      "rule": "EDR: Remote service created (PsExec)",
+      "source": "EDR",
+      "host": "APP-02",
+      "user": "adm.hassan",
+      "summary": "PSEXESVC service installed on APP-02 by adm.hassan from IT-PC-40",
+      "details": {
+        "src_ip": "10.13.114.144",
+        "dst_ip": "10.10.0.50",
+        "host_ip": "10.10.0.50",
+        "process": "PSEXESVC.exe",
+        "parent_process": "services.exe",
+        "event_id": 7045,
+        "command_line": "psexec.exe \\\\APP-02 -s cmd /c gpupdate /force",
+        "raw_log": "EventID=7045 ServiceName=PSEXESVC ImagePath=%SystemRoot%\\PSEXESVC.exe Host=APP-02"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 12,
+      "severity": "Medium",
+      "rule": "EDR: Encoded PowerShell command",
+      "source": "EDR",
+      "host": "LEGAL-PC-35",
+      "user": "SYSTEM",
+      "summary": "powershell.exe -EncodedCommand executed by SYSTEM, parent CcmExec.exe on LEGAL-PC-35",
+      "details": {
+        "host_ip": "10.15.213.53",
+        "process": "powershell.exe",
+        "parent_process": "CcmExec.exe",
+        "command_line": "powershell.exe -NoProfile -ExecutionPolicy Bypass -EncodedCommand JABwAGEAdABjAGgA...",
+        "raw_log": "EDR proc_start host=LEGAL-PC-35 user=SYSTEM image=powershell.exe parent=CcmExec.exe"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "21:56:43",
+      "src": "dns",
+      "host": "LEGAL-PC-39",
+      "user": "n.nabil",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "21:58:35",
+      "src": "proxy",
+      "host": "ENG-PC-29",
+      "user": "o.mansour",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "22:00:00",
+      "src": "firewall",
+      "host": "FW-EDGE",
+      "user": "n/a",
+      "msg": "DROP 203.0.113.181 -> 198.18.0.10 tcp SYN sweep (1427 ports)"
+    },
+    {
+      "t": "22:02:00",
+      "src": "windows",
+      "host": "IT-PC-40",
+      "user": "adm.hassan",
+      "msg": "4648 explicit credential logon to APP-02"
+    },
+    {
+      "t": "22:02:29",
+      "src": "dns",
+      "host": "HR-PC-07",
+      "user": "h.hassan",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "22:07:54",
+      "src": "dns",
+      "host": "FIN-PC-22",
+      "user": "a.ibrahim",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:08:20",
+      "src": "dns",
+      "host": "FIN-PC-28",
+      "user": "s.samir",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:08:38",
+      "src": "proxy",
+      "host": "EXEC-PC-18",
+      "user": "n.saleh",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:12:00",
+      "src": "edr",
+      "host": "LEGAL-PC-35",
+      "user": "SYSTEM",
+      "msg": "Process start: CcmExec.exe -> powershell.exe -EncodedCommand ..."
+    },
+    {
+      "t": "22:18:47",
+      "src": "proxy",
+      "host": "HR-PC-22",
+      "user": "h.saleh",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:21:51",
+      "src": "email",
+      "host": "HR-PC-23",
+      "user": "d.farouk",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {
+    "203.0.113.181": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Internet-wide scanner seen across many honeypots"
+    },
+    "10.13.114.144": {
+      "type": "ip",
+      "reputation": "benign",
+      "note": "IT administrator workstation (IT-PC-40)"
+    }
+  },
+  "expected_actions": [
+    "block_ip:203.0.113.181",
+    "close_false_positive",
+    "close_false_positive"
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "id": "sc-069",
+  "title": "Shift 069 - Afternoon Shift",
+  "category": "Intrusion",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "Network analytics and endpoint tools are reporting related findings.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "f.ibrahim": "FS-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "DNS: periodic beaconing to rare domain",
+      "source": "Network Analytics",
+      "host": "ENG-PC-40",
+      "user": "f.ibrahim",
+      "summary": "ENG-PC-40 queried secure-access-desk.net every 60 seconds for the last 2 hours",
+      "details": {
+        "src_ip": "10.16.206.153",
+        "dst_ip": "10.10.0.53",
+        "dst_port": 53,
+        "protocol": "UDP",
+        "count": 120,
+        "domain": "secure-access-desk.net",
+        "raw_log": "dns client=10.16.206.153 qname=secure-access-desk.net interval=60s jitter=2s count=120"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1071.004"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 10,
+      "severity": "High",
+      "rule": "SMB: admin share access from workstation",
+      "source": "Windows Security",
+      "host": "FS-01",
+      "user": "f.ibrahim",
+      "summary": "f.ibrahim accessed \\\\FS-01\\C$ from ENG-PC-40",
+      "details": {
+        "src_ip": "10.16.206.153",
+        "dst_ip": "10.10.0.20",
+        "protocol": "SMB",
+        "event_id": 5140,
+        "raw_log": "5140 share=\\\\*\\C$ src=10.16.206.153 user=f.ibrahim host=FS-01"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1021.002"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 14,
+      "severity": "Critical",
+      "rule": "EDR: LSASS memory access",
+      "source": "EDR",
+      "host": "FS-01",
+      "user": "f.ibrahim",
+      "summary": "Credential dumping behavior (LSASS read) on FS-01",
+      "details": {
+        "host_ip": "10.10.0.20",
+        "process": "rundll32.exe",
+        "parent_process": "cmd.exe",
+        "command_line": "rundll32.exe comsvcs.dll, MiniDump 624 C:\\Windows\\Temp\\l.dmp full",
+        "raw_log": "EDR access target=lsass.exe src=rundll32.exe rights=PROCESS_VM_READ"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1003.001"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:58:29",
+      "src": "dns",
+      "host": "LEGAL-PC-40",
+      "user": "d.khaled",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "16:00:00",
+      "src": "dns",
+      "host": "ENG-PC-40",
+      "user": "f.ibrahim",
+      "msg": "query secure-access-desk.net A NOERROR (every 60s)"
+    },
+    {
+      "t": "16:02:20",
+      "src": "email",
+      "host": "IT-PC-21",
+      "user": "m.fathy",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "16:06:38",
+      "src": "email",
+      "host": "LEGAL-PC-17",
+      "user": "f.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "16:10:00",
+      "src": "windows",
+      "host": "FS-01",
+      "user": "f.ibrahim",
+      "msg": "5140 admin share C$ accessed from 10.16.206.153"
+    },
+    {
+      "t": "16:17:08",
+      "src": "proxy",
+      "host": "FIN-PC-23",
+      "user": "h.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "16:19:40",
+      "src": "proxy",
+      "host": "EXEC-PC-12",
+      "user": "h.ibrahim",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:22:48",
+      "src": "proxy",
+      "host": "EXEC-PC-04",
+      "user": "a.adel",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "16:25:37",
+      "src": "proxy",
+      "host": "EXEC-PC-26",
+      "user": "t.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:26:54",
+      "src": "proxy",
+      "host": "LEGAL-PC-01",
+      "user": "s.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "secure-access-desk.net": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "C2 framework beacon infrastructure"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:ENG-PC-40",
+    "isolate_host:FS-01",
+    "block_domain:secure-access-desk.net",
+    "reset_password:f.ibrahim",
+    "escalate_tier2",
+    "initiate_incident_response"
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "id": "sc-042",
+  "title": "Shift 042 - Night Shift",
+  "category": "Network",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "DNS monitoring reports unusual query volume from a workstation.",
+  "startTime": "02:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "IT bulletin: new monitoring agent rolled out to workstations this week."
+    ]
+  },
+  "assets": {
+    "users": {
+      "n.nabil": "EXEC-PC-36"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "DNS: high query volume",
+      "source": "DNS Server",
+      "host": "EXEC-PC-36",
+      "user": "n.nabil",
+      "summary": "7027 DNS queries to telemetry.fabrikam-cdn.net in 10 minutes from EXEC-PC-36",
+      "details": {
+        "src_ip": "10.17.54.107",
+        "dst_ip": "10.10.0.53",
+        "dst_port": 53,
+        "protocol": "UDP",
+        "count": 7027,
+        "domain": "telemetry.fabrikam-cdn.net",
+        "raw_log": "dns client=10.17.54.107 qname=telemetry.fabrikam-cdn.net qtype=A count=7027/10min rcode=NOERROR"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "02:25:41",
+      "src": "dns",
+      "host": "HR-PC-02",
+      "user": "a.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "02:27:27",
+      "src": "windows",
+      "host": "EXEC-PC-36",
+      "user": "a.samir",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "02:30:00",
+      "src": "dns",
+      "host": "EXEC-PC-36",
+      "user": "n.nabil",
+      "msg": "query telemetry.fabrikam-cdn.net A NOERROR (x7027 in 10 min)"
+    },
+    {
+      "t": "02:30:23",
+      "src": "dns",
+      "host": "FIN-PC-20",
+      "user": "h.mansour",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "02:39:19",
+      "src": "proxy",
+      "host": "HR-PC-06",
+      "user": "m.farouk",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "02:52:17",
+      "src": "dns",
+      "host": "ENG-PC-31",
+      "user": "m.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "02:54:30",
+      "src": "proxy",
+      "host": "EXEC-PC-10",
+      "user": "m.gamal",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "02:55:19",
+      "src": "windows",
+      "host": "EXEC-PC-24",
+      "user": "y.hassan",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "02:57:15",
+      "src": "dns",
+      "host": "IT-PC-02",
+      "user": "a.fathy",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    }
+  ],
+  "iocs": {
+    "telemetry.fabrikam-cdn.net": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Telemetry endpoint of the corporate monitoring agent"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

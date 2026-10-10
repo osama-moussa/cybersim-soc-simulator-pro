@@ -1,0 +1,178 @@
+{
+  "id": "sc-026",
+  "title": "Shift 026 - Morning Shift",
+  "category": "Intrusion",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "The Linux application server has produced multiple alerts.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "root": "APP-02",
+      "svc_deploy": "APP-02"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "SSH: brute force attempts",
+      "source": "Linux Auth",
+      "host": "APP-02",
+      "user": "root",
+      "summary": "896 failed SSH logins from 192.0.2.224 in 10 minutes",
+      "details": {
+        "src_ip": "192.0.2.224",
+        "dst_ip": "10.10.0.50",
+        "dst_port": 22,
+        "protocol": "SSH",
+        "count": 896,
+        "raw_log": "sshd Failed password for root from 192.0.2.224 (x896)"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1110"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 8,
+      "severity": "High",
+      "rule": "SSH: successful login after brute force",
+      "source": "Linux Auth",
+      "host": "APP-02",
+      "user": "svc_deploy",
+      "summary": "Successful SSH login for svc_deploy from 192.0.2.224 after the failed attempts",
+      "details": {
+        "src_ip": "192.0.2.224",
+        "dst_ip": "10.10.0.50",
+        "dst_port": 22,
+        "protocol": "SSH",
+        "raw_log": "sshd Accepted password for svc_deploy from 192.0.2.224 port 57065 ssh2"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 11,
+      "severity": "Critical",
+      "rule": "Linux: new user + cron persistence",
+      "source": "EDR",
+      "host": "APP-02",
+      "user": "svc_deploy",
+      "summary": "User 'support01' created and a root cron job added on APP-02",
+      "details": {
+        "host_ip": "10.10.0.50",
+        "process": "useradd",
+        "parent_process": "bash",
+        "command_line": "useradd -m -G sudo support01; echo '* * * * * root /tmp/.x' >> /etc/crontab",
+        "raw_log": "auditd useradd name=support01 groups=sudo; crontab modified by svc_deploy"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1136.001"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "05:57:36",
+      "src": "email",
+      "host": "ENG-PC-11",
+      "user": "s.mansour",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "05:58:10",
+      "src": "windows",
+      "host": "HR-PC-35",
+      "user": "y.farouk",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:02:47",
+      "src": "edr",
+      "host": "HR-PC-13",
+      "user": "d.ibrahim",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "06:04:39",
+      "src": "email",
+      "host": "SALES-PC-13",
+      "user": "f.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "06:08:00",
+      "src": "linux",
+      "host": "APP-02",
+      "user": "svc_deploy",
+      "msg": "sshd: Accepted password for svc_deploy from 192.0.2.224"
+    },
+    {
+      "t": "06:11:00",
+      "src": "linux",
+      "host": "APP-02",
+      "user": "svc_deploy",
+      "msg": "useradd: new user name=support01"
+    },
+    {
+      "t": "06:11:13",
+      "src": "windows",
+      "host": "LEGAL-PC-16",
+      "user": "a.samir",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:13:09",
+      "src": "proxy",
+      "host": "LEGAL-PC-25",
+      "user": "s.gamal",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "06:20:28",
+      "src": "windows",
+      "host": "IT-PC-19",
+      "user": "h.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "06:23:17",
+      "src": "windows",
+      "host": "ENG-PC-12",
+      "user": "l.gamal",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "192.0.2.224": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "SSH brute force source, associated with botnet intrusions"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:APP-02",
+    "block_ip:192.0.2.224",
+    "disable_account:svc_deploy",
+    "disable_account:support01",
+    "escalate_tier2",
+    "initiate_incident_response"
+  ]
+}

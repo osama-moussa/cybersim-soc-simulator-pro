@@ -1,0 +1,167 @@
+{
+  "id": "sc-091",
+  "title": "Shift 091 - Morning Shift",
+  "category": "Account Compromise",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "The email security stack reported anomalies on a finance mailbox.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "d.samir": "MAIL-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Identity: sign-in from new IP / location",
+      "source": "Identity Provider",
+      "host": "IDP",
+      "user": "d.samir",
+      "summary": "Sign-in to d.samir mailbox from 198.51.100.93 (Romania), no MFA prompt",
+      "details": {
+        "src_ip": "198.51.100.93",
+        "geo": "Romania",
+        "mfa_result": "Skipped (token replay)",
+        "raw_log": "idp signin user=d.samir src=198.51.100.93 geo=Romania mfa=skipped"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 6,
+      "severity": "High",
+      "rule": "Email: inbox rule forwarding to external address",
+      "source": "Email Gateway",
+      "host": "MAIL-01",
+      "user": "d.samir",
+      "summary": "New inbox rule forwards all mail from d.samir to d.samir.backup@mailbox-fwd.net",
+      "details": {
+        "email_to": "d.samir.backup@mailbox-fwd.net",
+        "src_ip": "198.51.100.93",
+        "action_taken": "Rule created",
+        "raw_log": "mail rule_create user=d.samir forward_to=d.samir.backup@mailbox-fwd.net src=198.51.100.93"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1114.003"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 15,
+      "severity": "High",
+      "rule": "Email: outbound payment-change request",
+      "source": "Email Gateway",
+      "host": "MAIL-01",
+      "user": "d.samir",
+      "summary": "Mail sent from the mailbox to Accounts Payable requesting a bank account change",
+      "details": {
+        "email_from": "d.samir@corp.example",
+        "email_to": "ap@corp.example",
+        "subject": "Updated bank details",
+        "src_ip": "198.51.100.93",
+        "raw_log": "mail out from=d.samir to=ap subject='Updated bank details' src=198.51.100.93"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1534"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "07:55:51",
+      "src": "dns",
+      "host": "SALES-PC-39",
+      "user": "y.mansour",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "07:56:21",
+      "src": "email",
+      "host": "HR-PC-11",
+      "user": "m.hassan",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "08:03:51",
+      "src": "edr",
+      "host": "ENG-PC-02",
+      "user": "d.mansour",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "08:06:00",
+      "src": "email",
+      "host": "MAIL-01",
+      "user": "d.samir",
+      "msg": "Inbox rule created: forward -> d.samir.backup@mailbox-fwd.net"
+    },
+    {
+      "t": "08:10:34",
+      "src": "email",
+      "host": "IT-PC-16",
+      "user": "o.farouk",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "08:12:22",
+      "src": "windows",
+      "host": "ENG-PC-32",
+      "user": "l.nabil",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "08:13:17",
+      "src": "dns",
+      "host": "LEGAL-PC-01",
+      "user": "a.fathy",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "08:14:40",
+      "src": "proxy",
+      "host": "ENG-PC-31",
+      "user": "o.mansour",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:19:57",
+      "src": "dns",
+      "host": "HR-PC-38",
+      "user": "f.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    }
+  ],
+  "iocs": {
+    "198.51.100.93": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Proxy / VPN exit used in mailbox takeover campaigns"
+    }
+  },
+  "expected_actions": [
+    "reset_password:d.samir",
+    "revoke_sessions:d.samir",
+    "remove_inbox_rule",
+    "notify_finance",
+    "block_ip:198.51.100.93",
+    "escalate_tier2"
+  ]
+}

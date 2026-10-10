@@ -1,0 +1,122 @@
+{
+  "id": "sc-037",
+  "title": "Shift 037 - Morning Shift",
+  "category": "Phishing",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Email security quarantined a message for a user.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "o.samir": "SALES-PC-05"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Email: bulk sender flagged as phishing",
+      "source": "Email Gateway",
+      "host": "SALES-PC-05",
+      "user": "o.samir",
+      "summary": "Message from news@mail.northwind-news.com flagged: bulk sender, tracking links",
+      "details": {
+        "email_from": "news@mail.northwind-news.com",
+        "email_to": "o.samir@corp.example",
+        "subject": "October product update",
+        "spf": "pass",
+        "dkim": "pass",
+        "dmarc": "pass",
+        "action_taken": "Quarantined",
+        "raw_log": "mail from=news@mail.northwind-news.com spf=pass dkim=pass dmarc=pass bulk=yes list-unsubscribe=present"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "05:59:06",
+      "src": "windows",
+      "host": "HR-PC-26",
+      "user": "l.nabil",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:00:00",
+      "src": "email",
+      "host": "MAIL-01",
+      "user": "o.samir",
+      "msg": "Quarantined: 'October product update' from news@mail.northwind-news.com"
+    },
+    {
+      "t": "06:06:51",
+      "src": "proxy",
+      "host": "SALES-PC-19",
+      "user": "a.saleh",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:10:26",
+      "src": "proxy",
+      "host": "FIN-PC-22",
+      "user": "r.fathy",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "06:11:03",
+      "src": "proxy",
+      "host": "LEGAL-PC-16",
+      "user": "n.ibrahim",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "06:11:31",
+      "src": "edr",
+      "host": "EXEC-PC-35",
+      "user": "k.ibrahim",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "06:15:19",
+      "src": "proxy",
+      "host": "EXEC-PC-37",
+      "user": "h.nabil",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "06:16:19",
+      "src": "dns",
+      "host": "FIN-PC-11",
+      "user": "a.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "06:23:41",
+      "src": "edr",
+      "host": "EXEC-PC-13",
+      "user": "r.zaki",
+      "msg": "Scheduled scan completed, 0 detections"
+    }
+  ],
+  "iocs": {
+    "mail.northwind-news.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Legitimate marketing platform; vendor newsletter, SPF/DKIM/DMARC aligned"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive",
+    "release_email"
+  ]
+}

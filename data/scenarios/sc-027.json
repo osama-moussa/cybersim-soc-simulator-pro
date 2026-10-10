@@ -1,0 +1,127 @@
+{
+  "id": "sc-027",
+  "title": "Shift 027 - Evening Shift",
+  "category": "Identity",
+  "outcome": "false_positive",
+  "difficulty": "Tier 1",
+  "briefing": "The VPN gateway is reporting a login from an unusual location.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "Travel notice: Mona Saleh is on approved business travel to Germany this week (TRV-951)."
+    ]
+  },
+  "assets": {
+    "users": {
+      "m.saleh": "VPN-GW"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "VPN: login from new country",
+      "source": "VPN",
+      "host": "VPN-GW",
+      "user": "m.saleh",
+      "summary": "Successful VPN login from 198.51.100.54 (Germany), first time seen for m.saleh",
+      "details": {
+        "src_ip": "198.51.100.54",
+        "dst_ip": "10.10.0.1",
+        "geo": "Germany",
+        "mfa_result": "Passed (push approved)",
+        "raw_log": "vpn auth=OK user=m.saleh src=198.51.100.54 geo=Germany mfa=push_approved device=corp-laptop"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "09:00:00",
+      "src": "vpn",
+      "host": "VPN-GW",
+      "user": "m.saleh",
+      "msg": "Logout from 10.10.0.1 session ended normally"
+    },
+    {
+      "t": "18:55:01",
+      "src": "edr",
+      "host": "EXEC-PC-18",
+      "user": "s.farouk",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "18:56:32",
+      "src": "dns",
+      "host": "IT-PC-25",
+      "user": "t.ibrahim",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:00:00",
+      "src": "vpn",
+      "host": "VPN-GW",
+      "user": "m.saleh",
+      "msg": "Login OK from 198.51.100.54 (Germany) device=corp-laptop MFA=approved"
+    },
+    {
+      "t": "19:02:29",
+      "src": "proxy",
+      "host": "HR-PC-36",
+      "user": "h.zaki",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "19:08:09",
+      "src": "proxy",
+      "host": "IT-PC-25",
+      "user": "t.saleh",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:21:49",
+      "src": "dns",
+      "host": "IT-PC-22",
+      "user": "m.farouk",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "19:26:49",
+      "src": "windows",
+      "host": "FIN-PC-35",
+      "user": "h.farouk",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "19:26:56",
+      "src": "email",
+      "host": "EXEC-PC-15",
+      "user": "f.fathy",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:28:32",
+      "src": "proxy",
+      "host": "IT-PC-03",
+      "user": "o.zaki",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "198.51.100.54": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Residential ISP in Germany, no malicious reports"
+    }
+  },
+  "expected_actions": [
+    "close_false_positive"
+  ]
+}

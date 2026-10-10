@@ -1,0 +1,153 @@
+{
+  "id": "sc-031",
+  "title": "Shift 031 - Evening Shift",
+  "category": "Phishing",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Email security flagged a suspicious message delivered to a user.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "d.zaki": "ENG-PC-12"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: suspicious link detected",
+      "source": "Email Gateway",
+      "host": "ENG-PC-12",
+      "user": "d.zaki",
+      "summary": "Email from security-alert@office-365-update-desk.net contains a link to hxxps://office-365-update-desk[.]net/verify",
+      "details": {
+        "email_from": "security-alert@office-365-update-desk.net",
+        "email_to": "d.zaki@corp.example",
+        "subject": "Unusual sign-in activity on your account",
+        "url": "hxxps://office-365-update-desk[.]net/verify",
+        "src_ip": "198.51.100.194",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=security-alert@office-365-update-desk.net spf=fail dkim=none url=hxxps://office-365-update-desk[.]net/verify"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 4,
+      "severity": "Low",
+      "rule": "Proxy: request blocked (phishing category)",
+      "source": "Web Proxy",
+      "host": "ENG-PC-12",
+      "user": "d.zaki",
+      "summary": "d.zaki attempted to open office-365-update-desk.net; request blocked by policy",
+      "details": {
+        "src_ip": "10.16.236.102",
+        "dst_ip": "198.51.100.194",
+        "dst_port": 443,
+        "domain": "office-365-update-desk.net",
+        "url": "https://office-365-update-desk.net/verify",
+        "action_taken": "Blocked",
+        "raw_log": "proxy GET https://office-365-update-desk.net/verify 403 category=phishing"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:56:20",
+      "src": "email",
+      "host": "ENG-PC-07",
+      "user": "l.zaki",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "18:58:03",
+      "src": "proxy",
+      "host": "ENG-PC-31",
+      "user": "a.gamal",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "18:58:47",
+      "src": "windows",
+      "host": "LEGAL-PC-02",
+      "user": "l.khaled",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "19:04:00",
+      "src": "proxy",
+      "host": "ENG-PC-12",
+      "user": "d.zaki",
+      "msg": "GET https://office-365-update-desk.net/verify 403 (blocked: phishing)"
+    },
+    {
+      "t": "19:04:00",
+      "src": "dns",
+      "host": "ENG-PC-12",
+      "user": "d.zaki",
+      "msg": "query office-365-update-desk.net A NOERROR"
+    },
+    {
+      "t": "19:07:22",
+      "src": "proxy",
+      "host": "SALES-PC-26",
+      "user": "l.fathy",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "19:17:04",
+      "src": "windows",
+      "host": "IT-PC-40",
+      "user": "t.mansour",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "19:20:27",
+      "src": "proxy",
+      "host": "HR-PC-18",
+      "user": "m.samir",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "19:26:33",
+      "src": "dns",
+      "host": "EXEC-PC-09",
+      "user": "n.mansour",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:28:29",
+      "src": "email",
+      "host": "ENG-PC-31",
+      "user": "t.nabil",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {
+    "office-365-update-desk.net": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Phishing kit hosting, registered 3 days ago"
+    }
+  },
+  "expected_actions": [
+    "delete_email",
+    "block_domain:office-365-update-desk.net"
+  ]
+}

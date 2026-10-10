@@ -1,0 +1,159 @@
+{
+  "id": "sc-052",
+  "title": "Shift 052 - Afternoon Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A user workstation downloaded a file from the internet.",
+  "startTime": "13:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "f.nabil": "ENG-PC-24"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Proxy: executable from uncategorized domain",
+      "source": "Web Proxy",
+      "host": "ENG-PC-24",
+      "user": "f.nabil",
+      "summary": "f.nabil downloaded scan_577.exe from account-review-hub.co",
+      "details": {
+        "src_ip": "10.16.134.111",
+        "dst_ip": "203.0.113.25",
+        "dst_port": 443,
+        "domain": "account-review-hub.co",
+        "url": "https://account-review-hub.co/scan_577.exe",
+        "file_name": "scan_577.exe",
+        "action_taken": "Allowed",
+        "raw_log": "proxy GET https://account-review-hub.co/scan_577.exe 200 type=application/x-msdownload"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 1,
+      "severity": "Medium",
+      "rule": "AV: malware detected",
+      "source": "EDR",
+      "host": "ENG-PC-24",
+      "user": "f.nabil",
+      "summary": "Trojan.IcedID detected in C:\\Users\\f.nabil\\Downloads\\scan_577.exe; file quarantined",
+      "details": {
+        "host_ip": "10.16.134.111",
+        "file_name": "scan_577.exe",
+        "file_hash": "ead91069ea1f0e28ed5ebe041236f76abe1e98417a4420993d6d337154973a79",
+        "process": "chrome.exe",
+        "action_taken": "Quarantined",
+        "raw_log": "EDR detect=Trojan.IcedID path=C:\\Users\\f.nabil\\Downloads\\scan_577.exe action=quarantine"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "13:26:39",
+      "src": "windows",
+      "host": "FIN-PC-28",
+      "user": "a.adel",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "13:29:32",
+      "src": "email",
+      "host": "SALES-PC-11",
+      "user": "t.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "13:30:00",
+      "src": "proxy",
+      "host": "ENG-PC-24",
+      "user": "f.nabil",
+      "msg": "GET https://account-review-hub.co/scan_577.exe 200"
+    },
+    {
+      "t": "13:31:00",
+      "src": "edr",
+      "host": "ENG-PC-24",
+      "user": "f.nabil",
+      "msg": "Quarantined scan_577.exe (Trojan.IcedID) sha256=ead91069ea1f0e28..."
+    },
+    {
+      "t": "13:35:22",
+      "src": "proxy",
+      "host": "ENG-PC-29",
+      "user": "o.hassan",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "13:39:19",
+      "src": "email",
+      "host": "ENG-PC-30",
+      "user": "t.zaki",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "13:50:24",
+      "src": "windows",
+      "host": "EXEC-PC-06",
+      "user": "a.zaki",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "13:51:18",
+      "src": "windows",
+      "host": "LEGAL-PC-13",
+      "user": "t.hassan",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "13:53:10",
+      "src": "dns",
+      "host": "EXEC-PC-34",
+      "user": "s.saleh",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "13:54:36",
+      "src": "edr",
+      "host": "FIN-PC-15",
+      "user": "a.mansour",
+      "msg": "Scheduled scan completed, 0 detections"
+    }
+  ],
+  "iocs": {
+    "ead91069ea1f0e28ed5ebe041236f76abe1e98417a4420993d6d337154973a79": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Trojan.IcedID (61/70 engines)"
+    },
+    "account-review-hub.co": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Malware distribution host"
+    }
+  },
+  "expected_actions": [
+    "confirm_quarantine",
+    "block_hash:ead91069ea1f0e28ed5ebe041236f76abe1e98417a4420993d6d337154973a79",
+    "block_domain:account-review-hub.co"
+  ]
+}

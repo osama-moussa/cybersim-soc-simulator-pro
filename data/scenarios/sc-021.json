@@ -1,0 +1,120 @@
+{
+  "id": "sc-021",
+  "title": "Shift 021 - Night Shift",
+  "category": "Policy",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Proxy logs show unusual traffic from a user workstation.",
+  "startTime": "22:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "n.farouk": "FIN-PC-06"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Network: Tor relay connection",
+      "source": "Firewall",
+      "host": "FIN-PC-06",
+      "user": "n.farouk",
+      "summary": "FIN-PC-06 connected to a Tor relay at 203.0.113.68:9001",
+      "details": {
+        "src_ip": "10.12.227.4",
+        "dst_ip": "203.0.113.68",
+        "dst_port": 9001,
+        "protocol": "TCP",
+        "action_taken": "Allowed",
+        "raw_log": "fw ALLOW 10.12.227.4 -> 203.0.113.68:9001 app=tor"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1090.003"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "21:56:21",
+      "src": "edr",
+      "host": "SALES-PC-04",
+      "user": "k.hassan",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "21:57:11",
+      "src": "proxy",
+      "host": "HR-PC-37",
+      "user": "o.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "22:00:00",
+      "src": "firewall",
+      "host": "FIN-PC-06",
+      "user": "n.farouk",
+      "msg": "ALLOW 10.12.227.4 -> 203.0.113.68:9001 tor"
+    },
+    {
+      "t": "22:05:17",
+      "src": "proxy",
+      "host": "IT-PC-40",
+      "user": "a.samir",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "22:06:40",
+      "src": "proxy",
+      "host": "HR-PC-02",
+      "user": "a.saleh",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "22:07:55",
+      "src": "edr",
+      "host": "IT-PC-33",
+      "user": "n.farouk",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "22:08:12",
+      "src": "proxy",
+      "host": "EXEC-PC-19",
+      "user": "o.samir",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "22:28:30",
+      "src": "dns",
+      "host": "SALES-PC-33",
+      "user": "h.gamal",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:28:44",
+      "src": "dns",
+      "host": "LEGAL-PC-37",
+      "user": "m.hassan",
+      "msg": "query intranet.corp.example A NOERROR"
+    }
+  ],
+  "iocs": {
+    "203.0.113.68": {
+      "type": "ip",
+      "reputation": "suspicious",
+      "note": "Tor relay (anonymizer), policy violation if unapproved"
+    }
+  },
+  "expected_actions": [
+    "notify_manager",
+    "document_policy_violation"
+  ]
+}

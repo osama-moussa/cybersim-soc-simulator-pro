@@ -1,0 +1,120 @@
+{
+  "id": "sc-064",
+  "title": "Shift 064 - Evening Shift",
+  "category": "Policy",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "Proxy logs show unusual traffic from a user workstation.",
+  "startTime": "19:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "l.farouk": "ENG-PC-05"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Network: Tor relay connection",
+      "source": "Firewall",
+      "host": "ENG-PC-05",
+      "user": "l.farouk",
+      "summary": "ENG-PC-05 connected to a Tor relay at 198.51.100.3:9001",
+      "details": {
+        "src_ip": "10.16.47.174",
+        "dst_ip": "198.51.100.3",
+        "dst_port": 9001,
+        "protocol": "TCP",
+        "action_taken": "Allowed",
+        "raw_log": "fw ALLOW 10.16.47.174 -> 198.51.100.3:9001 app=tor"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1090.003"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "18:59:48",
+      "src": "email",
+      "host": "EXEC-PC-29",
+      "user": "k.khaled",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:00:00",
+      "src": "firewall",
+      "host": "ENG-PC-05",
+      "user": "l.farouk",
+      "msg": "ALLOW 10.16.47.174 -> 198.51.100.3:9001 tor"
+    },
+    {
+      "t": "19:00:47",
+      "src": "email",
+      "host": "LEGAL-PC-29",
+      "user": "k.adel",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "19:13:55",
+      "src": "windows",
+      "host": "ENG-PC-32",
+      "user": "o.saleh",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "19:14:24",
+      "src": "windows",
+      "host": "IT-PC-06",
+      "user": "l.nabil",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "19:15:14",
+      "src": "dns",
+      "host": "SALES-PC-06",
+      "user": "h.farouk",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "19:17:29",
+      "src": "edr",
+      "host": "LEGAL-PC-33",
+      "user": "n.hassan",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "19:17:47",
+      "src": "proxy",
+      "host": "EXEC-PC-35",
+      "user": "m.ibrahim",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "19:22:43",
+      "src": "dns",
+      "host": "FIN-PC-01",
+      "user": "o.gamal",
+      "msg": "query intranet.corp.example A NOERROR"
+    }
+  ],
+  "iocs": {
+    "198.51.100.3": {
+      "type": "ip",
+      "reputation": "suspicious",
+      "note": "Tor relay (anonymizer), policy violation if unapproved"
+    }
+  },
+  "expected_actions": [
+    "notify_manager",
+    "document_policy_violation"
+  ]
+}

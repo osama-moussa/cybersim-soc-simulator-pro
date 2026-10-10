@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSim SOC Simulator Pro · Tier 1 Training</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/queue.css">
+    <link rel="stylesheet" href="css/toolkit.css">
+    <link rel="stylesheet" href="css/guidedMode.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/responseModel.js"></script>
+    <script src="js/incidentLifecycle.js"></script>
+    <script src="js/ui/alertQueue.js"></script>
+    <script src="js/scoring.js"></script>
+    <script src="js/ui/toolkit.js"></script>
+    <script src="js/ui/actionsPanel.js"></script>
+    <script src="js/ui/incidentPanel.js"></script>
+    <script src="js/ui/alertBrief.js"></script>
+    <script src="js/ui/alertMeta.js"></script>
+    <script src="js/ui/alertRelated.js"></script>
+    <script src="js/ui/alertTimeline.js"></script>
+    <script src="js/ui/socExtras.js"></script>
+    <script src="js/ui/socMessages.js"></script>
+    <script src="js/ui/socFlow.js"></script>
+    <script src="js/ui/alertPlaybook.js"></script>
+    <script src="js/shiftGenerator.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/guidedMode.js"></script>
+    
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">🛡️</div>
+        <div class="loading-text">CyberSim SOC</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+        <div id="loadingStatus">Initializing security modules...</div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>CyberSim SOC</span>
+                </div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-section">
+                    <div class="nav-section-title">Dashboard</div>
+                    <a href="#" class="nav-item active" data-view="overview">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Overview</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Incidents</div>
+                    <a href="#" class="nav-item" data-view="incidents">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Active Incidents</span>
+                        <span class="badge" id="activeIncidentsBadge">0</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="threat-feed">
+                        <i class="fas fa-rss"></i>
+                        <span>Threat Feed</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Investigation</div>
+                    <a href="#" class="nav-item" data-view="forensics">
+                        <i class="fas fa-search"></i>
+                        <span>Digital Forensics</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="threat-hunting">
+                        <i class="fas fa-crosshairs"></i>
+                        <span>Threat Hunting</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="intel">
+                        <i class="fas fa-brain"></i>
+                        <span>Threat Intel</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Response</div>
+                    <a href="#" class="nav-item" data-view="playbooks">
+                        <i class="fas fa-book"></i>
+                        <span>Playbooks</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="containment">
+                        <i class="fas fa-lock"></i>
+                        <span>Containment</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="recovery">
+                        <i class="fas fa-redo"></i>
+                        <span>Recovery</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="#" class="nav-item" data-view="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="reports">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="topbar">
+                <div class="topbar-left">
+                    <div class="system-status">
+                        <div class="status-indicator" id="systemStatus"></div>
+                        <span id="systemStatusText">Simulation Ready</span>
+                    </div>
+                    <div class="system-status">
+                        <i class="fas fa-calendar"></i>
+                        <span id="currentDateTime"></span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="system-status">
+                        <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
+                        <span id="activeIncidentsCount">0 Active Incidents</span>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar">TG</div>
+                        <span>SOC Trainee · Tier 1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard" id="mainContent">
+                <!-- Overview Section -->
+                <div id="overviewContent">
+                    <h1 class="page-title">Security Operations Center</h1>
+                    <p class="page-subtitle">Training shift overview · metrics from the active simulation</p>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Active Incidents</div>
+                                <div class="stat-icon" style="background: var(--danger);">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="activeIncidentsValue">0</div>
+                            <div class="stat-change negative">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Open items in this shift</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Alerts Released</div>
+                                <div class="stat-icon" style="background: var(--warning);">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="threatsValue">0</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Alerts released so far</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Assets in Scenario</div>
+                                <div class="stat-icon" style="background: var(--success);">
+                                    <i class="fas fa-server"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="assetsValue">0</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Hosts listed in the scenario</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Mean Triage Time</div>
+                                <div class="stat-icon" style="background: var(--primary);">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="mttrValue">—</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Average time to triage closed alerts</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Grid -->
+                    <div class="content-grid">
+                        <!-- Recent Incidents -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Incidents</h3>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    View All
+                                </button>
+                            </div>
+                            <div class="card-body" style="padding: 0;">
+                                <table class="incidents-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Incident ID</th>
+                                            <th>Title</th>
+                                            <th>Severity</th>
+                                            <th>Status</th>
+                                            <th>Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="incidentsTableBody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Threat Feed -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Live Threat Feed</h3>
+                                <div class="status-indicator"></div>
+                            </div>
+                            <div class="card-body" style="padding: 0;" id="threatFeedContent">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Chart -->
+                    <div class="card" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <h3 class="card-title">Alerts Released During This Shift</h3>
+                            <div class="btn-group">
+                                <button class="btn btn-secondary btn-sm active" data-period="24h">24H</button>
+                                <button class="btn btn-secondary btn-sm" data-period="7d">7D</button>
+                                <button class="btn btn-secondary btn-sm" data-period="30d">30D</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="threatTrendsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Template -->
+    <div class="notification" id="notificationTemplate">
+        <div class="notification-header">
+            <div class="notification-title">New Critical Alert</div>
+            <button class="notification-close">&times;</button>
+        </div>
+        <div class="notification-body">
+            Multiple failed login attempts detected from suspicious IP addresses.
+        </div>
+    </div>
+
+    <!-- Guided Mode onboarding -->
+    <div class="gm-overlay" id="guidedModeModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="guidedModalTitle">
+      <div class="gm-dialog">
+        <div class="gm-head"><h2 id="guidedModalTitle"><i class="fas fa-graduation-cap"></i> CyberSim · Beginner Training</h2><button class="gm-close" id="guidedClose" aria-label="Close">&times;</button></div>
+        <div class="gm-content">
+          <section id="guidedIntro">
+            <div class="gm-hero"><div class="gm-icon"><i class="fas fa-compass"></i></div><h3 id="guidedIntroTitle">أول مرة تستخدم CyberSim؟ خلينا نبدأ مع بعض</h3><p id="guidedIntroText">هتتعلم أقسام المحاكي، وتفهم خطوات تحقيق SOC Tier 1، وبعدها تحل تنبيهات بتوجيه تدريجي. كل خطوة هتشرح لك تعمل إيه وليه، من غير ما نديك الإجابة قبل ما تفكر.</p></div>
+            <div class="gm-options">
+              <button class="gm-option" id="guidedStart"><strong><i class="fas fa-route"></i> Guided Mode · تدريب موجّه</strong><span>شرح خطوة بخطوة، مهام عملية، وأسباب كل قرار.</span></button>
+              <button class="gm-option" id="normalStart"><strong><i class="fas fa-bolt"></i> Normal Mode · الوضع العادي</strong><span>ادخل للمحاكي مباشرة، ويمكنك فتح Guided Mode في أي وقت.</span></button>
+            </div>
+          </section>
+          <section id="guidedLesson" hidden><div id="guidedLessonBody"></div></section>
+        </div>
+        <div class="gm-footer"><span class="gm-progress" id="guidedProgress">اختار طريقة الاستخدام</span><button class="gm-btn" id="guidedPrev" disabled>→ السابق</button><button class="gm-btn primary" id="guidedNext">الخطوة التالية ←</button><button class="gm-btn" id="guidedIntroStart" hidden>ابدأ الجولة</button><button class="gm-btn" id="guidedIntroNormal" hidden>دخول المحاكي</button></div>
+      </div>
+    </div>
+
+</body>
+</html>

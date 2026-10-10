@@ -1,0 +1,246 @@
+{
+  "id": "sc-074",
+  "title": "Shift 074 - Morning Shift",
+  "category": "Malware",
+  "outcome": "mixed",
+  "difficulty": "Tier 2",
+  "briefing": "Busy shift: alerts are arriving from several sources. Judge each one on its own evidence.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": [
+      "Authorized external penetration test by RedLine Security: source 192.0.2.189, scope WEB-01, ticket PT-345.",
+      "IT Helpdesk ticket INC-74040: Omar Mansour requested approved software NorthwindZip."
+    ]
+  },
+  "assets": {
+    "users": {
+      "m.zaki": "HR-PC-30",
+      "o.mansour": "HR-PC-21"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "Proxy: executable from uncategorized domain",
+      "source": "Web Proxy",
+      "host": "HR-PC-30",
+      "user": "m.zaki",
+      "summary": "m.zaki downloaded scan_398.exe from verify-review-site.co",
+      "details": {
+        "src_ip": "10.11.110.45",
+        "dst_ip": "198.51.100.150",
+        "dst_port": 443,
+        "domain": "verify-review-site.co",
+        "url": "https://verify-review-site.co/scan_398.exe",
+        "file_name": "scan_398.exe",
+        "action_taken": "Allowed",
+        "raw_log": "proxy GET https://verify-review-site.co/scan_398.exe 200 type=application/x-msdownload"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 1,
+      "severity": "Medium",
+      "rule": "AV: malware detected",
+      "source": "EDR",
+      "host": "HR-PC-30",
+      "user": "m.zaki",
+      "summary": "Trojan.AsyncRAT detected in C:\\Users\\m.zaki\\Downloads\\scan_398.exe; file quarantined",
+      "details": {
+        "host_ip": "10.11.110.45",
+        "file_name": "scan_398.exe",
+        "file_hash": "32bc280cbab14856810a779dcd32beb620f3b7742de31bee5772674c196afb18",
+        "process": "chrome.exe",
+        "action_taken": "Quarantined",
+        "raw_log": "EDR detect=Trojan.AsyncRAT path=C:\\Users\\m.zaki\\Downloads\\scan_398.exe action=quarantine"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 4,
+      "severity": "High",
+      "rule": "WAF: SQL injection attempts",
+      "source": "WAF",
+      "host": "WEB-01",
+      "user": "n/a",
+      "summary": "595 SQL injection payloads from 192.0.2.189 against /search within 5 minutes",
+      "details": {
+        "src_ip": "192.0.2.189",
+        "dst_ip": "172.16.10.5",
+        "dst_port": 443,
+        "protocol": "HTTPS",
+        "count": 595,
+        "url": "https://www.corp.example/search?q=' OR 1=1--",
+        "action_taken": "Blocked",
+        "raw_log": "waf rule=942100 action=block src=192.0.2.189 uri=/search?q=%27%20OR%201%3D1-- count=595"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1003"
+    },
+    {
+      "at": 11,
+      "severity": "Medium",
+      "rule": "Proxy: suspicious executable download",
+      "source": "Web Proxy",
+      "host": "HR-PC-21",
+      "user": "o.mansour",
+      "summary": "o.mansour downloaded NorthwindZip_setup_8.5.exe from downloads.contoso-tools.com (uncategorized, newly seen)",
+      "details": {
+        "src_ip": "10.11.102.36",
+        "dst_ip": "192.0.2.101",
+        "dst_port": 443,
+        "url": "https://downloads.contoso-tools.com/NorthwindZip_setup_8.5.exe",
+        "file_name": "NorthwindZip_setup_8.5.exe",
+        "file_hash": "c4747b499a9ad45f0ad9bda95f94796d2788329e59d55949a7dd38df0bbca6a8",
+        "action_taken": "Allowed",
+        "raw_log": "proxy GET https://downloads.contoso-tools.com/NorthwindZip_setup_8.5.exe 200 type=application/x-msdownload"
+      },
+      "truth": {
+        "verdict": "FP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": null
+      },
+      "id": "A-1004"
+    }
+  ],
+  "logs": [
+    {
+      "t": "07:58:22",
+      "src": "email",
+      "host": "LEGAL-PC-10",
+      "user": "a.saleh",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "07:59:32",
+      "src": "windows",
+      "host": "HR-PC-07",
+      "user": "k.samir",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "08:00:00",
+      "src": "proxy",
+      "host": "HR-PC-30",
+      "user": "m.zaki",
+      "msg": "GET https://verify-review-site.co/scan_398.exe 200"
+    },
+    {
+      "t": "08:00:00",
+      "src": "proxy",
+      "host": "HR-PC-02",
+      "user": "m.hassan",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:01:00",
+      "src": "edr",
+      "host": "HR-PC-30",
+      "user": "m.zaki",
+      "msg": "Quarantined scan_398.exe (Trojan.AsyncRAT) sha256=32bc280cbab14856..."
+    },
+    {
+      "t": "08:03:08",
+      "src": "proxy",
+      "host": "LEGAL-PC-38",
+      "user": "a.gamal",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:04:00",
+      "src": "waf",
+      "host": "WEB-01",
+      "user": "n/a",
+      "msg": "BLOCK 192.0.2.189 GET /search?q=' OR 1=1-- rule=942100"
+    },
+    {
+      "t": "08:09:38",
+      "src": "proxy",
+      "host": "ENG-PC-15",
+      "user": "d.adel",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:11:00",
+      "src": "proxy",
+      "host": "HR-PC-21",
+      "user": "o.mansour",
+      "msg": "GET https://downloads.contoso-tools.com/NorthwindZip_setup_8.5.exe 200"
+    },
+    {
+      "t": "08:14:34",
+      "src": "windows",
+      "host": "ENG-PC-40",
+      "user": "h.zaki",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "08:16:09",
+      "src": "proxy",
+      "host": "LEGAL-PC-15",
+      "user": "h.saleh",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:22:05",
+      "src": "proxy",
+      "host": "EXEC-PC-15",
+      "user": "n.adel",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {
+    "32bc280cbab14856810a779dcd32beb620f3b7742de31bee5772674c196afb18": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Trojan.AsyncRAT (61/70 engines)"
+    },
+    "verify-review-site.co": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Malware distribution host"
+    },
+    "192.0.2.189": {
+      "type": "ip",
+      "reputation": "clean",
+      "note": "Registered penetration-test source (RedLine Security)"
+    },
+    "c4747b499a9ad45f0ad9bda95f94796d2788329e59d55949a7dd38df0bbca6a8": {
+      "type": "hash",
+      "reputation": "clean",
+      "note": "Signed by Contoso Software Ltd, known-good (0/68 detections)"
+    },
+    "downloads.contoso-tools.com": {
+      "type": "domain",
+      "reputation": "clean",
+      "note": "Vendor distribution domain, 6 years old"
+    }
+  },
+  "expected_actions": [
+    "confirm_quarantine",
+    "block_hash:32bc280cbab14856810a779dcd32beb620f3b7742de31bee5772674c196afb18",
+    "block_domain:verify-review-site.co",
+    "close_false_positive",
+    "close_false_positive"
+  ]
+}

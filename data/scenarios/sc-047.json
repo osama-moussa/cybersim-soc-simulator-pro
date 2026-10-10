@@ -1,0 +1,120 @@
+{
+  "id": "sc-047",
+  "title": "Shift 047 - Night Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "EDR detected newly installed software.",
+  "startTime": "02:30:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "h.farouk": "LEGAL-PC-04"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "EDR: potentially unwanted program installed",
+      "source": "EDR",
+      "host": "LEGAL-PC-04",
+      "user": "h.farouk",
+      "summary": "Adware 'WebSearchHelper' installed on LEGAL-PC-04",
+      "details": {
+        "host_ip": "10.15.246.26",
+        "file_name": "websearchhelper_setup.exe",
+        "file_hash": "f9804a32ba6fc5ec2fcca51c2cfa123d6faa1a32ffbfbec4f77ba6ae3ef58d74",
+        "process": "setup.exe",
+        "action_taken": "Detected",
+        "raw_log": "EDR detect=PUP.WebSearchHelper host=LEGAL-PC-04"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1204.002"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "02:28:55",
+      "src": "windows",
+      "host": "ENG-PC-35",
+      "user": "a.khaled",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "02:29:56",
+      "src": "windows",
+      "host": "SALES-PC-06",
+      "user": "h.gamal",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "02:30:00",
+      "src": "edr",
+      "host": "LEGAL-PC-04",
+      "user": "h.farouk",
+      "msg": "PUP.WebSearchHelper installed (browser extension + scheduled task)"
+    },
+    {
+      "t": "02:37:55",
+      "src": "email",
+      "host": "EXEC-PC-13",
+      "user": "h.gamal",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:41:10",
+      "src": "edr",
+      "host": "ENG-PC-20",
+      "user": "a.samir",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "02:42:13",
+      "src": "edr",
+      "host": "LEGAL-PC-39",
+      "user": "t.fathy",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "02:47:35",
+      "src": "email",
+      "host": "SALES-PC-03",
+      "user": "y.gamal",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "02:47:39",
+      "src": "proxy",
+      "host": "ENG-PC-16",
+      "user": "a.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "02:47:55",
+      "src": "proxy",
+      "host": "FIN-PC-32",
+      "user": "h.zaki",
+      "msg": "GET https://mail.corp.example/owa 200"
+    }
+  ],
+  "iocs": {
+    "f9804a32ba6fc5ec2fcca51c2cfa123d6faa1a32ffbfbec4f77ba6ae3ef58d74": {
+      "type": "hash",
+      "reputation": "suspicious",
+      "note": "Adware bundler, medium confidence"
+    }
+  },
+  "expected_actions": [
+    "uninstall_pup",
+    "scan_host"
+  ]
+}

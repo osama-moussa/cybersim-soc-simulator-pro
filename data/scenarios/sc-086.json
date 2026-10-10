@@ -1,0 +1,126 @@
+{
+  "id": "sc-086",
+  "title": "Shift 086 - Morning Shift",
+  "category": "Network",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A Linux server is reporting authentication failures.",
+  "startTime": "06:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "root": "WEB-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "SSH: brute force attempts",
+      "source": "Linux Auth",
+      "host": "WEB-01",
+      "user": "root",
+      "summary": "836 failed SSH logins from 198.51.100.93 in 10 minutes; no successful login observed",
+      "details": {
+        "src_ip": "198.51.100.93",
+        "dst_ip": "172.16.10.5",
+        "dst_port": 22,
+        "protocol": "SSH",
+        "count": 836,
+        "raw_log": "sshd Failed password for root from 198.51.100.93 port 59222 ssh2 (x836)"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1110"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "05:55:11",
+      "src": "dns",
+      "host": "EXEC-PC-09",
+      "user": "y.gamal",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "05:55:41",
+      "src": "dns",
+      "host": "ENG-PC-07",
+      "user": "m.saleh",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "06:00:00",
+      "src": "linux",
+      "host": "WEB-01",
+      "user": "root",
+      "msg": "sshd: Failed password for root from 198.51.100.93 port 51189 ssh2"
+    },
+    {
+      "t": "06:01:09",
+      "src": "windows",
+      "host": "FIN-PC-25",
+      "user": "l.farouk",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "06:01:45",
+      "src": "windows",
+      "host": "ENG-PC-13",
+      "user": "a.gamal",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "06:04:45",
+      "src": "edr",
+      "host": "SALES-PC-36",
+      "user": "h.mansour",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "06:07:21",
+      "src": "proxy",
+      "host": "ENG-PC-15",
+      "user": "h.ibrahim",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    },
+    {
+      "t": "06:10:00",
+      "src": "linux",
+      "host": "WEB-01",
+      "user": "n/a",
+      "msg": "sshd: no 'Accepted' entries for 198.51.100.93 in the last 60 minutes"
+    },
+    {
+      "t": "06:20:06",
+      "src": "edr",
+      "host": "SALES-PC-34",
+      "user": "r.khaled",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "06:21:06",
+      "src": "dns",
+      "host": "LEGAL-PC-08",
+      "user": "y.samir",
+      "msg": "query intranet.corp.example A NOERROR"
+    }
+  ],
+  "iocs": {
+    "198.51.100.93": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Reported for mass SSH brute force"
+    }
+  },
+  "expected_actions": [
+    "block_ip:198.51.100.93"
+  ]
+}

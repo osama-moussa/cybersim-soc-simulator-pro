@@ -1,0 +1,142 @@
+{
+  "id": "sc-048",
+  "title": "Shift 048 - Morning Shift",
+  "category": "Malware",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "EDR reports removable media activity.",
+  "startTime": "08:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "o.ibrahim": "SALES-PC-18"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Low",
+      "rule": "EDR: USB mass storage connected",
+      "source": "EDR",
+      "host": "SALES-PC-18",
+      "user": "o.ibrahim",
+      "summary": "USB storage device connected to SALES-PC-18",
+      "details": {
+        "host_ip": "10.14.8.227",
+        "process": "System",
+        "raw_log": "EDR device_connect class=USB-MassStorage vid=0951 pid=1666"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1091"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 1,
+      "severity": "Medium",
+      "rule": "EDR: autorun executable blocked",
+      "source": "EDR",
+      "host": "SALES-PC-18",
+      "user": "o.ibrahim",
+      "summary": "Executable launched from removable drive blocked on SALES-PC-18",
+      "details": {
+        "host_ip": "10.14.8.227",
+        "file_name": "E:\\setup_driver.exe",
+        "file_hash": "ee0ec37fac268faa9ba8675ca68ca5dc9977d33b1356b9020cb3279637ee1bb0",
+        "process": "explorer.exe",
+        "action_taken": "Blocked",
+        "raw_log": "EDR block image=E:\\setup_driver.exe parent=explorer.exe"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Medium",
+        "escalate": false,
+        "mitre": "T1091"
+      },
+      "id": "A-1002"
+    }
+  ],
+  "logs": [
+    {
+      "t": "08:00:19",
+      "src": "proxy",
+      "host": "EXEC-PC-09",
+      "user": "o.farouk",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:01:00",
+      "src": "edr",
+      "host": "SALES-PC-18",
+      "user": "o.ibrahim",
+      "msg": "Blocked execution of E:\\setup_driver.exe (removable media)"
+    },
+    {
+      "t": "08:01:59",
+      "src": "windows",
+      "host": "FIN-PC-38",
+      "user": "s.farouk",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "08:02:27",
+      "src": "dns",
+      "host": "FIN-PC-39",
+      "user": "f.zaki",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:07:56",
+      "src": "email",
+      "host": "LEGAL-PC-28",
+      "user": "t.nabil",
+      "msg": "Delivered: weekly IT bulletin from it-bulletin@corp.example"
+    },
+    {
+      "t": "08:10:17",
+      "src": "dns",
+      "host": "ENG-PC-17",
+      "user": "h.zaki",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "08:13:34",
+      "src": "windows",
+      "host": "ENG-PC-07",
+      "user": "y.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "08:14:55",
+      "src": "proxy",
+      "host": "HR-PC-27",
+      "user": "h.samir",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "08:23:30",
+      "src": "proxy",
+      "host": "FIN-PC-32",
+      "user": "s.farouk",
+      "msg": "GET https://cdn.fabrikam-cdn.net/lib.js 200"
+    }
+  ],
+  "iocs": {
+    "ee0ec37fac268faa9ba8675ca68ca5dc9977d33b1356b9020cb3279637ee1bb0": {
+      "type": "hash",
+      "reputation": "malicious",
+      "note": "Worm dropper commonly spread via USB"
+    }
+  },
+  "expected_actions": [
+    "block_hash:ee0ec37fac268faa9ba8675ca68ca5dc9977d33b1356b9020cb3279637ee1bb0",
+    "scan_host",
+    "retrieve_usb_device"
+  ]
+}

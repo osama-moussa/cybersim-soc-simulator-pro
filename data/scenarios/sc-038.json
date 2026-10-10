@@ -1,0 +1,126 @@
+{
+  "id": "sc-038",
+  "title": "Shift 038 - Morning Shift",
+  "category": "Network",
+  "outcome": "true_positive",
+  "difficulty": "Tier 1",
+  "briefing": "A Linux server is reporting authentication failures.",
+  "startTime": "09:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "root": "WEB-01"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "SSH: brute force attempts",
+      "source": "Linux Auth",
+      "host": "WEB-01",
+      "user": "root",
+      "summary": "539 failed SSH logins from 192.0.2.142 in 10 minutes; no successful login observed",
+      "details": {
+        "src_ip": "192.0.2.142",
+        "dst_ip": "172.16.10.5",
+        "dst_port": 22,
+        "protocol": "SSH",
+        "count": 539,
+        "raw_log": "sshd Failed password for root from 192.0.2.142 port 64019 ssh2 (x539)"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Low",
+        "escalate": false,
+        "mitre": "T1110"
+      },
+      "id": "A-1001"
+    }
+  ],
+  "logs": [
+    {
+      "t": "08:55:15",
+      "src": "proxy",
+      "host": "FIN-PC-38",
+      "user": "f.hassan",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "08:58:43",
+      "src": "dns",
+      "host": "ENG-PC-21",
+      "user": "f.khaled",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "08:59:59",
+      "src": "edr",
+      "host": "IT-PC-28",
+      "user": "r.adel",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "09:00:00",
+      "src": "linux",
+      "host": "WEB-01",
+      "user": "root",
+      "msg": "sshd: Failed password for root from 192.0.2.142 port 62329 ssh2"
+    },
+    {
+      "t": "09:00:03",
+      "src": "dns",
+      "host": "IT-PC-20",
+      "user": "k.fathy",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "09:07:10",
+      "src": "windows",
+      "host": "HR-PC-32",
+      "user": "l.hassan",
+      "msg": "4634 logoff"
+    },
+    {
+      "t": "09:08:06",
+      "src": "proxy",
+      "host": "ENG-PC-06",
+      "user": "y.zaki",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "09:10:00",
+      "src": "linux",
+      "host": "WEB-01",
+      "user": "n/a",
+      "msg": "sshd: no 'Accepted' entries for 192.0.2.142 in the last 60 minutes"
+    },
+    {
+      "t": "09:17:47",
+      "src": "proxy",
+      "host": "IT-PC-34",
+      "user": "h.mansour",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "09:19:14",
+      "src": "windows",
+      "host": "EXEC-PC-28",
+      "user": "f.mansour",
+      "msg": "4634 logoff"
+    }
+  ],
+  "iocs": {
+    "192.0.2.142": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Reported for mass SSH brute force"
+    }
+  },
+  "expected_actions": [
+    "block_ip:192.0.2.142"
+  ]
+}

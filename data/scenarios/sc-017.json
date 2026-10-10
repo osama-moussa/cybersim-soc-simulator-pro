@@ -1,0 +1,184 @@
+{
+  "id": "sc-017",
+  "title": "Shift 017 - Night Shift",
+  "category": "Account Compromise",
+  "outcome": "escalation",
+  "difficulty": "Tier 2",
+  "briefing": "Several security tools are reporting activity tied to one user.",
+  "startTime": "22:00:00",
+  "context": {
+    "change_calendar": [],
+    "notices": []
+  },
+  "assets": {
+    "users": {
+      "a.samir": "VPN-GW"
+    }
+  },
+  "alerts": [
+    {
+      "at": 0,
+      "severity": "Medium",
+      "rule": "Email: suspicious link detected",
+      "source": "Email Gateway",
+      "host": "HR-PC-39",
+      "user": "a.samir",
+      "summary": "Email from payroll@portal-access-desk.info contains a link to hxxps://portal-access-desk[.]info/login",
+      "details": {
+        "email_from": "payroll@portal-access-desk.info",
+        "email_to": "a.samir@corp.example",
+        "subject": "Payroll update required",
+        "url": "hxxps://portal-access-desk[.]info/login",
+        "action_taken": "Delivered",
+        "raw_log": "mail from=payroll@portal-access-desk.info spf=fail url=hxxps://portal-access-desk[.]info/login"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1566.002"
+      },
+      "id": "A-1001"
+    },
+    {
+      "at": 3,
+      "severity": "High",
+      "rule": "Proxy: credentials submitted to uncategorized domain",
+      "source": "Web Proxy",
+      "host": "HR-PC-39",
+      "user": "a.samir",
+      "summary": "POST with form data from HR-PC-39 to portal-access-desk.info",
+      "details": {
+        "src_ip": "10.11.124.18",
+        "dst_ip": "198.51.100.57",
+        "dst_port": 443,
+        "domain": "portal-access-desk.info",
+        "url": "https://portal-access-desk.info/login",
+        "action_taken": "Allowed",
+        "raw_log": "proxy POST https://portal-access-desk.info/login 200 bytes_out=412 category=uncategorized"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "High",
+        "escalate": true,
+        "mitre": "T1056.003"
+      },
+      "id": "A-1002"
+    },
+    {
+      "at": 9,
+      "severity": "High",
+      "rule": "VPN: login from new country",
+      "source": "VPN",
+      "host": "VPN-GW",
+      "user": "a.samir",
+      "summary": "Successful VPN login from 198.51.100.57 (Turkey) 6 minutes after the credential submission",
+      "details": {
+        "src_ip": "198.51.100.57",
+        "dst_ip": "10.10.0.1",
+        "geo": "Turkey",
+        "mfa_result": "Not required (legacy profile)",
+        "raw_log": "vpn auth=OK user=a.samir src=198.51.100.57 geo=Turkey mfa=none"
+      },
+      "truth": {
+        "verdict": "TP",
+        "severity": "Critical",
+        "escalate": true,
+        "mitre": "T1078"
+      },
+      "id": "A-1003"
+    }
+  ],
+  "logs": [
+    {
+      "t": "22:03:00",
+      "src": "proxy",
+      "host": "HR-PC-39",
+      "user": "a.samir",
+      "msg": "POST https://portal-access-desk.info/login 200 (form data submitted)"
+    },
+    {
+      "t": "22:08:25",
+      "src": "proxy",
+      "host": "HR-PC-02",
+      "user": "a.khaled",
+      "msg": "GET https://intranet.corp.example/home 200"
+    },
+    {
+      "t": "22:09:00",
+      "src": "vpn",
+      "host": "VPN-GW",
+      "user": "a.samir",
+      "msg": "Login OK from 198.51.100.57 (Turkey)"
+    },
+    {
+      "t": "22:11:44",
+      "src": "edr",
+      "host": "LEGAL-PC-10",
+      "user": "t.adel",
+      "msg": "Scheduled scan completed, 0 detections"
+    },
+    {
+      "t": "22:14:02",
+      "src": "windows",
+      "host": "LEGAL-PC-12",
+      "user": "a.hassan",
+      "msg": "4624 logon type 2 (interactive) success"
+    },
+    {
+      "t": "22:14:34",
+      "src": "proxy",
+      "host": "SALES-PC-06",
+      "user": "d.gamal",
+      "msg": "GET https://mail.corp.example/owa 200"
+    },
+    {
+      "t": "22:15:33",
+      "src": "dns",
+      "host": "SALES-PC-25",
+      "user": "m.samir",
+      "msg": "query intranet.corp.example A NOERROR"
+    },
+    {
+      "t": "22:18:37",
+      "src": "dns",
+      "host": "ENG-PC-28",
+      "user": "d.hassan",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:21:37",
+      "src": "dns",
+      "host": "HR-PC-36",
+      "user": "k.adel",
+      "msg": "query updates.contoso-tools.com A NOERROR"
+    },
+    {
+      "t": "22:25:29",
+      "src": "windows",
+      "host": "HR-PC-11",
+      "user": "y.gamal",
+      "msg": "4624 logon type 2 (interactive) success"
+    }
+  ],
+  "iocs": {
+    "portal-access-desk.info": {
+      "type": "domain",
+      "reputation": "malicious",
+      "note": "Credential harvesting page, registered 2 days ago"
+    },
+    "198.51.100.57": {
+      "type": "ip",
+      "reputation": "malicious",
+      "note": "Known Tor exit node"
+    }
+  },
+  "expected_actions": [
+    "disable_account:a.samir",
+    "block_ip:198.51.100.57",
+    "block_domain:portal-access-desk.info",
+    "reset_password:a.samir",
+    "revoke_sessions:a.samir",
+    "escalate_tier2"
+  ]
+}
