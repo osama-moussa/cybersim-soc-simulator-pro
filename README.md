@@ -136,6 +136,6 @@ Contributions are welcome, especially scenario quality improvements, tests, begi
 See [LICENSE](LICENSE). The project is a Pro fork of [TheGhostPacket/cybersim-soc-simulator](https://github.com/TheGhostPacket/cybersim-soc-simulator). MITRE ATT&CK is referenced for educational mapping; this project is not affiliated with or endorsed by MITRE.
 
 
-## V7 incident lifecycle model
+## V1 incident lifecycle model
 
 `js/incidentLifecycle.js` provides a pure state model for per-alert incident records. It requires evidence before investigation, a verified action before containment, and documented evidence plus explicit outcome confirmation before resolution. A caller must not mark an incident contained/resolved while residual risk remains. The model is included as a reusable API; it does not connect to real security tools, and its simulated verification evidence is not proof of real-world containment. Use `IncidentLifecycle.get(window.shiftState, alertId, alert)` to create/read a case, `addEvidence`, `recordAction`, `verifyAction`, `transition`, `addNote`, and `summary` to operate on it.
