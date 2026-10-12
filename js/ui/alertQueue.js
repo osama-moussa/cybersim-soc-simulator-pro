@@ -187,6 +187,7 @@ class AlertQueueUI {
     window.AlertMeta?.mount(detail, a);
     window.AlertRelated?.mount(detail, a);
     window.AlertTimeline?.mount(detail, a);
+    window.AskPeople?.mount(detail, a);
     this.$('aq-list').hidden = true;
   }
 
